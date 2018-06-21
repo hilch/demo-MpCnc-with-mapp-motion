@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?AutomationStudio Version=4.3.6.57 SP?>
+<Library Version="5.02.1" Description="[mapp Motion] Program Interpreter Library" xmlns="http://br-automation.co.at/AS/Library">
+  <Files>
+    <File>McProgInt.typ</File>
+    <File>McProgInt.fun</File>
+    <File>McProgInt.var</File>
+    <File>McProgtIntUserConfig.zip</File>
+  </Files>
+  <Dependencies>
+    <Dependency ObjectName="McBase" FromVersion="5.02.0" ToVersion="5.02.9" />
+  </Dependencies>
+</Library>

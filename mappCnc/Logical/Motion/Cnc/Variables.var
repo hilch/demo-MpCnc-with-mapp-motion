@@ -1,0 +1,6 @@
+VAR
+	MFunc_CutterDown : BOOL;
+	MFunc_CutterUp : BOOL;
+	MpCnc3Axis_0 : MpCnc3Axis;
+	CncParameters : MpCnc2AxisParType;
+END_VAR

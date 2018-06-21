@@ -1,0 +1,14 @@
+VAR
+	positionXOld : LREAL;
+	positionYOld : LREAL;
+	currentPage : UINT;
+	step : UDINT;
+	vcHandle : UDINT;
+	scale : REAL;
+	drawX1 : UINT;
+	drawY2 : UINT;
+	drawX2 : UINT;
+	drawY1 : UINT;
+	offsetX : LREAL;
+	offsetY : LREAL;
+END_VAR

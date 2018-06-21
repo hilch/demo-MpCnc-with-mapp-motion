@@ -1,0 +1,230 @@
+
+FUNCTION_BLOCK MpCnc2Axis
+	VAR_INPUT
+		MpLink : REFERENCE TO McAxesGroupType; (*The axis group reference establishes the connection between the function block and the axis group.*)
+		Enable : BOOL; (*The function block is active as long as this input is set.*)
+		ErrorReset : BOOL; (*Used to reset errors*)
+		Parameters : REFERENCE TO MpCnc2AxisParType; (*Parameters of the function block*)
+		Update : BOOL; (*Updates the parameters*)
+		Override : REAL; (*Velocity override*)
+		RapidOverride : REAL := 100; (*Rapid motion override*)
+		FeedrateOverride : REAL := 100; (*Feed override*)
+		Power : BOOL; (*Level-sensitive command for turning an axis on/off. In the event of an error, a new rising edge is required to restart the axis.*)
+		Home : BOOL; (*Command for homing the axis*)
+		MoveProgram : BOOL; (*Starts a CNC program*)
+		Interrupt : BOOL; (*Interrupts a CNC program*)
+		Continue : BOOL; (*Resumes a CNC program*)
+		Stop : BOOL; (*Stops the axis*)
+		Jog : BOOL; (*Jogging the CNC axes*)
+		MoveBlock : BOOL; (*Executes a single instruction*)
+		SingleStep : BOOL; (*Controls the CNC system in single-step mode*)
+	END_VAR
+	VAR_OUTPUT
+		Active : BOOL; (*Indicates whether the function block is active*)
+		Error : BOOL; (*Indicates whether the function block is active*)
+		StatusID : DINT; (*Status information about the function block*)
+		UpdateDone : BOOL; (*Parameter update completed*)
+		X : LREAL; (*Current X position [measurement units]*)
+		Y : LREAL; (*Current position [measurement units]*)
+		PathVelocity : REAL; (*Current path velocity [measurement units/s]*)
+		CommandBusy : BOOL; (*Function block currently executing a command*)
+		CommandAborted : BOOL; (*Function block interrupted while executing a command*)
+		PowerOn : BOOL; (*CNC axes switched on.*)
+		IsHomed : BOOL; (*CNC axes homed.*)
+		MoveActive : BOOL; (*CNC system movement active.*)
+		MoveInterrupted : BOOL; (*CNC system movement interrupted.*)
+		InMotion : BOOL; (*At least one of the CNC system's axes is performing a movement.*)
+		MoveDone : BOOL; (*CNC system movement complete.*)
+		Stopped : BOOL; (*Axis stopped*)
+		SingleStepActive : BOOL; (*Single-step mode active*)
+		Info : MpCnc2AxisInfoType; (*Additional information*)
+	END_VAR
+	VAR
+		Internal : {REDUND_UNREPLICABLE} MpComInternalDataType; (*Internal data*)
+	END_VAR
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK MpCnc3Axis
+	VAR_INPUT
+		MpLink : REFERENCE TO McAxesGroupType; (*The axis group reference establishes the connection between the function block and the axis group.*)
+		Enable : BOOL; (*The function block is active as long as this input is set.*)
+		ErrorReset : BOOL; (*Used to reset errors*)
+		Parameters : REFERENCE TO MpCnc3AxisParType; (*Parameters of the function block*)
+		Update : BOOL; (*Updates the parameters*)
+		Override : REAL; (*Velocity override*)
+		RapidOverride : REAL := 100; (*Rapid motion override*)
+		FeedrateOverride : REAL := 100; (*Feed override*)
+		Power : BOOL; (*Level-sensitive command for turning an axis on/off. In the event of an error, a new rising edge is required to restart the axis.*)
+		Home : BOOL; (*Command for homing the axis*)
+		MoveProgram : BOOL; (*Starts a CNC program*)
+		Interrupt : BOOL; (*Interrupts a CNC program*)
+		Continue : BOOL; (*Resumes a CNC program*)
+		Stop : BOOL; (*Stops the axis*)
+		Jog : BOOL; (*Jogging the CNC axes*)
+		MoveBlock : BOOL; (*Executes a single instruction*)
+		SingleStep : BOOL; (*Controls the CNC system in single-step mode*)
+	END_VAR
+	VAR_OUTPUT
+		Active : BOOL; (*Indicates whether the function block is active*)
+		Error : BOOL; (*Indicates whether the function block is active*)
+		StatusID : DINT; (*Status information about the function block*)
+		UpdateDone : BOOL; (*Parameter update completed*)
+		X : LREAL; (*Current X position [measurement units]*)
+		Y : LREAL; (*Current Y position [measurement units]*)
+		Z : LREAL; (*Current Z position [measurement units]*)
+		PathVelocity : REAL; (*Current path velocity [measurement units/s]*)
+		CommandBusy : BOOL; (*Function block currently executing a command*)
+		CommandAborted : BOOL; (*Function block interrupted while executing a command*)
+		PowerOn : BOOL; (*CNC axes switched on.*)
+		IsHomed : BOOL; (*CNC axes homed.*)
+		MoveActive : BOOL; (*CNC system movement active.*)
+		MoveInterrupted : BOOL; (*CNC system movement interrupted.*)
+		InMotion : BOOL; (*At least one of the CNC system's axes is performing a movement.*)
+		MoveDone : BOOL; (*CNC system movement complete.*)
+		Stopped : BOOL; (*Axis stopped*)
+		SingleStepActive : BOOL; (*Single-step mode active*)
+		Info : MpCnc3AxisInfoType; (*Additional information*)
+	END_VAR
+	VAR
+		Internal : {REDUND_UNREPLICABLE} MpComInternalDataType; (*Internal data*)
+	END_VAR
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK MpCnc4Axis
+	VAR_INPUT
+		MpLink : REFERENCE TO McAxesGroupType; (*The axis group reference establishes the connection between the function block and the axis group.*)
+		Enable : BOOL; (*The function block is active as long as this input is set.*)
+		ErrorReset : BOOL; (*Used to reset errors*)
+		Parameters : REFERENCE TO MpCnc4AxisParType; (*Parameters of the function block*)
+		Update : BOOL; (*Updates the parameters*)
+		Override : REAL; (*Velocity override*)
+		RapidOverride : REAL := 100; (*Rapid motion override*)
+		FeedrateOverride : REAL := 100; (*Feed override*)
+		Power : BOOL; (*Level-sensitive command for turning an axis on/off. In the event of an error, a new rising edge is required to restart the axis.*)
+		Home : BOOL; (*Command for homing the axis*)
+		MoveProgram : BOOL; (*Starts a CNC program*)
+		Interrupt : BOOL; (*Interrupts a CNC program*)
+		Continue : BOOL; (*Resumes a CNC program*)
+		Stop : BOOL; (*Stops the axis*)
+		Jog : BOOL; (*Jogging the CNC axes*)
+		MoveBlock : BOOL; (*Executes a single instruction*)
+		SingleStep : BOOL; (*Controls the CNC system in single-step mode*)
+	END_VAR
+	VAR_OUTPUT
+		Active : BOOL; (*Indicates whether the function block is active*)
+		Error : BOOL; (*Indicates whether the function block is active*)
+		StatusID : DINT; (*Status information about the function block*)
+		UpdateDone : BOOL; (*Parameter update completed*)
+		X : LREAL; (*Current X position [measurement units]*)
+		Y : LREAL; (*Current Y position [measurement units]*)
+		Z : LREAL; (*Current Z position [measurement units]*)
+		C : LREAL; (*Current C position [measurement units]*)
+		PathVelocity : REAL; (*Current path velocity [measurement units/s]*)
+		CommandBusy : BOOL; (*Function block currently executing a command*)
+		CommandAborted : BOOL; (*Function block interrupted while executing a command*)
+		PowerOn : BOOL; (*CNC axes switched on.*)
+		IsHomed : BOOL; (*CNC axes homed.*)
+		MoveActive : BOOL; (*CNC system movement active.*)
+		MoveInterrupted : BOOL; (*CNC system movement interrupted.*)
+		InMotion : BOOL; (*At least one of the CNC system's axes is performing a movement.*)
+		MoveDone : BOOL; (*CNC system movement complete.*)
+		Stopped : BOOL; (*Axis stopped*)
+		SingleStepActive : BOOL; (*Single-step mode active*)
+		Info : MpCnc4AxisInfoType; (*Additional information*)
+	END_VAR
+	VAR
+		Internal : {REDUND_UNREPLICABLE} MpComInternalDataType; (*Internal data*)
+	END_VAR
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK MpCnc5Axis
+	VAR_INPUT
+		MpLink : REFERENCE TO McAxesGroupType; (*The axis group reference establishes the connection between the function block and the axis group.*)
+		Enable : BOOL; (*The function block is active as long as this input is set.*)
+		ErrorReset : BOOL; (*Used to reset errors*)
+		Parameters : REFERENCE TO MpCnc5AxisParType; (*Parameters of the function block*)
+		Update : BOOL; (*Updates the parameters*)
+		Override : REAL; (*Velocity override*)
+		RapidOverride : REAL := 100; (*Rapid motion override*)
+		FeedrateOverride : REAL := 100; (*Feed override*)
+		Power : BOOL; (*Level-sensitive command for turning an axis on/off. In the event of an error, a new rising edge is required to restart the axis.*)
+		Home : BOOL; (*Command for homing the axis*)
+		MoveProgram : BOOL; (*Starts a CNC program*)
+		Interrupt : BOOL; (*Interrupts a CNC program*)
+		Continue : BOOL; (*Resumes a CNC program*)
+		Stop : BOOL; (*Stops the axis*)
+		Jog : BOOL; (*Jogging the CNC axes*)
+		MoveBlock : BOOL; (*Executes a single instruction*)
+		SingleStep : BOOL; (*Controls the CNC system in single-step mode*)
+	END_VAR
+	VAR_OUTPUT
+		Active : BOOL; (*Indicates whether the function block is active*)
+		Error : BOOL; (*Indicates whether the function block is active*)
+		StatusID : DINT; (*Status information about the function block*)
+		UpdateDone : BOOL; (*Parameter update completed*)
+		X : LREAL; (*Current X position [measurement units]*)
+		Y : LREAL; (*Current Y position [measurement units]*)
+		Z : LREAL; (*Current Z position [measurement units]*)
+		C : LREAL; (*Current C position [measurement units]*)
+		A : LREAL; (*Current A position [measurement units]*)
+		PathVelocity : REAL; (*Current path velocity [measurement units/s]*)
+		CommandBusy : BOOL; (*Function block currently executing a command*)
+		CommandAborted : BOOL; (*Function block interrupted while executing a command*)
+		PowerOn : BOOL; (*CNC axes switched on.*)
+		IsHomed : BOOL; (*CNC axes homed.*)
+		MoveActive : BOOL; (*CNC system movement active.*)
+		MoveInterrupted : BOOL; (*CNC system movement interrupted.*)
+		InMotion : BOOL; (*At least one of the CNC system's axes is performing a movement.*)
+		MoveDone : BOOL; (*CNC system movement complete.*)
+		Stopped : BOOL; (*Axis stopped*)
+		SingleStepActive : BOOL; (*Single-step mode active*)
+		Info : MpCnc5AxisInfoType; (*Additional information*)
+	END_VAR
+	VAR
+		Internal : {REDUND_UNREPLICABLE} MpComInternalDataType; (*Internal data*)
+	END_VAR
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK MpCncFlex
+	VAR_INPUT
+		MpLink : REFERENCE TO McAxesGroupType; (*The axis group reference establishes the connection between the function block and the axis group.*)
+		Enable : BOOL; (*The function block is active as long as this input is set.*)
+		ErrorReset : BOOL; (*Used to reset errors*)
+		Parameters : REFERENCE TO MpCncFlexParType; (*Parameters of the function block*)
+		Update : BOOL; (*Updates the parameters*)
+		Override : REAL; (*Velocity override*)
+		RapidOverride : REAL := 100; (*Rapid motion override*)
+		FeedrateOverride : REAL := 100; (*Feed override*)
+		Power : BOOL; (*Level-sensitive command for turning an axis on/off. In the event of an error, a new rising edge is required to restart the axis.*)
+		Home : BOOL; (*Command for homing the axis*)
+		MoveProgram : BOOL; (*Starts a CNC program*)
+		Interrupt : BOOL; (*Interrupts a CNC program*)
+		Continue : BOOL; (*Resumes a CNC program*)
+		Stop : BOOL; (*Stops the axis*)
+		Jog : BOOL; (*Jogging the CNC axes*)
+		MoveBlock : BOOL; (*Executes a single instruction*)
+		SingleStep : BOOL; (*Controls the CNC system in single-step mode*)
+	END_VAR
+	VAR_OUTPUT
+		Active : BOOL; (*Indicates whether the function block is active*)
+		Error : BOOL; (*Indicates whether the function block is active*)
+		StatusID : DINT; (*Status information about the function block*)
+		UpdateDone : BOOL; (*Parameter update completed*)
+		Position : ARRAY[0..14] OF LREAL; (*Current position [measurement units]*)
+		PathVelocity : REAL; (*Current path velocity [measurement units/s]*)
+		CommandBusy : BOOL; (*Function block currently executing a command*)
+		CommandAborted : BOOL; (*Function block interrupted while executing a command*)
+		PowerOn : BOOL; (*CNC axes switched on.*)
+		IsHomed : BOOL; (*CNC axes homed.*)
+		MoveActive : BOOL; (*CNC system movement active.*)
+		MoveInterrupted : BOOL; (*CNC system movement interrupted.*)
+		InMotion : BOOL; (*At least one of the CNC system's axes is performing a movement.*)
+		MoveDone : BOOL; (*CNC system movement complete.*)
+		Stopped : BOOL; (*Axis stopped*)
+		SingleStepActive : BOOL; (*Single-step mode active*)
+		Info : MpCncFlexInfoType; (*Additional information*)
+	END_VAR
+	VAR
+		Internal : {REDUND_UNREPLICABLE} MpComInternalDataType; (*Internal data*)
+	END_VAR
+END_FUNCTION_BLOCK

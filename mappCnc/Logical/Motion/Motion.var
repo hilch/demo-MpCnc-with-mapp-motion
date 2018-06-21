@@ -1,0 +1,4 @@
+VAR
+	g_positionY : LREAL;
+	g_positionX : LREAL;
+END_VAR
