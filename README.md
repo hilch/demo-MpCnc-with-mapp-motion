@@ -4,7 +4,11 @@ demo cnc application with [B&amp;R](https://www.br-automation.com) mapp componen
 
 ![Screenshot](https://github.com/hilch/demo-MpCnc-with-mapp-motion-/blob/master/doc/screenshot.PNG)
 
-# CNC programs
+## Usage
+This project can be started in a simulation environment ('ArSim') with a vnc viewer connected to 127.0.0.1 (8-Bit colour mode).
+Just press button '1.', '2.' and '3.' one after another to see Mickey.
+
+## CNC programs
 - The 'standard' way to run a cnc program is to insert a special data module named "CNC program" in Automation Studio and to edit it with the buildin editor that also supports minimalistic G-Code highlighting.
 ![cncprogram1](https://github.com/hilch/demo-MpCnc-with-mapp-motion-/blob/master/doc/cncprogram1.png)
 - The second way is to create it outside and store it as text file on local flash or a network share. Just point a 'File Device' to the partition or directory ("CPU configuration/File devices")
