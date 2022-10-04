@@ -1,3 +1,5 @@
+[![Made For B&R](https://github.com/hilch/BandR-badges/blob/main/Made-For-BrAutomation.svg)](https://www.br-automation.com)
+
 # demo-MpCnc-with-mapp-motion
 [B&amp;R](https://www.br-automation.com) Automation Studio 
 demo cnc application with [B&amp;R](https://www.br-automation.com) mapp components (MpCNC based on mapp motion)
