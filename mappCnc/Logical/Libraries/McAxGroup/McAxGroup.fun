@@ -59,6 +59,26 @@ FUNCTION_BLOCK MC_BR_GroupHome_15
 	END_VAR
 END_FUNCTION_BLOCK
 
+FUNCTION_BLOCK MC_BR_GroupBrakeOperation
+	VAR_INPUT
+		AxesGroup : REFERENCE TO McAxesGroupType; (*The axis group reference establishes the connection between the function block and the axis group.*)
+		Execute : BOOL; (*Execution of this function block is started on rising edge of the input*)
+		Command : McBrakeCmdEnum; (*Brake command input*)
+		SelectMode : McBrakeSelectModeEnum; (*Mode for selecting the brake*)
+		Identifier : UDINT; (*Identifier for the brake*)
+	END_VAR
+	VAR_OUTPUT
+		Done : BOOL; (*execution successful. FB finished*)
+		Busy : BOOL; (*FB is active and needs to be called*)
+		Error : BOOL; (*error occurred during operation*)
+		ErrorID : DINT; (*error number*)
+		BrakeStatus : McBrakeStatusEnum; (*shows the brake status*)
+	END_VAR
+	VAR
+		Internal : McInternalType; (*internal variable*)
+	END_VAR
+END_FUNCTION_BLOCK
+
 FUNCTION_BLOCK MC_BR_GroupJogAbsolute_15
 	VAR_INPUT
 		AxesGroup : REFERENCE TO McAxesGroupType; (*The axis group reference establishes the connection between the function block and the axis group.*)
@@ -166,6 +186,25 @@ FUNCTION_BLOCK MC_BR_GroupPower
 		Busy : BOOL; (*Function block is active and must continue to be called.*)
 		Error : BOOL; (*Error occurred during execution.*)
 		ErrorID : DINT; (*Error number*)
+	END_VAR
+	VAR
+		Internal : McInternalType; (*Internal data*)
+	END_VAR
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK MC_BR_GroupReadCyclicPosition_15
+	VAR_INPUT
+		AxesGroup : REFERENCE TO McAxesGroupType; (*The axis group reference establishes the connection between the function block and the axis group.*)
+		Enable : BOOL; (*The function block is active as long as this input is set.*)
+		CoordSystem : UDINT; (*Coordinate system*)
+		ValueSource : McValueSrcEnum; (*selection which position should be read*)
+	END_VAR
+	VAR_OUTPUT
+		Valid : BOOL; (*The function block's output values can be used.*)
+		Busy : BOOL; (*Function block is active and must continue to be called.*)
+		Error : BOOL; (*Error occurred during execution.*)
+		ErrorID : DINT; (*Error number*)
+		CyclicPosition : ARRAY[0..14] OF LREAL; (*Current positions in the specified coordinate system.*)
 	END_VAR
 	VAR
 		Internal : McInternalType; (*Internal data*)
@@ -527,6 +566,86 @@ FUNCTION_BLOCK MC_GroupStop
 	END_VAR
 END_FUNCTION_BLOCK
 
+FUNCTION_BLOCK MC_BR_SetToolPar
+	VAR_INPUT
+		AxesGroup : REFERENCE TO McAxesGroupType; (*The axis group reference establishes the connection between the function block and the axis group.*)
+		Execute : BOOL; (*Execution of the function block begins on a rising edge of this input.*)
+		ToolParameters : McToolParType; (*Geometric parameters for tools to set*)
+		ExecutionMode : McExecutionModeEnum; (*Execution Mode*)
+	END_VAR
+	VAR_OUTPUT
+		Done : BOOL; (*Execution successful. Function block is finished.*)
+		Busy : BOOL; (*Function block is active and must continue to be called.*)
+		Active : BOOL; (*Function block is active.*)
+		Error : BOOL; (*Error occurred during execution.*)
+		ErrorID : DINT; (*Error number*)
+	END_VAR
+	VAR
+		Internal : McInternalType; (*Internal data*)
+	END_VAR
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK MC_BR_SetToolTable
+	VAR_INPUT
+		AxesGroup : REFERENCE TO McAxesGroupType; (*The axis group reference establishes the connection between the function block and the axis group.*)
+		Execute : BOOL; (*Execution of the function block begins on a rising edge of this input.*)
+		Name : STRING[250]; (*Name of tool table*)
+		ToolIdentifier : STRING[250]; (*Identifier of initial tool to be activated*)
+		ExecutionMode : McExecutionModeEnum; (*Error command*)
+	END_VAR
+	VAR_OUTPUT
+		Done : BOOL; (*Execution successful. Function block is finished.*)
+		Busy : BOOL; (*Function block is active and must continue to be called.*)
+		Active : BOOL; (*Function block is active.*)
+		Error : BOOL; (*Error occurred during execution.*)
+		ErrorID : DINT; (*Error number*)
+	END_VAR
+	VAR
+		Internal : McInternalType; (*Internal data*)
+	END_VAR
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK MC_BR_SetFrameTableFrame
+	VAR_INPUT
+		AxesGroup : REFERENCE TO McAxesGroupType; (*The axis group reference establishes the connection between the function block and the axis group.*)
+		Execute : BOOL; (*Execution of the function block begins on a rising edge of this input.*)
+		CoordSystem : UDINT; (*Coordinate system*)
+		Name : STRING[250]; (*Name of frame table*)
+		Index : UINT; (*Frame index*)
+		ExecutionMode : McExecutionModeEnum; (*Error command*)
+	END_VAR
+	VAR_OUTPUT
+		Done : BOOL; (*Execution successful. Function block is finished.*)
+		Busy : BOOL; (*Function block is active and must continue to be called.*)
+		Active : BOOL; (*Function block is active.*)
+		Error : BOOL; (*Error occurred during execution.*)
+		ErrorID : DINT; (*Error number*)
+	END_VAR
+	VAR
+		Internal : McInternalType; (*Internal data*)
+	END_VAR
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK MC_BR_SetStandardFrame
+	VAR_INPUT
+		AxesGroup : REFERENCE TO McAxesGroupType; (*The axis group reference establishes the connection between the function block and the axis group.*)
+		Execute : BOOL; (*Execution of the function block begins on a rising edge of this input.*)
+		CoordSystem : UDINT; (*Coordinate system*)
+		Frame : McFrameType; (*Frame*)
+		ExecutionMode : McExecutionModeEnum; (*Error command*)
+	END_VAR
+	VAR_OUTPUT
+		Done : BOOL; (*Execution successful. Function block is finished.*)
+		Busy : BOOL; (*Function block is active and must continue to be called.*)
+		Active : BOOL; (*Function block is active.*)
+		Error : BOOL; (*Error occurred during execution.*)
+		ErrorID : DINT; (*Error number*)
+	END_VAR
+	VAR
+		Internal : McInternalType; (*Internal data*)
+	END_VAR
+END_FUNCTION_BLOCK
+
 FUNCTION_BLOCK MC_MoveDirectAbsolute_15
 	VAR_INPUT
 		AxesGroup : REFERENCE TO McAxesGroupType; (*The axis group reference establishes the connection between the function block and the axis group.*)
@@ -608,6 +727,7 @@ FUNCTION_BLOCK MC_MoveLinearAbsolute_15
 	END_VAR
 END_FUNCTION_BLOCK
 
+
 FUNCTION_BLOCK MC_MoveLinearRelative_15
 	VAR_INPUT
 		AxesGroup : REFERENCE TO McAxesGroupType; (*The axis group reference establishes the connection between the function block and the axis group.*)
@@ -629,6 +749,136 @@ FUNCTION_BLOCK MC_MoveLinearRelative_15
 		CommandAborted : BOOL; (*Command aborted by another command*)
 		Error : BOOL; (*Error occurred during execution.*)
 		ErrorID : DINT; (*Error number*)
+	END_VAR
+	VAR
+		Internal : McInternalType; (*Internal data*)
+	END_VAR
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK MC_BR_UnloadProgram
+	VAR_INPUT
+		AxesGroup : REFERENCE TO McAxesGroupType; (*The axis group reference establishes the connection between the function block and the axis group.*)
+		Execute : BOOL; (*Execution of the function block begins on a rising edge of this input.*)
+		Name : STRING[260]; (*Program name*)
+		Mode : McUnloadProgramModeEnum; (*Defines which programs should be unloaded.*)
+	END_VAR
+	VAR_OUTPUT
+		Done : BOOL; (*Execution successful. Function block is finished.*)
+		Busy : BOOL; (*Function block is active and must continue to be called.*)
+		Error : BOOL; (*Execution error*)
+		ErrorID : DINT; (*Error number*)
+	END_VAR
+	VAR
+		Internal : McInternalType;
+	END_VAR
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK MC_BR_LoadProgram
+	VAR_INPUT
+		AxesGroup : REFERENCE TO McAxesGroupType; (*The axis group reference establishes the connection between the function block and the axis group.*)
+		Execute : BOOL; (*Execution of the function block begins on a rising edge of this input.*)
+		Name : STRING[260]; (*Program name*)
+		Mode : McLoadProgramModeEnum; (*Defines behavior of loaded program.*)
+	END_VAR
+	VAR_OUTPUT
+		Done : BOOL; (*Execution successful. Function block is finished.*)
+		Busy : BOOL; (*Function block is active and must continue to be called.*)
+		CommandAborted : BOOL; (*Command aborted by another command.*)
+		Error : BOOL; (*Execution error*)
+		ErrorID : DINT; (*Error number*)
+	END_VAR
+	VAR
+		Internal : McInternalType;
+	END_VAR
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK MC_BR_RestartData
+	VAR_INPUT
+		AxesGroup : REFERENCE TO McAxesGroupType; (*The axis group reference establishes the connection between the function block and the axis group.*)
+		Execute : BOOL; (*Execution of the function block begins on a rising edge of this input.*)
+		Name : STRING[260]; (*File name*)
+		Mode : McRestartDataModeEnum; (*Defines which file should be used to load or save the restart data.*)
+	END_VAR
+	VAR_OUTPUT
+		Done : BOOL; (*Execution successful. Function block is finished.*)
+		Busy : BOOL; (*Function block is active and must continue to be called.*)
+		Error : BOOL; (*Execution error*)
+		ErrorID : DINT; (*Error number*)
+	END_VAR
+	VAR
+		Internal : McInternalType;
+	END_VAR
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK MC_BR_VelLimitMonPoints
+	VAR_INPUT
+		AxesGroup : REFERENCE TO McAxesGroupType; (*The axis group reference establishes the connection between the function block and the axis group.*)
+		Enable : BOOL; (*The function block is active as long as this input is set.*)
+		Parameter : McLimitMonPointsParType; (*Limitation parameters*)
+	END_VAR
+	VAR_OUTPUT
+		Valid : BOOL; (*The function block's output values can be used.*)
+		Busy : BOOL; (*Function block is active and must continue to be called.*)
+		Error : BOOL; (*Error occurred during execution.*)
+		ErrorID : DINT; (*Error number*)
+		LimitInfo : McLimitMonPointsInfoType; (*Info about current Limitation*)
+	END_VAR
+	VAR
+		Internal : McInternalType; (*Internal data*)
+	END_VAR
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK MC_BR_SkipBlock
+	VAR_INPUT
+		AxesGroup : REFERENCE TO McAxesGroupType; (*The axis group reference establishes the connection between the function block and the axis group.*)
+		Enable : BOOL; (*The function block is active as long as this input is set.*)
+		SkipLevel : ARRAY[0..9] OF BOOL; (*Skip levels*)
+	END_VAR
+	VAR_OUTPUT
+		Enabled : BOOL; (*Function block has been enabled and is active.*)
+		Busy : BOOL; (*Function block is active and must continue to be called.*)
+		Error : BOOL; (*Error occurred during execution.*)
+		ErrorID : DINT; (*Error number*)
+	END_VAR
+	VAR
+		Internal : McInternalType; (*Internal data*)
+	END_VAR
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK MC_BR_GroupAxisExclusion
+	VAR_INPUT
+		AxesGroup : REFERENCE TO McAxesGroupType; (*The axis group reference establishes the connection between the function block and the axis group.*)
+		Execute : BOOL; (*Execution of the function block begins on a rising edge of this input.*)
+		Command : McExclusionCmdEnum; (*Axis exclusion command*)
+		Type : McExclusionTypeEnum; (*Type of the exclusion for this exclusion command*)
+		Parameters : McExclusionParType; (*Exclusion command parameters*)
+		ExecutionMode : McExecutionModeEnum; (*Execution Mode*)
+	END_VAR
+	VAR_OUTPUT
+		Done : BOOL; (*Execution successful. Function block is finished.*)
+		Busy : BOOL; (*Function block is active and must continue to be called.*)
+		Error : BOOL; (*Execution error*)
+		ErrorID : DINT; (*Error number*)
+		Excluded : BOOL; (*Exclusion status of the axis.*)
+	END_VAR
+	VAR
+		Internal : McInternalType; (*Internal data*)
+	END_VAR
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK MC_BR_GroupInterrupt
+	VAR_INPUT
+		AxesGroup : REFERENCE TO McAxesGroupType; (*The axis group reference establishes the connection between the function block and the axis group.*)
+		Execute : BOOL; (*Execution of the function block begins on a rising edge of this input.*)
+		Parameters : McInterruptParType; (*Parameters for the interruption of the movement.*)
+	END_VAR
+	VAR_OUTPUT
+		Done : BOOL; (*Execution successful. Function block is finished.*)
+		Busy : BOOL; (*Function block is active and must continue to be called.*)
+		CommandAborted : BOOL; (*Command aborted by another command*)
+		Error : BOOL; (*Error occurred during execution.*)
+		ErrorID : DINT; (*Error number*)
+		Phase : McInterruptPhaseEnum; (*Indicates the current phase of the interrupt.*)
 	END_VAR
 	VAR
 		Internal : McInternalType; (*Internal data*)

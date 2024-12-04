@@ -1,6 +1,6 @@
 /* Automation Studio generated header file */
 /* Do not edit ! */
-/* MpCnc 5.02.0 */
+/* MpCnc 5.27.1 */
 
 #ifndef _MPCNC_
 #define _MPCNC_
@@ -9,7 +9,7 @@ extern "C"
 {
 #endif
 #ifndef _MpCnc_VERSION
-#define _MpCnc_VERSION 5.02.0
+#define _MpCnc_VERSION 5.27.1
 #endif
 
 #include <bur/plctypes.h>
@@ -17,19 +17,20 @@ extern "C"
 #ifndef _BUR_PUBLIC
 #define _BUR_PUBLIC
 #endif
+
 #ifdef _SG4
-		#include "McAxGroup.h"
-		#include "MpBase.h"
+#include <McAxGroup.h> 
+#include <MpBase.h>
 #endif
-
+ 
 #ifdef _SG3
-		#include "McAxGroup.h"
-		#include "MpBase.h"
+#include <McAxGroup.h> 
+#include <MpBase.h>
 #endif
-
+ 
 #ifdef _SGC
-		#include "McAxGroup.h"
-		#include "MpBase.h"
+#include <McAxGroup.h> 
+#include <MpBase.h>
 #endif
 
 /* Datatypes and datatypes of function blocks */
@@ -50,14 +51,14 @@ typedef enum MpCncErrorEnum
 
 typedef struct MpCncStatusIDType
 {	enum MpCncErrorEnum ID;
-	MpComSeveritiesEnum Severity;
+	enum MpComSeveritiesEnum Severity;
 	unsigned short Code;
 } MpCncStatusIDType;
 
 typedef struct MpCncInternalIDType
 {	signed long ID;
-	MpComSeveritiesEnum Severity;
-	MpComFacilitiesEnum Facility;
+	enum MpComSeveritiesEnum Severity;
+	enum MpComFacilitiesEnum Facility;
 	unsigned short Code;
 } MpCncInternalIDType;
 
@@ -72,8 +73,8 @@ typedef struct MpCnc5AxisInfoType
 	plcbit WaitForContinue;
 	struct McPrgInfoType Program;
 	struct McPathInfoType Path;
-	McJogStatusEnum JogStatus;
-	McGroupPLCopenStateEnum PLCopenState;
+	enum McJogStatusEnum JogStatus;
+	enum McGroupPLCopenStateEnum PLCopenState;
 	struct MpCncDiagExtType Diag;
 } MpCnc5AxisInfoType;
 
@@ -83,8 +84,8 @@ typedef struct MpCnc4AxisInfoType
 	plcbit WaitForContinue;
 	struct McPrgInfoType Program;
 	struct McPathInfoType Path;
-	McJogStatusEnum JogStatus;
-	McGroupPLCopenStateEnum PLCopenState;
+	enum McJogStatusEnum JogStatus;
+	enum McGroupPLCopenStateEnum PLCopenState;
 	struct MpCncDiagExtType Diag;
 } MpCnc4AxisInfoType;
 
@@ -94,8 +95,8 @@ typedef struct MpCnc3AxisInfoType
 	plcbit WaitForContinue;
 	struct McPrgInfoType Program;
 	struct McPathInfoType Path;
-	McJogStatusEnum JogStatus;
-	McGroupPLCopenStateEnum PLCopenState;
+	enum McJogStatusEnum JogStatus;
+	enum McGroupPLCopenStateEnum PLCopenState;
 	struct MpCncDiagExtType Diag;
 } MpCnc3AxisInfoType;
 
@@ -105,8 +106,8 @@ typedef struct MpCnc2AxisInfoType
 	plcbit WaitForContinue;
 	struct McPrgInfoType Program;
 	struct McPathInfoType Path;
-	McJogStatusEnum JogStatus;
-	McGroupPLCopenStateEnum PLCopenState;
+	enum McJogStatusEnum JogStatus;
+	enum McGroupPLCopenStateEnum PLCopenState;
 	struct MpCncDiagExtType Diag;
 } MpCnc2AxisInfoType;
 
@@ -181,8 +182,8 @@ typedef struct MpCncFlexInfoType
 	plcbit WaitForContinue;
 	struct McPrgInfoType Program;
 	struct McPathInfoType Path;
-	McJogStatusEnum JogStatus;
-	McGroupPLCopenStateEnum PLCopenState;
+	enum McJogStatusEnum JogStatus;
+	enum McGroupPLCopenStateEnum PLCopenState;
 	struct MpCncDiagExtType Diag;
 } MpCncFlexInfoType;
 

@@ -17,6 +17,7 @@ extern "C" {
 #define coTRACE_ERR_FILEIO_FAILED (-2124414950) 	/*!< File-I/O operation failed*/
 #define coTRACE_ERR_END_REACHED (-2124414951)		/*!< no further suitable entry found*/
 #define coTRACE_ERR_NOT_EXISTS (-2124414952)		/*!< record not found; doesn't exist*/
+#define coTRACE_ERR_REF_NOT_FOUND (-2124414953) 	/*!< Reference resource not found/configured*/
 #define coTRACE_ERR_INCOMPLETE_CONFIG (-2124414954) /*!< aborted due incomplete configuration*/
 #define coTRACE_ERR_UNSUPPORTED_TYPE (-2124414955)	/*!< unsupported variable-type or -size*/
 #define coTRACE_INF_ALREADY_DONE 1096810516 		/*!< execution/task already performed*/
@@ -36,6 +37,7 @@ extern "C" {
 _GLOBAL_CONST signed long coTRACE_ERR_FILEIO_FAILED;
 _GLOBAL_CONST signed long coTRACE_ERR_END_REACHED;
 _GLOBAL_CONST signed long coTRACE_ERR_NOT_EXISTS;
+_GLOBAL_CONST signed long coTRACE_ERR_REF_NOT_FOUND;
 _GLOBAL_CONST signed long coTRACE_ERR_INCOMPLETE_CONFIG;
 _GLOBAL_CONST signed long coTRACE_ERR_UNSUPPORTED_TYPE;
 _GLOBAL_CONST signed long coTRACE_INF_ALREADY_DONE;
@@ -217,6 +219,26 @@ typedef struct CoTraceConfigAddStartTrigger
 	plcbit Error;
 } CoTraceConfigAddStartTrigger_typ;
 
+typedef struct CoTraceConfigAddStartTriggerExt
+{
+	/* VAR_INPUT (analog) */
+	CoTraceConfigIdentType ConfigIdent;
+	plcstring DataPointName[768];
+	enum CoTraceTriggerConditionEnum Condition;
+	double Threshold;
+	double Window;
+	/* VAR_OUTPUT (analog) */
+	signed long StatusID;
+	/* VAR (analog) */
+	struct CoTraceExec1InternalType Internal;
+	/* VAR_INPUT (digital) */
+	plcbit Execute;
+	/* VAR_OUTPUT (digital) */
+	plcbit Done;
+	plcbit Busy;
+	plcbit Error;
+} CoTraceConfigAddStartTriggerExt_typ;
+
 typedef struct CoTraceRecorder
 {
 	/* VAR_INPUT (analog) */
@@ -292,6 +314,7 @@ _BUR_PUBLIC void CoTraceConfigSetTiming(struct CoTraceConfigSetTiming* inst);
 _BUR_PUBLIC void CoTraceConfigOptionalParameter(struct CoTraceConfigOptionalParameter* inst);
 _BUR_PUBLIC void CoTraceConfigAddDataPoint(struct CoTraceConfigAddDataPoint* inst);
 _BUR_PUBLIC void CoTraceConfigAddStartTrigger(struct CoTraceConfigAddStartTrigger* inst);
+_BUR_PUBLIC void CoTraceConfigAddStartTriggerExt(struct CoTraceConfigAddStartTriggerExt* inst);
 _BUR_PUBLIC void CoTraceRecorder(struct CoTraceRecorder* inst);
 _BUR_PUBLIC void CoTraceDataReadRecords(struct CoTraceDataReadRecords* inst);
 _BUR_PUBLIC void CoTraceDataSaveCsv(struct CoTraceDataSaveCsv* inst);

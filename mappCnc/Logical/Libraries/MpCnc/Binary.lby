@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<?AutomationStudio Version=4.3.6.57 SP?>
-<Library Version="5.02.1" Description="[mapp Motion] CNC machines library" xmlns="http://br-automation.co.at/AS/Library">
+<?AutomationStudio FileVersion="4.9"?>
+<Library Version="5.27.1" SubType="binary" Description="[mapp Motion] CNC library" xmlns="http://br-automation.co.at/AS/Library">
   <Files>
+    <File>MpCnc.fun</File>
     <File>MpCnc.typ</File>
     <File>MpCncError.typ</File>
-    <File>MpCnc.fun</File>
   </Files>
   <Dependencies>
-    <Dependency ObjectName="MpBase" FromVersion="5.02.0" ToVersion="5.02.9" />
-    <Dependency ObjectName="McAxGroup" FromVersion="5.02.0" ToVersion="5.02.9" />
+    <Dependency ObjectName="McAxGroup" FromVersion="5.27.0" ToVersion="5.27.9" />
+    <Dependency ObjectName="MpBase" FromVersion="5.24.0" ToVersion="5.24.8" />
   </Dependencies>
 </Library>

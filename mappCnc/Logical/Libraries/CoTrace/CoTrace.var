@@ -115,6 +115,12 @@ Causes:
 --	TotalRecordingTime is 0 or undefined
 *)
 
+coTRACE_ERR_REF_NOT_FOUND		: DINT := -2124414953;	(*Referenced resource not found or not configured.
+
+Causes:
+-	CoTraceConfigAddStartTrigger(), CoTraceConfigAddDataPoint() or CoTraceConfigLoad(): DataPoint with "*ACP:" namespace references a module or channel, which address is currently not configured.
+*)
+
 coTRACE_ERR_NOT_EXISTS			: DINT := -2124414952;	(*Record not found or does not exist.
 -	CoTraceDataSaveCsv() and CoTraceDataReadRecords(): No data available.
 
