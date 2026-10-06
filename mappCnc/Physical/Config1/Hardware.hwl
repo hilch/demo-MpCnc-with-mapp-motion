@@ -2,19 +2,17 @@
 <?AutomationStudio FileVersion="4.9"?>
 <BR.AS.HardwareTopology>
   <TimeStamps>
-    <TimeStamp LogicalPath="Config1.Hardware.hw" LastWriteTime="10/05/2026 15:27:59" />
+    <TimeStamp LogicalPath="Config2.Hardware.hw" LastWriteTime="10/06/2026 15:21:23" />
   </TimeStamps>
   <Modules>
-    <Module Name="X20CP3585" Type="X20CP3585" X="100" Y="100" />
+    <Module Name="X20CP3684" Type="X20CP3684" X="100" Y="100" />
     <Module Name="8EI8X8HWT10.0500-1" Type="8EI8X8HWT10.0500-1" X="300" Y="249" />
-    <Module Name="8EI8X8HWT10.0500-1a" Type="8EI8X8HWT10.0500-1" X="730" Y="249" />
     <Module Name="8LSA35.D0030D000-0" Type="8LSA35.D0030D000-0" X="300" Y="560.8" />
     <Module Name="8LSA35.D0030D000-0a" Type="8LSA35.D0030D000-0" X="300" Y="694.8" />
-    <Module Name="8LSA35.D0030D000-0b" Type="8LSA35.D0030D000-0" X="100" Y="978.8" />
-    <Module Name="8LSA35.D0030D000-0c" Type="8LSA35.D0030D000-0" X="730" Y="560.8" />
+    <Module Name="8LSA35.D0030D000-0b" Type="8LSA35.D0030D000-0" X="300" Y="828.8" />
   </Modules>
   <Links>
-    <Link From="8EI8X8HWT10.0500-1" To="X20CP3585" FromPort="PLK1" ToPort="IF3" IsRoutedByUser="False">
+    <Link From="X20CP3684" To="8EI8X8HWT10.0500-1" FromPort="IF3" ToPort="PLK1" IsRoutedByUser="False">
       <Point X="156" Y="187" />
       <Point X="156" Y="187" />
       <Point X="156" Y="200" />
@@ -22,17 +20,6 @@
       <Point X="299.7" Y="259.5" />
       <Point X="307.7" Y="259.5" />
       <Point X="307.7" Y="259.5" />
-    </Link>
-    <Link From="8EI8X8HWT10.0500-1" To="8EI8X8HWT10.0500-1a" FromPort="PLK2" ToPort="PLK1" IsRoutedByUser="False">
-      <Point X="316.1" Y="259.5" />
-      <Point X="316.1" Y="259.5" />
-      <Point X="316.1" Y="248.5" />
-      <Point X="316.1" Y="235" />
-      <Point X="355" Y="235" />
-      <Point X="355" Y="259.5" />
-      <Point X="729.7" Y="259.5" />
-      <Point X="737.7" Y="259.5" />
-      <Point X="737.7" Y="259.5" />
     </Link>
     <Link From="8EI8X8HWT10.0500-1" To="8LSA35.D0030D000-0" FromPort="MT1" ToPort="MT" IsRoutedByUser="False">
       <Point X="326.6" Y="395.3" />
@@ -60,23 +47,12 @@
       <Point X="326.6" Y="297.3" />
       <Point X="326.6" Y="297.3" />
       <Point X="346.6" Y="297.3" />
-      <Point X="362" Y="297.3" />
-      <Point X="362" Y="518" />
-      <Point X="149.5" Y="518" />
-      <Point X="149.5" Y="977.899963" />
-      <Point X="149.5" Y="984.899963" />
-      <Point X="149.5" Y="984.899963" />
-    </Link>
-    <Link From="8EI8X8HWT10.0500-1a" To="8LSA35.D0030D000-0c" FromPort="MT1" ToPort="MT" IsRoutedByUser="False">
-      <Point X="756.6" Y="395.3" />
-      <Point X="756.6" Y="395.3" />
-      <Point X="776.6" Y="395.3" />
-      <Point X="785" Y="395.3" />
-      <Point X="785" Y="525" />
-      <Point X="779.5" Y="525" />
-      <Point X="779.5" Y="559.899963" />
-      <Point X="779.5" Y="566.899963" />
-      <Point X="779.5" Y="566.899963" />
+      <Point X="392" Y="297.3" />
+      <Point X="392" Y="785" />
+      <Point X="349.5" Y="785" />
+      <Point X="349.5" Y="827.899963" />
+      <Point X="349.5" Y="834.899963" />
+      <Point X="349.5" Y="834.899963" />
     </Link>
   </Links>
   <InfoElements />

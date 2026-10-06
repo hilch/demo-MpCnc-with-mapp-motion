@@ -2,7 +2,7 @@
 <?AutomationStudio Version=4.12.11.2 FileVersion="4.9"?>
 <Hardware xmlns="http://br-automation.co.at/AS/Hardware">
   <Module Name="8EI8X8HWT10.0500-1" Type="8EI8X8HWT10.0500-1" Version="2.4.0.0">
-    <Connection Connector="PLK1" TargetModule="X20CP3585" TargetConnector="IF3">
+    <Connection Connector="PLK1" TargetModule="X20CP3684" TargetConnector="IF3" NodeNumber="1">
       <Cable Type="PowerlinkCable" Length="10" Version="1.0.0.3" />
     </Connection>
     <Connection Connector="MT2" TargetModule="8LSA35.D0030D000-0a" TargetConnector="MT" />
@@ -187,37 +187,20 @@
   <Module Name="8LSA35.D0030D000-0b" Type="8LSA35.D0030D000-0" Version="1.0.5.40">
     <Connection Connector="MT" TargetModule="8EI8X8HWT10.0500-1" TargetConnector="MT3" />
   </Module>
-  <Module Name="X20CP3585" Type="X20CP3585" Version="1.13.0.0">
+  <Module Name="X20CP3684" Type="X20CP3684" Version="1.5.0.0">
     <Connector Name="IF2">
       <Parameter ID="ActivateDevice" Value="1" />
       <Parameter ID="ActivateIna" Value="0" />
       <Group ID="Vnc1" />
       <Parameter ID="VncVcObjectName1" Value="Visu" />
-      <Parameter ID="VncKeyMappingFile1" Value="VC\PS2-Keyboard.dis" />
+      <Parameter ID="VncKeyMappingFile1" Value="VC\PS2-Keyboard1.dis" />
+      <Parameter ID="VncRefreshRate1" Value="300" />
     </Connector>
-    <Connector Name="IF3">
-      <Parameter ID="DNAConfiguration" Value="manual" />
-      <Group ID="Channel1" />
-      <Parameter ID="ChannelID1" Value="McAcpBroadcast" />
-      <Parameter ID="ChannelType1" Value="OCTET[24]" />
-    </Connector>
-    <Parameter ID="ConfigurationID" Value="mappCnc_Config1" />
-    <Parameter ID="UserPartitionSize" Value="0" />
+    <Parameter ID="ConfigurationID" Value="mappCnc_Config2" />
     <Parameter ID="Simulation" Value="1" />
-    <Parameter ID="TimerDeviceType" Value="EPLX2X" />
-    <Parameter ID="TimerDevice" Value="X20CP3585.IF3" />
-    <Parameter ID="TaskClassIdleTime" Value="4000" />
-    <Parameter ID="CyclicTaskClassCount" Value="4" />
-    <Parameter ID="Cyclic1Tolerance" Value="0" />
-    <Parameter ID="Cyclic1Output" Value="1" />
-    <Parameter ID="Cyclic4Duration" Value="200000" />
-    <Parameter ID="Cyclic4Tolerance" Value="200000" />
     <Group ID="FileDevice1" />
-    <Parameter ID="FileDeviceName1" Value="CNC_PrgDir" />
-    <Parameter ID="FileDevicePath1" Value="C:\Temp" />
-    <Group ID="FileDevice2" />
-    <Parameter ID="FileDeviceName2" Value="mappCockpitDir" />
-    <Parameter ID="FileDevicePath2" Value="C:\Temp" />
+    <Parameter ID="FileDeviceName1" Value="USER" />
+    <Parameter ID="FileDevicePath1" Value="USER_PATH" />
     <Parameter ID="ActivateOpcUa" Value="1" />
     <Parameter ID="OpcUaInformationModels_PV_Version" Value="1" />
   </Module>
