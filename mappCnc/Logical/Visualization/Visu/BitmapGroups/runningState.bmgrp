@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?AutomationStudio Version="4.12.11.2 SP"?>
+<BitmapGroup xmlns="http://br-automation.co.at/AS/VC/Project" Name="runningState">
+  <Property Name="Description" Value=""/>
+  <Property Name="Index" Value="3"/>
+  <Property Name="Translate" Value="False"/>
+  <BitmapLayer LanguageId="neutral">
+    <BitmapRef ID="7" Value="Source[local].Bitmap[kaboodleloop]"/>
+    <BitmapRef ID="8" Value="None"/>
+  </BitmapLayer>
+  <IndexMap>
+    <Index ID="7" Value="1"/>
+    <Index ID="8" Value="0"/>
+  </IndexMap>
+</BitmapGroup>

@@ -1,6 +1,6 @@
 /* Automation Studio generated header file */
 /* Do not edit ! */
-/* McAcpAx 5.27.1 */
+/* McAcpAx 5.31.3 */
 
 #ifndef _MCACPAX_
 #define _MCACPAX_
@@ -9,7 +9,7 @@ extern "C"
 {
 #endif
 #ifndef _McAcpAx_VERSION
-#define _McAcpAx_VERSION 5.27.1
+#define _McAcpAx_VERSION 5.31.3
 #endif
 
 #include <bur/plctypes.h>
@@ -43,6 +43,9 @@ typedef enum McAcpAxDataTypeEnum
 	mcACPAX_PARTYPE_UINT,
 	mcACPAX_PARTYPE_UDINT,
 	mcACPAX_PARTYPE_REAL,
+	mcACPAX_PARTYPE_DINT_REAL = 64,
+	mcACPAX_PARTYPE_DINT_REAL_COUNT = 65,
+	mcACPAX_PARTYPE_DINT_REAL_TIME = 66,
 	mcACPAX_PARTYPE_VOID = 65535
 } McAcpAxDataTypeEnum;
 
@@ -54,7 +57,8 @@ typedef enum McAcpAxProcessDataBlockModeEnum
 typedef enum McAcpAxProcessParIDModeEnum
 {	mcACPAX_PARID_GET = 0,
 	mcACPAX_PARID_SET,
-	mcACPAX_PARID_GET_NO_NCT
+	mcACPAX_PARID_GET_NO_NCT,
+	mcACPAX_PARID_GET_NO_LOG
 } McAcpAxProcessParIDModeEnum;
 
 typedef enum McAcpAxProcessParTabModeEnum
@@ -80,6 +84,11 @@ typedef enum McAcpAxLimitLoadModeEnum
 {	mcACPAX_LL_WITH_FEED_FORWARD = 0,
 	mcACPAX_LL_WITHOUT_FEED_FORWARD
 } McAcpAxLimitLoadModeEnum;
+
+typedef enum McAcpAxLimitLoadParIDModeEnum
+{	mcACPAX_LLPM_NO_INIT = 0,
+	mcACPAX_LLPM_INIT_FB_INPUT = 1
+} McAcpAxLimitLoadParIDModeEnum;
 
 typedef enum McAcpAxBrakeTestCmdEnum
 {	mcACPAX_BRAKE_TEST_INIT = 0,
@@ -811,7 +820,8 @@ typedef enum McACMPCFFFFwdEnum
 typedef enum McACMPCMBCFFEnum
 {	mcACMPCMBCFF_STD = 0,
 	mcACMPCMBCFF_PRED_SPD = 1,
-	mcACMPCMBCFF_TWO_MASS_MDL_BASED = 2
+	mcACMPCMBCFF_TWO_MASS_MDL_BASED = 2,
+	mcACMPCMBCFF_FRICT_COMP = 3
 } McACMPCMBCFFEnum;
 
 typedef enum McACMPCMBCFdbkEnum
@@ -894,11 +904,16 @@ typedef enum McASRQstopEnum
 {	mcASRQ_DEC_LIM = 0,
 	mcASRQ_DEC_LIM_W_JERK_FLTR = 1,
 	mcASRQ_TORQ_LIM = 2,
+	mcASRQ_TORQ_LIM_W_JERK_FLTR = 4,
+	mcASRQ_VEL_CTRL = 5,
 	mcASRQ_INDUCT_HALT = 3
 } McASRQstopEnum;
 
 typedef enum McASRDrvErrEnum
 {	mcASRDE_DEC_LIM = 0,
+	mcASRDE_TORQ_LIM = 4,
+	mcASRDE_TORQ_LIM_W_JERK_FLTR = 5,
+	mcASRDE_VEL_CTRL = 6,
 	mcASRDE_INDUCT_HALT = 1,
 	mcASRDE_COAST_TO_STANDSTILL = 2,
 	mcASRDE_CYC_DEC_FROM_AX_GRP = 3
@@ -1655,6 +1670,9 @@ typedef struct McAcpAxAdvLimitLoadParType
 	unsigned short LoadPosDecelParID;
 	unsigned short LoadNegAccelParID;
 	unsigned short LoadNegDecelParID;
+	enum McAcpAxLimitLoadParIDModeEnum LoadParIDMode;
+	enum McLimitLoadStopModeEnum StopMode;
+	float StopTorque;
 } McAcpAxAdvLimitLoadParType;
 
 typedef struct McAcpAxBrakeParType
@@ -1980,11 +1998,24 @@ typedef struct McACMPCMBCFFTwoMassMdlBasedType
 	float AccelerationFilterTime;
 } McACMPCMBCFFTwoMassMdlBasedType;
 
+typedef struct McACMPCMBCFFFrictCompType
+{	float TorqueLoad;
+	float TorquePositive;
+	float TorqueNegative;
+	float SpeedTorqueFactor;
+	float Inertia;
+	float AccelerationFilterTime;
+	float ActivationSpeed;
+	float DeactivationLagError;
+	float TimeConstant;
+} McACMPCMBCFFFrictCompType;
+
 typedef struct McACMPCMBCFFType
 {	enum McACMPCMBCFFEnum Type;
 	struct McACMPCMBCFFStdType Standard;
 	struct McACMPCMBCFFPredSpdType PredictiveSpeed;
 	struct McACMPCMBCFFTwoMassMdlBasedType TwoMassModelBased;
+	struct McACMPCMBCFFFrictCompType FrictionCompensation;
 } McACMPCMBCFFType;
 
 typedef struct McACMPCMBCFdbkOneMassMdlBsdType
@@ -2863,6 +2894,7 @@ typedef struct McAcpAxAdvInitReceiveNetDataType
 {	unsigned char NodeNumber;
 	unsigned short BitOffset;
 	enum McAcpAxReceiveChannelEnum ReceiveChannel;
+	unsigned long CycleTime;
 } McAcpAxAdvInitReceiveNetDataType;
 
 typedef struct McAcpAxAdvReceiveParIDOnPLCType
@@ -3719,10 +3751,19 @@ typedef struct McASRQstopDecLimWJerkFltrType
 {	float JerkTime;
 } McASRQstopDecLimWJerkFltrType;
 
+typedef struct McASRQstopTorqLimWJerkFltrType
+{	float JerkTime;
+} McASRQstopTorqLimWJerkFltrType;
+
 typedef struct McASRQstopType
 {	enum McASRQstopEnum Type;
 	struct McASRQstopDecLimWJerkFltrType DecelerationLimitWithJerkFilter;
+	struct McASRQstopTorqLimWJerkFltrType TorqueLimitWithJerkFilter;
 } McASRQstopType;
+
+typedef struct McASRDrvErrTorqLimWJerkFltrType
+{	float JerkTime;
+} McASRDrvErrTorqLimWJerkFltrType;
 
 typedef struct McASRDrvErrCycDecFromAxGrpType
 {	float DefaultDeceleration;
@@ -3730,12 +3771,14 @@ typedef struct McASRDrvErrCycDecFromAxGrpType
 
 typedef struct McASRDrvErrType
 {	enum McASRDrvErrEnum Type;
+	struct McASRDrvErrTorqLimWJerkFltrType TorqueLimitWithJerkFilter;
 	struct McASRDrvErrCycDecFromAxGrpType CyclicDecelerationFromAxesGroup;
 } McASRDrvErrType;
 
 typedef struct McASRType
 {	struct McASRQstopType Quickstop;
 	struct McASRDrvErrType DriveError;
+	float FilterTime;
 } McASRType;
 
 typedef struct McAMELVelErrMonUsrDefType

@@ -97,7 +97,9 @@ TYPE
 		mcERROR_STOP_DEC_CTRL_OFF_CMD,  (*Generates an error, ends any active movement with the deceleration specified on configuration, written by the axis group or written via the function block MC_BR_CyclicDriveErrorDecel and switches off the controller*)
 		mcERROR_V_STOP_DEC_CTRL_OFF_CMD,  (*Generates an error, ends any active movement with a speed-controlled ramp with the deceleration specified on configuration, written by the axis group or written via the function block MC_BR_CyclicDriveErrorDecel and switches off the controller*)
 		mcERROR_ENCODER_CMD,  (*Generates an error, the encoder is set to error status and the configured stop reaction is carried out*)
-		mcERROR_CHANNEL_CMD  (*Generates a channel specific error and carries out the configured stop reaction*)
+		mcERROR_CHANNEL_CMD,  (*Generates a channel specific error and carries out the configured stop reaction*)
+		mcERROR_STOP_TRQ_CMD, (*Generates an error and ends an active movement torque limited*)
+		mcERROR_STOP_TRQ_JERK_CMD (*Generates an error and ends an active movement torque limited with configured Jerk Filter time*)
 	);
 
 	McEdgeEnum :

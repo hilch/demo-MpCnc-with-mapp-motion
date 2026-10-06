@@ -1,22 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<?AutomationStudio FileVersion="4.9"?>
 <Configuration>
-  <Element ID="MechSys_3AxCNCXYZ" Type="mechanicalsystem">
-    <Selector ID="Type" Value="3AxesCNC">
-      <Selector ID="Subtype" Value="3AxesCNCXYZ">
+  <Element ID="MechSys" Type="mechanicalsystem">
+    <Property ID="TypeIsReadOnly" Value="0" />
+    <Selector ID="Type" Value="2AxesCNC">
+      <Selector ID="Subtype" Value="2AxesCNCXY">
         <Selector ID="CoordinatesNames" Value="Default">
           <Property ID="XCoordinateName" Value="X" />
           <Property ID="YCoordinateName" Value="Y" />
-          <Property ID="ZCoordinateName" Value="Z" />
         </Selector>
         <Selector ID="WireFrameModel" Value="Standard">
           <Selector ID="FlangeToTcp" Value="ConnectionLine">
+            <Property ID="DistanceMin" Value="-1.79769313486231E308" />
+            <Property ID="DistanceMax" Value="1.79769313486231E308" />
             <Property ID="Distance" Value="0.0" />
           </Selector>
         </Selector>
         <Group ID="JointAxesPositionLimits">
+          <Property ID="JointAxisIsReadOnly" Value="0" />
           <Selector ID="JointAxis[1]" Value="UseAxisLimits" />
           <Selector ID="JointAxis[2]" Value="UseAxisLimits" />
-          <Selector ID="JointAxis[3]" Value="UseAxisLimits" />
         </Group>
       </Selector>
     </Selector>

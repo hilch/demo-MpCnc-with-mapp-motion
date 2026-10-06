@@ -1,10 +1,10 @@
 
 
 PROGRAM _EXIT
-	MpCnc3Axis_0.Enable := FALSE;
-    MpCnc3Axis_0.Power  := FALSE;
-    MpCnc3Axis_0.Home   := FALSE;
-    MpCnc3Axis_0();
+	fbMpCnc.Enable := FALSE;
+    fbMpCnc.Power  := FALSE;
+    fbMpCnc.Home   := FALSE;
+    fbMpCnc();
 
 
 	 

@@ -1,6 +1,6 @@
 /* Automation Studio generated header file */
 /* Do not edit ! */
-/* McAxis 5.27.1 */
+/* McAxis 5.31.3 */
 
 #ifndef _MCAXIS_
 #define _MCAXIS_
@@ -9,7 +9,7 @@ extern "C"
 {
 #endif
 #ifndef _McAxis_VERSION
-#define _McAxis_VERSION 5.27.1
+#define _McAxis_VERSION 5.31.3
 #endif
 
 #include <bur/plctypes.h>
@@ -331,7 +331,9 @@ typedef enum McAxisTypeEnum
 	mcAX_TYPE_PURE_VIRT_GPAI,
 	mcAX_TYPE_DS402_SERVO,
 	mcAX_TYPE_DS402_INV,
-	mcAX_TYPE_PURE_VIRT_EXT_ENC
+	mcAX_TYPE_PURE_VIRT_EXT_ENC,
+	mcAX_TYPE_PURE_VIRT_DS402_CSP,
+	mcAX_TYPE_PURE_VIRT_DS402_VL
 } McAxisTypeEnum;
 
 typedef enum McAcpAxAutoTuneFeedFwdModeEnum
@@ -388,6 +390,12 @@ typedef enum McLimitLoadModeEnum
 {	mcLL_WITH_FEED_FORWARD,
 	mcLL_WITHOUT_FEED_FORWARD
 } McLimitLoadModeEnum;
+
+typedef enum McLimitLoadStopModeEnum
+{	mcLLSM_DEFAULT = 0,
+	mcLLSM_USER_DEFINED = 1,
+	mcLLSM_MAX_TORQUE = 2
+} McLimitLoadStopModeEnum;
 
 typedef enum McAcpAxAutoTuneOrientationEnum
 {	mcACPAX_ORIENTATION_HORIZONTAL,
@@ -1146,6 +1154,8 @@ typedef struct McAdvBrLimitLoadCamParType
 	signed long LoadFactorPos;
 	signed long PositionFactorNeg;
 	signed long LoadFactorNeg;
+	enum McLimitLoadStopModeEnum StopMode;
+	float StopTorque;
 } McAdvBrLimitLoadCamParType;
 
 typedef struct McMechDevCompDataType
@@ -3440,6 +3450,22 @@ typedef struct MC_BR_CheckAutCompensation
 	plcbit Error;
 } MC_BR_CheckAutCompensation_typ;
 
+typedef struct MC_BR_PowerOnTest
+{
+	/* VAR_INPUT (analog) */
+	struct McAxisType* Axis;
+	/* VAR_OUTPUT (analog) */
+	signed long ErrorID;
+	/* VAR (analog) */
+	struct McInternalType Internal;
+	/* VAR_INPUT (digital) */
+	plcbit Execute;
+	/* VAR_OUTPUT (digital) */
+	plcbit Done;
+	plcbit Busy;
+	plcbit Error;
+} MC_BR_PowerOnTest_typ;
+
 
 
 /* Prototyping of functions and function blocks */
@@ -3518,6 +3544,7 @@ _BUR_PUBLIC void MC_BR_GetHardwareInfo(struct MC_BR_GetHardwareInfo* inst);
 _BUR_PUBLIC void MC_WriteDigitalOutput(struct MC_WriteDigitalOutput* inst);
 _BUR_PUBLIC void MC_BR_CamGetObjectData(struct MC_BR_CamGetObjectData* inst);
 _BUR_PUBLIC void MC_BR_CheckAutCompensation(struct MC_BR_CheckAutCompensation* inst);
+_BUR_PUBLIC void MC_BR_PowerOnTest(struct MC_BR_PowerOnTest* inst);
 
 
 #ifdef __cplusplus

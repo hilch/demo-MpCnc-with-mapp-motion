@@ -1,6 +1,6 @@
 /* Automation Studio generated header file */
 /* Do not edit ! */
-/* MpAxis 5.27.1 */
+/* MpAxis 5.31.3 */
 
 #ifndef _MPAXIS_
 #define _MPAXIS_
@@ -9,7 +9,7 @@ extern "C"
 {
 #endif
 #ifndef _MpAxis_VERSION
-#define _MpAxis_VERSION 5.27.1
+#define _MpAxis_VERSION 5.31.3
 #endif
 
 #include <bur/plctypes.h>
@@ -54,6 +54,11 @@ typedef enum MpAxisErrorEnum
 	mcAXIS_ERR_CONFIG_NULL = -1064239096,
 	mcAXIS_ERR_CONFIG_CMD_FAILED = -1067278070
 } MpAxisErrorEnum;
+
+typedef enum MpAxisShiftResetModeEnum
+{	mcSHIFT_RESET_MODE_END_OF_SHIFT,
+	mcSHIFT_RESET_MODE_IMMEDIATE
+} MpAxisShiftResetModeEnum;
 
 typedef enum MpAxisGetCamPositionModeEnum
 {	mcAXIS_GET_CAM_POSITION_SLAVE,
@@ -128,7 +133,8 @@ typedef enum MpAxisMoveCyclicVelocityModeEnum
 } MpAxisMoveCyclicVelocityModeEnum;
 
 typedef enum MpAxisBasicConfigSectionEnum
-{	mcAXB_CFG_SEC_ALL
+{	mcAXB_CFG_SEC_ALL,
+	mcAXB_CFG_SEC_MOVE_LIMITS
 } MpAxisBasicConfigSectionEnum;
 
 typedef enum MpAxisBasicConfigCmdEnum
@@ -153,7 +159,9 @@ typedef enum MpAXBModuleAxTypeEnum
 	mcAXB_CFG_AX_PUREVAX,
 	mcAXB_CFG_AX_PUREVAX_GPAI,
 	mcAXB_CFG_AX_PUREVAX_EXT_ENC,
-	mcAXB_CFG_AX_POWER_SUPPLY
+	mcAXB_CFG_AX_POWER_SUPPLY,
+	mcAXB_CFG_AX_PUREVAX_DS402_CSP,
+	mcAXB_CFG_AX_PUREVAX_DS402_VL
 } MpAXBModuleAxTypeEnum;
 
 typedef enum MpAXBMotorDataTypeEnum
@@ -200,13 +208,15 @@ typedef enum MpAXBDrvCtrlModEnum
 	mcAXB_CTRL_MODE_POS_MDL_BASED = 3,
 	mcAXB_CTRL_MODE_V_FREQ = 2,
 	mcAXB_CTRL_MODE_STP_CUR = 4,
-	mcAXB_CTRL_MODE_STP_POS_AND_CUR = 5
+	mcAXB_CTRL_MODE_STP_POS_AND_CUR = 5,
+	mcAXB_CTRL_MODE_NOT_USE = 6
 } MpAXBDrvCtrlModEnum;
 
 typedef enum MpAXBDrvCtrlFFwdModEnum
 {	mcAXB_FF_MODE_STD = 0,
 	mcAXB_FF_MODE_PRED_SPD = 1,
-	mcAXB_FF_MODE_TWO_MASS_MDL = 2
+	mcAXB_FF_MODE_TWO_MASS_MDL = 2,
+	mcAXB_FF_MODE_FRICT_COMP = 3
 } MpAXBDrvCtrlFFwdModEnum;
 
 typedef enum MpAXBDrvCtrlFdbkModEnum
@@ -215,6 +225,12 @@ typedef enum MpAXBDrvCtrlFdbkModEnum
 	mcAXB_CTLR_FEED_TWO_MASS_MDL = 2,
 	mcAXB_CTLR_FEED_TWO_ENC_SPD = 3
 } MpAXBDrvCtrlFdbkModEnum;
+
+typedef enum MpAXBDrvCtrlVFreqCtrlTypEnum
+{	mcAXB_VF_TYP_LIN = 129,
+	mcAXB_VF_TYP_CONST_LD_TORQ = 131,
+	mcAXB_VF_TYP_QUAD = 130
+} MpAXBDrvCtrlVFreqCtrlTypEnum;
 
 typedef enum MpAXBDrvCtrlVFreqCtrlAutCfgEnum
 {	mcAXB_VF_AUTO_CFG_NOT_USE = 0,
@@ -246,14 +262,19 @@ typedef enum MpAXBDrvStopReacQstopEnum
 {	mcAXB_QSTOP_RCT_DEC_LIM = 0,
 	mcAXB_QSTOP_RCT_DEC_LIM_W_JERK = 1,
 	mcAXB_QSTOP_RCT_TORQ_LIM = 2,
-	mcAXB_QSTOP_RCT_INDUCT_HALT = 3
+	mcAXB_QSTOP_RCT_INDUCT_HALT = 3,
+	mcAXB_QSTOP_RCT_TORQ_LIM_W_JERK = 4,
+	mcAXB_QSTOP_RCT_VEL_CTRL = 5
 } MpAXBDrvStopReacQstopEnum;
 
 typedef enum MpAXBDrvStopReacDrvErrEnum
 {	mcAXB_ERR_RCT_DEC_LIM = 0,
 	mcAXB_ERR_RCT_INDUCT_HALT = 1,
 	mcAXB_ERR_RCT_COAST_STANDSTILL = 2,
-	mcAXB_ERR_RCT_CYC_DEC_AXESGROUP = 3
+	mcAXB_ERR_RCT_CYC_DEC_AXESGROUP = 3,
+	mcAXB_ERR_RCT_TORQ_LIM = 4,
+	mcAXB_ERR_RCT_TORQ_LIM_W_JERK = 5,
+	mcAXB_ERR_RCT_VEL_CTRL = 6
 } MpAXBDrvStopReacDrvErrEnum;
 
 typedef enum MpAXBDrvMovVelErrMonEnum
@@ -274,13 +295,58 @@ typedef enum MpAXBDrvDigInLevelEnum
 	mcAXB_DI_LEVEL_LOW = 1
 } MpAXBDrvDigInLevelEnum;
 
+typedef enum MpAXBDrvDigInSrcEnum
+{	mcAXBDI_NOT_USE = 0,
+	mcAXBDI_ACP_DIG_IN_X8TRG_1 = 1,
+	mcAXBDI_ACP_DIG_IN_X8TRG_2 = 2,
+	mcAXBDI_ACP_DIG_IN_SS1X41X1 = 3,
+	mcAXBDI_ACP_DIG_IN_SS1X41X2 = 4,
+	mcAXBDI_ACP_DIG_IN_SS1X41X3 = 5,
+	mcAXBDI_ACP_DIG_IN_SS1X41X4 = 6,
+	mcAXBDI_ACP_DIG_IN_SS1X41X5 = 7,
+	mcAXBDI_ACP_DIG_IN_SS1X41X6 = 8,
+	mcAXBDI_ACP_DIG_IN_SS1X41X7 = 9,
+	mcAXBDI_ACP_DIG_IN_SS1X41X8 = 10,
+	mcAXBDI_ACP_DIG_IN_SS1X41X9 = 11,
+	mcAXBDI_ACP_DIG_IN_SS1X41X10 = 12,
+	mcAXBDI_ACP_DIG_IN_X23ATRG_1 = 13,
+	mcAXBDI_ACP_DIG_IN_X23ATRG_2 = 14,
+	mcAXBDI_ACP_DIG_IN_X24ATRG_2 = 15,
+	mcAXBDI_ACP_DIG_IN_X2TRG_1 = 16,
+	mcAXBDI_ACP_DIG_IN_X2TRG_2 = 17,
+	mcAXBDI_ACP_DIG_IN_X1TRG_1 = 18,
+	mcAXBDI_ACP_DIG_IN_X1TRG_2 = 19,
+	mcAXBDI_ACP_DIG_IN_X1REF_SW = 20,
+	mcAXBDI_ACP_DIG_IN_X1POS_HW_LIM = 21,
+	mcAXBDI_ACP_DIG_IN_X1NEG_HW_LIM = 22,
+	mcAXBDI_FORCED_BY_FUN_BLK = 23,
+	mcAXBDI_VAR = 24,
+	mcAXBDI_IO_CH = 40,
+	mcAXBDI_STP_DIG_IN_TRG_1 = 41,
+	mcAXBDI_STP_DIG_IN_TRG_2 = 42,
+	mcAXBDI_STP_DIG_IN_1 = 43,
+	mcAXBDI_STP_DIG_IN_2 = 44,
+	mcAXBDI_STP_DIG_IN_3 = 45,
+	mcAXBDI_STP_DIG_IN_4 = 46,
+	mcAXBDI_STP_DIG_IN_5 = 47,
+	mcAXBDI_STP_DIG_IN_6 = 48
+} MpAXBDrvDigInSrcEnum;
+
+typedef enum MpAXBDrvDigTimeStampTypeEnum
+{	mcAXB_DI_TIME_STAMP_NOT_USE = 0,
+	mcAXB_DI_TIME_STAMP_USE = 1,
+	mcAXB_DI_TIME_STAMP_RIS_FALL_EDG = 2
+} MpAXBDrvDigTimeStampTypeEnum;
+
 typedef enum MpAXBDrvDigInQstopInEnum
 {	mcAXB_QSTOP_IN_TRG_2 = 0,
 	mcAXB_QSTOP_IN_TRG_1 = 1,
 	mcAXB_QSTOP_IN_POS_LIM_SW = 2,
 	mcAXB_QSTOP_IN_NEG_LIM_SW = 3,
 	mcAXB_QSTOP_IN_HOME_SW = 4,
-	mcAXB_QSTOP_IN_NOT_USE = 5
+	mcAXB_QSTOP_IN_NOT_USE = 5,
+	mcAXB_QSTOP_IN_VAR = 6,
+	mcAXB_QSTOP_IN_IO_CH = 7
 } MpAXBDrvDigInQstopInEnum;
 
 typedef struct MpAxisHomingAddTorqLimParType
@@ -333,6 +399,7 @@ typedef struct MpAxisStopAtPositionType
 {	plcbit Activate;
 	float Deceleration;
 	double Position;
+	float Acceleration;
 } MpAxisStopAtPositionType;
 
 typedef struct MpAxisStopType
@@ -431,6 +498,7 @@ typedef struct MpAxisOffsetParType
 	float Acceleration;
 	struct McAdvOffsetParType Options;
 	plcbit CmdIndependentActivation;
+	enum MpAxisShiftResetModeEnum ResetMode;
 } MpAxisOffsetParType;
 
 typedef struct MpAxisPhasingParType
@@ -439,6 +507,7 @@ typedef struct MpAxisPhasingParType
 	float Acceleration;
 	struct McAdvPhasingParType Options;
 	plcbit CmdIndependentActivation;
+	enum MpAxisShiftResetModeEnum ResetMode;
 } MpAxisPhasingParType;
 
 typedef struct MpAxisCamInfoType
@@ -741,6 +810,9 @@ typedef struct MpAXBDrvCtrlFFwdType
 	float Inertia;
 	float AccelerationFilterTime;
 	float PredictionTime;
+	float ActivationSpeed;
+	float DeactivationLagError;
+	float TimeConstant;
 } MpAXBDrvCtrlFFwdType;
 
 typedef struct MpAXBDrvCtrlFdbkType
@@ -767,7 +839,8 @@ typedef struct MpAXBDrvCtrlMdlType
 } MpAXBDrvCtrlMdlType;
 
 typedef struct MpAXBDrvCtrlVFreqCtrlType
-{	enum MpAXBDrvCtrlVFreqCtrlAutCfgEnum AutomaticConfiguration;
+{	enum MpAXBDrvCtrlVFreqCtrlTypEnum Type;
+	enum MpAXBDrvCtrlVFreqCtrlAutCfgEnum AutomaticConfiguration;
 	float SlipCompensation;
 	float TotalDelayTime;
 	float BoostVoltage;
@@ -885,6 +958,9 @@ typedef struct MpAXBDrvHomeType
 typedef struct MpAXBDrvStopReacType
 {	enum MpAXBDrvStopReacQstopEnum Quickstop;
 	enum MpAXBDrvStopReacDrvErrEnum DriveError;
+	float DriveErrorJerkTime;
+	float QuickstopJerkTime;
+	float FilterTime;
 } MpAXBDrvStopReacType;
 
 typedef struct MpAXBDrvMovementErrorLimitsType
@@ -900,26 +976,51 @@ typedef struct MpAXBDrvJerkFilterType
 
 typedef struct MpAXBDrvDigInHomeSwType
 {	enum MpAXBDrvDigInLevelEnum Level;
+	enum MpAXBDrvDigInSrcEnum Source;
+	plcstring SourceMapping[251];
 } MpAXBDrvDigInHomeSwType;
 
 typedef struct MpAXBDrvDigInPosLimSwType
 {	enum MpAXBDrvDigInLevelEnum Level;
+	enum MpAXBDrvDigInSrcEnum Source;
+	plcstring SourceMapping[251];
 } MpAXBDrvDigInPosLimSwType;
 
 typedef struct MpAXBDrvDigInNegLimSwType
 {	enum MpAXBDrvDigInLevelEnum Level;
+	enum MpAXBDrvDigInSrcEnum Source;
+	plcstring SourceMapping[251];
 } MpAXBDrvDigInNegLimSwType;
+
+typedef struct MpAXBDrvDigTimeStampEdgType
+{	plcstring CountSourceMapping[251];
+	plcstring TimeStampSourceMapping[251];
+} MpAXBDrvDigTimeStampEdgType;
+
+typedef struct MpAXBDrvDigTimeStampType
+{	enum MpAXBDrvDigTimeStampTypeEnum Type;
+	plcstring TimeStampSourceMapping[251];
+	struct MpAXBDrvDigTimeStampEdgType RisingEdge;
+	struct MpAXBDrvDigTimeStampEdgType FallingEdge;
+} MpAXBDrvDigTimeStampType;
 
 typedef struct MpAXBDrvDigInTrg1Type
 {	enum MpAXBDrvDigInLevelEnum Level;
+	enum MpAXBDrvDigInSrcEnum Source;
+	plcstring SourceMapping[251];
+	struct MpAXBDrvDigTimeStampType TimeStamp;
 } MpAXBDrvDigInTrg1Type;
 
 typedef struct MpAXBDrvDigInTrg2Type
 {	enum MpAXBDrvDigInLevelEnum Level;
+	enum MpAXBDrvDigInSrcEnum Source;
+	plcstring SourceMapping[251];
+	struct MpAXBDrvDigTimeStampType TimeStamp;
 } MpAXBDrvDigInTrg2Type;
 
 typedef struct MpAXBDrvDigInQstopType
 {	enum MpAXBDrvDigInQstopInEnum Input;
+	plcstring SourceMapping[251];
 } MpAXBDrvDigInQstopType;
 
 typedef struct MpAXBDrvDigInType

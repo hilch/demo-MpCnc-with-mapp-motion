@@ -1,6 +1,6 @@
 /* Automation Studio generated header file */
 /* Do not edit ! */
-/* McPathGen 5.27.1 */
+/* McPathGen 5.31.3 */
 
 #ifndef _MCPATHGEN_
 #define _MCPATHGEN_
@@ -9,7 +9,7 @@ extern "C"
 {
 #endif
 #ifndef _McPathGen_VERSION
-#define _McPathGen_VERSION 5.27.1
+#define _McPathGen_VERSION 5.31.3
 #endif
 
 #include <bur/plctypes.h>
@@ -124,9 +124,15 @@ typedef enum McAGPGGeoPlanRndAvoidZeroCrvEnum
 	mcAGPGGPRAZC_NO = 0
 } McAGPGGeoPlanRndAvoidZeroCrvEnum;
 
+typedef enum McAGPGGeoPlanRndNonCartRndEnum
+{	mcAGPGGPRNCR_YES = 1,
+	mcAGPGGPRNCR_NO = 0
+} McAGPGGeoPlanRndNonCartRndEnum;
+
 typedef enum McAGPGGeoPlanRndModEnum
 {	mcAGPGGPRM_STD = 0,
-	mcAGPGGPRM_ADV = 1
+	mcAGPGGPRM_ADV = 1,
+	mcAGPGGPRM_BLENDED_RND = 2
 } McAGPGGeoPlanRndModEnum;
 
 typedef enum McAGPGGeoPlanWrkPlEnum
@@ -1704,6 +1710,7 @@ typedef struct McAGPGGeoPlanRndType
 	enum McAGPGGeoPlanRndSymRndEnum SymmetricRounding;
 	enum McAGPGGeoPlanRndLatSegEnum LastSegment;
 	enum McAGPGGeoPlanRndAvoidZeroCrvEnum AvoidZeroCurvature;
+	enum McAGPGGeoPlanRndNonCartRndEnum NonCartesianRounding;
 } McAGPGGeoPlanRndType;
 
 typedef struct McAGPGGeoPlanType
@@ -2165,6 +2172,10 @@ typedef struct McCfgAxGrpFeatFfType
 	struct McAGFFParIdentType ParameterIdentification;
 	struct McAGFFFFwdFltrType FeedForwardFilter;
 } McCfgAxGrpFeatFfType;
+
+typedef struct McCfgAxGrpFeatFfModeType
+{	struct McAGFFFFwdModType FeedForwardMode;
+} McCfgAxGrpFeatFfModeType;
 
 typedef struct McAGFFHSProdFrmType
 {	struct McCfgTransXYZType Translation;

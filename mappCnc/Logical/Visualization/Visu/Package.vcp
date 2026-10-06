@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?AutomationStudio Version="4.3.4.121 SP"?>
+<?AutomationStudio Version="4.12.11.2 SP"?>
 <Project xmlns="http://br-automation.co.at/AS/VC/Project">
   <Property Name="Backlight" Value="False"/>
   <Property Name="BeepKey" Value="False"/>
@@ -42,13 +42,18 @@
   <SourceFiles>
     <Source File="Fonts\DefaultFont.fninfo"/>
     <Source File="Fonts\BigFont.fninfo"/>
-    <Source File="Bitmaps\Bitmap_1.bminfo"/>
-    <Source File="Bitmaps\Bitmap_2.bminfo"/>
-    <Source File="Bitmaps\Bitmap_3.bminfo"/>
-    <Source File="Bitmaps\Bitmap_4.bminfo"/>
-    <Source File="Bitmaps\Bitmap_5.bminfo"/>
+    <Source File="Bitmaps\AxisError.bminfo"/>
+    <Source File="Bitmaps\AxisOK_40x40.bminfo"/>
+    <Source File="Bitmaps\AxisError_40x40.bminfo"/>
+    <Source File="Bitmaps\ControllerOff_40x40.bminfo"/>
+    <Source File="Bitmaps\ControllerOn_40x40.bminfo"/>
+    <Source File="Bitmaps\HomingNotOK_40x40.bminfo"/>
+    <Source File="Bitmaps\HomingOK_40x40.bminfo"/>
+    <Source File="Bitmaps\kaboodleloop.bminfo"/>
     <Source File="BitmapGroups\controllerState.bmgrp"/>
     <Source File="BitmapGroups\homingState.bmgrp"/>
+    <Source File="BitmapGroups\alarmState.bmgrp"/>
+    <Source File="BitmapGroups\runningState.bmgrp"/>
     <Source File="Pages\PageCncView.page"/>
     <Source File="StyleSheets\Color.vcs"/>
     <Source File="Trends\TrendData.tdc"/>

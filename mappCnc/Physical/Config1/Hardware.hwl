@@ -1,14 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<BR.AS.HardwareTopology Version="0.0.0.1">
+<?AutomationStudio FileVersion="4.9"?>
+<BR.AS.HardwareTopology>
+  <TimeStamps>
+    <TimeStamp LogicalPath="Config1.Hardware.hw" LastWriteTime="10/05/2026 15:27:59" />
+  </TimeStamps>
   <Modules>
     <Module Name="X20CP3585" Type="X20CP3585" X="100" Y="100" />
     <Module Name="8EI8X8HWT10.0500-1" Type="8EI8X8HWT10.0500-1" X="300" Y="249" />
-    <Module Name="8LSA35.D0030D000-0" Type="8LSA35.D0030D000-0" X="476" Y="556.8" />
-    <Module Name="8LSA35.D0030D000-0a" Type="8LSA35.D0030D000-0" X="717" Y="556.8" />
-    <Module Name="8LSA35.D0030D000-0b" Type="8LSA35.D0030D000-0" X="590" Y="556.8" />
+    <Module Name="8EI8X8HWT10.0500-1a" Type="8EI8X8HWT10.0500-1" X="730" Y="249" />
+    <Module Name="8LSA35.D0030D000-0" Type="8LSA35.D0030D000-0" X="300" Y="560.8" />
+    <Module Name="8LSA35.D0030D000-0a" Type="8LSA35.D0030D000-0" X="300" Y="694.8" />
+    <Module Name="8LSA35.D0030D000-0b" Type="8LSA35.D0030D000-0" X="100" Y="978.8" />
+    <Module Name="8LSA35.D0030D000-0c" Type="8LSA35.D0030D000-0" X="730" Y="560.8" />
   </Modules>
   <Links>
-    <Link From="X20CP3585" To="8EI8X8HWT10.0500-1" FromPort="IF3" ToPort="PLK1" IsRoutedByUser="False">
+    <Link From="8EI8X8HWT10.0500-1" To="X20CP3585" FromPort="PLK1" ToPort="IF3" IsRoutedByUser="False">
       <Point X="156" Y="187" />
       <Point X="156" Y="187" />
       <Point X="156" Y="200" />
@@ -17,59 +23,60 @@
       <Point X="307.7" Y="259.5" />
       <Point X="307.7" Y="259.5" />
     </Link>
-    <Link From="8EI8X8HWT10.0500-1" To="8LSA35.D0030D000-0" FromPort="EC1" ToPort="EC" IsRoutedByUser="False">
-      <Point X="325" Y="351" />
-      <Point X="325" Y="351" />
-      <Point X="347" Y="351" />
-      <Point X="497.5" Y="351" />
-      <Point X="497.5" Y="555.899963" />
-      <Point X="497.5" Y="562.899963" />
-      <Point X="497.5" Y="562.899963" />
-    </Link>
-    <Link From="8EI8X8HWT10.0500-1" To="8LSA35.D0030D000-0b" FromPort="EC2" ToPort="EC" IsRoutedByUser="False">
-      <Point X="325" Y="316.7" />
-      <Point X="325" Y="316.7" />
-      <Point X="347" Y="316.7" />
-      <Point X="611.5" Y="316.7" />
-      <Point X="611.5" Y="555.899963" />
-      <Point X="611.5" Y="562.899963" />
-      <Point X="611.5" Y="562.899963" />
-    </Link>
-    <Link From="8EI8X8HWT10.0500-1" To="8LSA35.D0030D000-0a" FromPort="EC3" ToPort="EC" IsRoutedByUser="False">
-      <Point X="325" Y="283.8" />
-      <Point X="325" Y="283.8" />
-      <Point X="347" Y="283.8" />
-      <Point X="738.5" Y="283.8" />
-      <Point X="738.5" Y="555.899963" />
-      <Point X="738.5" Y="562.899963" />
-      <Point X="738.5" Y="562.899963" />
+    <Link From="8EI8X8HWT10.0500-1" To="8EI8X8HWT10.0500-1a" FromPort="PLK2" ToPort="PLK1" IsRoutedByUser="False">
+      <Point X="316.1" Y="259.5" />
+      <Point X="316.1" Y="259.5" />
+      <Point X="316.1" Y="248.5" />
+      <Point X="316.1" Y="235" />
+      <Point X="355" Y="235" />
+      <Point X="355" Y="259.5" />
+      <Point X="729.7" Y="259.5" />
+      <Point X="737.7" Y="259.5" />
+      <Point X="737.7" Y="259.5" />
     </Link>
     <Link From="8EI8X8HWT10.0500-1" To="8LSA35.D0030D000-0" FromPort="MT1" ToPort="MT" IsRoutedByUser="False">
-      <Point X="326.6" Y="358.9" />
-      <Point X="326.6" Y="358.9" />
-      <Point X="346.6" Y="358.9" />
-      <Point X="525.5" Y="358.9" />
-      <Point X="525.5" Y="555.899963" />
-      <Point X="525.5" Y="562.899963" />
-      <Point X="525.5" Y="562.899963" />
+      <Point X="326.6" Y="395.3" />
+      <Point X="326.6" Y="395.3" />
+      <Point X="346.6" Y="395.3" />
+      <Point X="355" Y="395.3" />
+      <Point X="355" Y="525" />
+      <Point X="349.5" Y="525" />
+      <Point X="349.5" Y="559.899963" />
+      <Point X="349.5" Y="566.899963" />
+      <Point X="349.5" Y="566.899963" />
     </Link>
-    <Link From="8EI8X8HWT10.0500-1" To="8LSA35.D0030D000-0b" FromPort="MT2" ToPort="MT" IsRoutedByUser="False">
-      <Point X="326.6" Y="326" />
-      <Point X="326.6" Y="326" />
-      <Point X="346.6" Y="326" />
-      <Point X="639.5" Y="326" />
-      <Point X="639.5" Y="555.899963" />
-      <Point X="639.5" Y="562.899963" />
-      <Point X="639.5" Y="562.899963" />
+    <Link From="8EI8X8HWT10.0500-1" To="8LSA35.D0030D000-0a" FromPort="MT2" ToPort="MT" IsRoutedByUser="False">
+      <Point X="326.6" Y="346.3" />
+      <Point X="326.6" Y="346.3" />
+      <Point X="346.6" Y="346.3" />
+      <Point X="385" Y="346.3" />
+      <Point X="385" Y="655" />
+      <Point X="349.5" Y="655" />
+      <Point X="349.5" Y="693.899963" />
+      <Point X="349.5" Y="700.899963" />
+      <Point X="349.5" Y="700.899963" />
     </Link>
-    <Link From="8EI8X8HWT10.0500-1" To="8LSA35.D0030D000-0a" FromPort="MT3" ToPort="MT" IsRoutedByUser="False">
-      <Point X="326.6" Y="293.1" />
-      <Point X="326.6" Y="293.1" />
-      <Point X="346.6" Y="293.1" />
-      <Point X="766.5" Y="293.1" />
-      <Point X="766.5" Y="555.899963" />
-      <Point X="766.5" Y="562.899963" />
-      <Point X="766.5" Y="562.899963" />
+    <Link From="8EI8X8HWT10.0500-1" To="8LSA35.D0030D000-0b" FromPort="MT3" ToPort="MT" IsRoutedByUser="False">
+      <Point X="326.6" Y="297.3" />
+      <Point X="326.6" Y="297.3" />
+      <Point X="346.6" Y="297.3" />
+      <Point X="362" Y="297.3" />
+      <Point X="362" Y="518" />
+      <Point X="149.5" Y="518" />
+      <Point X="149.5" Y="977.899963" />
+      <Point X="149.5" Y="984.899963" />
+      <Point X="149.5" Y="984.899963" />
+    </Link>
+    <Link From="8EI8X8HWT10.0500-1a" To="8LSA35.D0030D000-0c" FromPort="MT1" ToPort="MT" IsRoutedByUser="False">
+      <Point X="756.6" Y="395.3" />
+      <Point X="756.6" Y="395.3" />
+      <Point X="776.6" Y="395.3" />
+      <Point X="785" Y="395.3" />
+      <Point X="785" Y="525" />
+      <Point X="779.5" Y="525" />
+      <Point X="779.5" Y="559.899963" />
+      <Point X="779.5" Y="566.899963" />
+      <Point X="779.5" Y="566.899963" />
     </Link>
   </Links>
   <InfoElements />

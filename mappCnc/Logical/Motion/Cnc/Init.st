@@ -1,13 +1,12 @@
 
 
 PROGRAM _INIT
-	MpCnc3Axis_0.MpLink := ADR(gCncXYZ);
-	MpCnc3Axis_0.Enable := TRUE;
-	MpCnc3Axis_0.Parameters := ADR(CncParameters);
+	fbMpCnc.MpLink := ADR(gCncXYZ);
+	fbMpCnc.Enable := TRUE;
+	fbMpCnc.Parameters := ADR(CncParameters);
 
-	MpCnc3Axis_0.Override := 100.0;
+	fbMpCnc.Override := 100.0;
 
-	CncParameters.ProgramName := 'Micky';	
-	 
+	CncParameters.ProgramName := 'World';	
 
 END_PROGRAM

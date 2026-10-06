@@ -412,7 +412,9 @@ TYPE
 	 	mcAX_TYPE_PURE_VIRT_GPAI,	(*Purely virtual axis with activated general purpose axis interface*)
 	 	mcAX_TYPE_DS402_SERVO,	(*DS402 conform servo drive axis*)
 	 	mcAX_TYPE_DS402_INV,	(*DS402 conform inverter axis*)
-	 	mcAX_TYPE_PURE_VIRT_EXT_ENC	(*Purely virtual axis with activated external encoder axis interface*)
+	 	mcAX_TYPE_PURE_VIRT_EXT_ENC,	(*Purely virtual axis with activated external encoder axis interface*)
+	 	mcAX_TYPE_PURE_VIRT_DS402_CSP,	(*Purely virtual axis with activated DS402 CSP*)
+	 	mcAX_TYPE_PURE_VIRT_DS402_VL	(*Purely virtual axis with activated DS402 VL*)
 	);
 
 	McAcpAxAutoTuneFeedFwdModeEnum:
@@ -809,11 +811,21 @@ TYPE
 		mcLL_WITHOUT_FEED_FORWARD  (*control deviation torque only is limited; feed forward torque component is not limited *)
 		);
 
+	McLimitLoadStopModeEnum :
+		(
+		mcLLSM_DEFAULT := 0, (*The limit values are not switched when the movement is aborted.*)
+		mcLLSM_USER_DEFINED := 1, (*When the movement is aborted, a switchover is made to the limit value in the StopTorque parameter.*)
+		mcLLSM_MAX_TORQUE := 2 (*A switchover to the maximum torque value takes place when the movement is aborted.*)
+		);
+
 	McAdvBrLimitLoadCamParType : STRUCT
 		PositionFactorPos : DINT; (*Multiplication factor of the axis position for the positive direction *)
 		LoadFactorPos : DINT; (*Multiplication factor of the torque for the positive direction *)
 		PositionFactorNeg : DINT; (*Multiplication factor of the axis position for the negative direction *)
 		LoadFactorNeg : DINT; (*Multiplication factor of the torque for the negative direction *)
+		StopMode : McLimitLoadStopModeEnum; (*Mode defines how and if limits are switched when movement is aborted*)
+		StopTorque : REAL; (*If Stop mode is mcLLSM_USER_DEFINED, switch over to limit value contained in StopTorque is performed*)
+
 	END_STRUCT;
 
 	McAcpAxAutoTuneOrientationEnum:

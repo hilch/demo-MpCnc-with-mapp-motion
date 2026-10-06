@@ -1,7 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<?AutomationStudio FileVersion="4.9"?>
 <Configuration>
   <Element ID="GCode" Type="axesgroupfeature">
     <Selector ID="Type" Value="Program">
+      <Selector ID="ModalDataBehaviour" Value="UseAxesGroupSettings" />
+      <Group ID="InitialSettings">
+        <Selector ID="InterpolationTypes" Value="LinearRapid" />
+        <Selector ID="PositionCoordinates" Value="Absolute" />
+        <Selector ID="CircleCoordinates" Value="Relative" />
+        <Selector ID="JACS_ACSProgramming" Value="JACS" />
+        <Selector ID="ContourConnection" Value="Inactive" />
+        <Selector ID="AccuracyHoldDelays" Value="None" />
+        <Selector ID="ProgrammingUnits" Value="UseAxesGroupSettings" />
+        <Group ID="Feedrates">
+          <Selector ID="FeedPath" Value="Standard" />
+          <Selector ID="FeedCharacteristic" Value="StandardCharacteristic" />
+          <Selector ID="FeedType" Value="Feedrate" />
+          <Selector ID="FeedReduction" Value="Inactive" />
+          <Property ID="FeedrateValue" Value="0.0" />
+          <Property ID="InverseFeedrateValue" Value="0.0" />
+          <Property ID="FeedratePerRevValue" Value="0.0" />
+        </Group>
+      </Group>
       <Selector ID="DefaultLanguage" Value="BRGCode" />
       <Selector ID="Location" Value="Default">
         <Property ID="FileDevice" Value="CNC_PrgDir" />
@@ -10,6 +30,7 @@
   </Element>
   <Element ID="M-Functions" Type="axesgroupfeature">
     <Selector ID="Type" Value="MFunctions">
+      <Selector ID="ModalDataBehaviour" Value="UseAxesGroupSettings" />
       <Group ID="MFunction[1]">
         <Selector ID="IndexType" Value="Single">
           <Property ID="Index" Value="7" />
@@ -17,7 +38,8 @@
         <Selector ID="Blocking" Value="Enabled" />
         <Selector ID="Output" Value="Before" />
         <Selector ID="InSimulation" Value="NotUsed" />
-        <Property ID="PvMapping" Value="::Cnc:MFunc_CutterDown" />
+        <Property ID="PvMapping" Value="::gMFunc_CutterDown" />
+        <Property ID="Counter" />
       </Group>
       <Group ID="MFunction[2]">
         <Selector ID="IndexType" Value="Single">
@@ -26,7 +48,23 @@
         <Selector ID="Blocking" Value="Enabled" />
         <Selector ID="Output" Value="Before" />
         <Selector ID="InSimulation" Value="NotUsed" />
-        <Property ID="PvMapping" Value="::Cnc:MFunc_CutterUp" />
+        <Property ID="PvMapping" Value="::gMFunc_CutterUp" />
+        <Property ID="Counter" />
+      </Group>
+    </Selector>
+  </Element>
+  <Element ID="Path-Definition" Type="axesgroupfeature">
+    <Selector ID="Type" Value="PathDefinitions">
+      <Selector ID="ModalDataBehaviour" Value="UseAxesGroupSettings" />
+      <Group ID="PathDefinition[1]">
+        <Property ID="Name" Value="Path1" />
+        <Selector ID="Type" Value="PhysicalAxes" />
+        <Selector ID="Limit" Value="Internal">
+          <Selector ID="Velocity" Value="NotUsed" />
+          <Selector ID="Acceleration" Value="NotUsed" />
+          <Selector ID="Deceleration" Value="NotUsed" />
+          <Selector ID="Jerk" Value="NotUsed" />
+        </Selector>
       </Group>
     </Selector>
   </Element>

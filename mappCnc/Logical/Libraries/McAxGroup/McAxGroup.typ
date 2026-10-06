@@ -256,7 +256,8 @@ TYPE
 	END_STRUCT;
 	McInterruptModeEnum :
 		(
-		mcINTMODE_JERK_LIMIT (*Takes into account the jerk limit value while interrupting.*)
+		mcINTMODE_JERK_LIMIT, (*Takes into account the jerk limit value while interrupting.*)
+		mcINTMODE_QUICKSTOP (*Only takes into account axes speed and acceleration limit values, motor and gearbox torque value limits and cross-sectional load value limits.*)
 		);
 	McInterruptTypeEnum:
 		(

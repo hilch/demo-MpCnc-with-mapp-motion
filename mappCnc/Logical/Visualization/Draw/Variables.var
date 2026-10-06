@@ -1,4 +1,5 @@
 VAR
+	color : USINT;
 	positionXOld : LREAL;
 	positionYOld : LREAL;
 	currentPage : UINT;

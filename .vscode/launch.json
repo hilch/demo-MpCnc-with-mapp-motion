@@ -1,0 +1,19 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Plot",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "tools\\gcode_plotter.py",
+            "args": [
+                "-t 0.01",
+                "mappCnc\\Logical\\Motion\\World\\CncProg.cnc"
+            ],
+            "console": "integratedTerminal"
+        },
+    ]
+}

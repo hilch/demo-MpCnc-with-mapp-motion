@@ -1,4 +1,6 @@
 VAR
 	g_positionY : LREAL;
+	gMFunc_CutterDown : BOOL;
+	gMFunc_CutterUp : BOOL;
 	g_positionX : LREAL;
 END_VAR

@@ -1,14 +1,14 @@
 [![Made For B&R](https://github.com/hilch/BandR-badges/blob/main/Made-For-BrAutomation.svg)](https://www.br-automation.com)
 
 # demo-MpCnc-with-mapp-motion
-[B&amp;R](https://www.br-automation.com) Automation Studio 
-demo cnc application with [B&amp;R](https://www.br-automation.com) mapp components (MpCNC based on mapp motion)
+[B&amp;R](https://www.br-automation.com) Automation Studio minimalistic 
+demo cnc application with [B&amp;R](https://www.br-automation.com) mapp components (MpCNC based on mapp motion).
 
 ![Screenshot](https://github.com/hilch/demo-MpCnc-with-mapp-motion-/blob/master/doc/screenshot.PNG)
 
 ## Usage
 This project can be started in a simulation environment ('ArSim') with a vnc viewer connected to 127.0.0.1 (8-Bit colour mode).
-Just press button '1.', '2.' and '3.' one after another to see Mickey.
+Just press button '1.', '2.' and '3.' one after another to see CNC contour.
 
 ## CNC programs
 ### 'CNC program' object

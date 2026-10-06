@@ -82,6 +82,7 @@ TYPE
 Note:
 Parameters left at default values disable the associated optional functions.*)
 		CmdIndependentActivation : BOOL := FALSE; (*Allow to activate the Offset functionality independently from OffsetShift command to avoid latency in shift functionalilty when command is set*)
+		ResetMode : MpAxisShiftResetModeEnum; (*Reset mode for command negative edge behavior in case of active shift movement*)
 	END_STRUCT;
 	MpAxisPhasingParType : 	STRUCT 
 		Shift : LREAL; (*Phase shift in the master position of the slave axis [Measurement units].*)
@@ -91,7 +92,13 @@ Parameters left at default values disable the associated optional functions.*)
 Note:
 Parameters left at default values disable the associated optional functions.*)
 		CmdIndependentActivation : BOOL := FALSE; (*Allow to activate the Phasing functionality independently from PhaseShift command to avoid latency in shift functionalilty when command is set*)
+		ResetMode : MpAxisShiftResetModeEnum; (*Reset mode for command negative edge behavior in case of active shift movement*)
 	END_STRUCT;
+	MpAxisShiftResetModeEnum : 
+		(
+		mcSHIFT_RESET_MODE_END_OF_SHIFT, (*Shift ended at the end of shift movement*)
+		mcSHIFT_RESET_MODE_IMMEDIATE (*Shift aborted immediately. This might cause a velocity jump*)
+		);
 	MpAxisCouplingInfoType : 	STRUCT 
 		SlaveReady : BOOL; (*Slave axis ready for operation (Powered + IsHomed( when needed ))*)
 		MasterReady : BOOL; (*Master axis ready for operation (CommunicationReady)*)
@@ -340,6 +347,7 @@ mcSWITCH_ON ... The direction of movement is not permitted to be changed during 
 		Activate : BOOL; (*Option to move to defined position before stop*)
 		Deceleration : REAL := 25.0; (*Maximum deceleration [measurement units/s²]*)
 		Position : LREAL; (*Position to be stopped at*)
+		Acceleration : REAL := 0.0; (*Maximum acceleration [measurement units/s²]. When 0.0 then Deceleration is used *)
 	END_STRUCT;
 	MpAxisAutoTuneType : 	STRUCT 
 		Mode : MpAxisAutoTuneModeEnum; (*Tuning mode*)
@@ -470,7 +478,8 @@ Parameters left at "0" disable the associated advanced function. *)
 	END_STRUCT;
 	MpAxisBasicConfigSectionEnum : 
 		(
-		mcAXB_CFG_SEC_ALL (*Whole configuration structere is used*)
+		mcAXB_CFG_SEC_ALL, (*Whole configuration structere is used*)
+		mcAXB_CFG_SEC_MOVE_LIMITS (*Only Axis.MovementLimits section is used*)
 		);
 	MpAxisBasicConfigCmdEnum : 
 		(
@@ -495,7 +504,9 @@ Parameters left at "0" disable the associated advanced function. *)
 		mcAXB_CFG_AX_PUREVAX, (*Pure virtual axis*)
 		mcAXB_CFG_AX_PUREVAX_GPAI, (*	Pure virtual axis GPAI*)
 		mcAXB_CFG_AX_PUREVAX_EXT_ENC, (*Pure virtual GPAI external encoder*)
-		mcAXB_CFG_AX_POWER_SUPPLY (*Power supply module*)
+		mcAXB_CFG_AX_POWER_SUPPLY, (*Power supply module*)
+		mcAXB_CFG_AX_PUREVAX_DS402_CSP,
+		mcAXB_CFG_AX_PUREVAX_DS402_VL
 		);
 	MpAXBMotorDataTypeEnum : 
 		(

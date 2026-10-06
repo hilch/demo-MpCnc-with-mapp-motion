@@ -1,6 +1,6 @@
 /* Automation Studio generated header file */
 /* Do not edit ! */
-/* McAxGroup 5.27.1 */
+/* McAxGroup 5.31.3 */
 
 #ifndef _MCAXGROUP_
 #define _MCAXGROUP_
@@ -9,7 +9,7 @@ extern "C"
 {
 #endif
 #ifndef _McAxGroup_VERSION
-#define _McAxGroup_VERSION 5.27.1
+#define _McAxGroup_VERSION 5.31.3
 #endif
 
 #include <bur/plctypes.h>
@@ -164,7 +164,8 @@ typedef enum McExclusionTypeEnum
 } McExclusionTypeEnum;
 
 typedef enum McInterruptModeEnum
-{	mcINTMODE_JERK_LIMIT
+{	mcINTMODE_JERK_LIMIT,
+	mcINTMODE_QUICKSTOP
 } McInterruptModeEnum;
 
 typedef enum McInterruptTypeEnum

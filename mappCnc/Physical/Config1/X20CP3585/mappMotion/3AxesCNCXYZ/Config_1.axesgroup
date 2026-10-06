@@ -1,4 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<?AutomationStudio FileVersion="4.9"?>
 <Configuration>
   <Element ID="gCncXYZ" Type="axesgroup">
     <Selector ID="Type" Value="PathGenAxesGroup">
@@ -6,6 +7,7 @@
       <Property ID="License" Value="1" />
       <Group ID="PhysicalAxes">
         <Group ID="JointAxes">
+          <Property ID="JointAxisAxisRefIsReadOnly" Value="0" />
           <Group ID="JointAxis[1]">
             <Property ID="Name" Value="QX" />
             <Property ID="AxisRef" Value="gAxisQX" />
@@ -14,36 +16,63 @@
             <Property ID="Name" Value="QY" />
             <Property ID="AxisRef" Value="gAxisQY" />
           </Group>
-          <Group ID="JointAxis[3]">
-            <Property ID="Name" Value="QZ" />
-            <Property ID="AxisRef" Value="gAxisQZ" />
-          </Group>
         </Group>
       </Group>
       <Group ID="MechanicalSystem">
-        <Property ID="MechSysRef" Value="MechSys_3AxCNCXYZ" />
+        <Property ID="MechSysRefIsReadOnly" Value="0" />
+        <Property ID="MechSysRef" Value="MechSys" />
       </Group>
       <Group ID="BasicSettings">
         <Selector ID="ModalDataBehaviour" Value="ResetToDefault" />
         <Group ID="GeometryPlanning">
+          <Property ID="TCPResolutionIsReadOnly" Value="0" />
+          <Group ID="TCPResolution">
+            <Property ID="LengthResolution" Value="0.001" />
+            <Property ID="AngleResolution" Value="0.001" />
+          </Group>
+          <Group ID="Rounding">
+            <Property ID="PathDistance" Value="0.0" />
+            <Property ID="SymmetricRounding" Value="Yes" />
+            <Property ID="LastSegment" Value="Half" />
+            <Property ID="AvoidZeroCurvature" Value="No" />
+          </Group>
+          <Property ID="RoundingMode" Value="Standard" />
           <Property ID="MaxCornerDeviation" Value="0.0" />
           <Property ID="MaxTangentialTransitionDeviation" Value="0.0" />
-          <Property ID="MaxRadiusDeviation" Value="0.001" />
+          <Property ID="MaxRadiusDeviation" Value="0.1" />
           <Property ID="WorkingPlane" Value="XY" />
         </Group>
+        <Property ID="TrajectoryPlanningIsReadOnly" Value="0" />
         <Selector ID="TrajectoryPlanning" Value="Basic">
+          <Property ID="LimitCheckResolutionIsReadOnly" Value="0" />
           <Selector ID="LimitCheckResolution" Value="UserDefinedTime">
+            <Property ID="TimeIsReadOnly" Value="0" />
             <Property ID="Time" Value="0.01" />
           </Selector>
           <Selector ID="BufferTime" Value="UserDefinedTime">
             <Property ID="Time" Value="0.1" />
           </Selector>
+          <Selector ID="BarrierParametrization" Value="JointCoordinates" />
+          <Selector ID="TorqueLimitConsideration" Value="Exact" />
         </Selector>
+        <Group ID="Miscellaneous">
+          <Selector ID="NonMovementsLimit" Value="NotUsed" />
+          <Group ID="TimeStretchOverride">
+            <Selector ID="JerkSuppression" Value="NotUsed" />
+          </Group>
+        </Group>
+      </Group>
+      <Group ID="StopReaction">
+        <Group ID="AxisError">
+          <Property ID="AxisReactionIsReadOnly" Value="0" />
+        </Group>
       </Group>
       <Group ID="AxesGroupFeatures">
         <Property ID="FeatureRef[1]" Value="GCode" />
         <Property ID="FeatureRef[2]" Value="M-Functions" />
+        <Property ID="FeatureRef[3]" Value="Path-Definition" />
       </Group>
     </Selector>
+    <Selector ID="Alarms" Value="None" />
   </Element>
 </Configuration>

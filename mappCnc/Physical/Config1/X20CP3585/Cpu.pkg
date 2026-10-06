@@ -17,11 +17,11 @@
     <Object Type="Package">VC</Object>
   </Objects>
   <Configuration ModuleId="X20CP3585">
-    <AutomationRuntime Version="B4.93" />
+    <AutomationRuntime Version="U4.93" />
     <Build GccVersion="4.1.2" />
     <DefaultTargetMemory Tasks="UserROM" />
     <Safety SafetyRelease="0.0" />
     <Transfer SavedOfflineInstallationFolder="" SavedPipDestinationFolder="" SavedRuntimeUtilityCenterPackagePath="" />
-    <Vc FirmwareVersion="V4.73.3" />
+    <Vc FirmwareVersion="V4.73.5" />
   </Configuration>
 </Cpu>

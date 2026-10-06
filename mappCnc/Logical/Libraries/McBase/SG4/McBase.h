@@ -1,6 +1,6 @@
 /* Automation Studio generated header file */
 /* Do not edit ! */
-/* McBase 5.27.1 */
+/* McBase 5.31.3 */
 
 #ifndef _MCBASE_
 #define _MCBASE_
@@ -9,7 +9,7 @@ extern "C"
 {
 #endif
 #ifndef _McBase_VERSION
-#define _McBase_VERSION 5.27.1
+#define _McBase_VERSION 5.31.3
 #endif
 
 #include <bur/plctypes.h>
@@ -106,7 +106,9 @@ typedef enum McErrorCmdEnum
 	mcERROR_STOP_DEC_CTRL_OFF_CMD,
 	mcERROR_V_STOP_DEC_CTRL_OFF_CMD,
 	mcERROR_ENCODER_CMD,
-	mcERROR_CHANNEL_CMD
+	mcERROR_CHANNEL_CMD,
+	mcERROR_STOP_TRQ_CMD,
+	mcERROR_STOP_TRQ_JERK_CMD
 } McErrorCmdEnum;
 
 typedef enum McEdgeEnum
@@ -311,6 +313,12 @@ typedef enum McCfgTypeEnum
 	mcCFG_PURE_V_AX_SIM = 12023,
 	mcCFG_PURE_V_AX_MOD = 12024,
 	mcCFG_PURE_V_AX_ZERO_VIB_FLTR = 12025,
+	mcCFG_PURE_V_AX_ENC_SET = 12116,
+	mcCFG_PURE_V_AX_POS_ACT_VAL = 12126,
+	mcCFG_PURE_V_AX_STAT_IN_DS402 = 12121,
+	mcCFG_PURE_V_AX_CTRL_OUT_DS402C = 12122,
+	mcCFG_PURE_V_AX_CTRL_OUT_DS402V = 12132,
+	mcCFG_PURE_V_AX_VEL_ACT_VAL = 12136,
 	mcCFG_STP_AX = 13000,
 	mcCFG_STP_AX_REF = 13011,
 	mcCFG_STP_AX_MECH_ELM = 13012,
@@ -350,6 +358,7 @@ typedef enum McCfgTypeEnum
 	mcCFG_AXGRP_FEAT_COMP = 21102,
 	mcCFG_AXGRP_FEAT_CDC = 21103,
 	mcCFG_AXGRP_FEAT_FF = 21104,
+	mcCFG_AXGRP_FEAT_FF_M = 21204,
 	mcCFG_AXGRP_FEAT_FRM_HIER_STD = 21105,
 	mcCFG_AXGRP_FEAT_FRM_HIER_CUS = 21106,
 	mcCFG_AXGRP_FEAT_JOG = 21107,
