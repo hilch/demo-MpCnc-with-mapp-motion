@@ -138,7 +138,7 @@ FUNCTION_BLOCK MC_BR_CamAutomatCommand (*send command for the cam automat to the
 		Error : BOOL; (*error occurred during operation*)
 		ErrorID : DINT; (*error number*)
 		Running : BOOL; (*automat is currently running*)
-		StandBy : BOOL; (*automat is in standby and can be restarted*)
+		Standby : BOOL; (*automat is in standby and can be restarted*)
 		ActualStateIndex : USINT; (*index of the actual cam automat state*)
 		ActualStateCamIndex : UINT; (*index of the cam of the actual cam automat state*)
 		InCam : BOOL; (*cam in the current cam automat state is active*)
@@ -774,7 +774,7 @@ FUNCTION_BLOCK MC_BR_CamIn (*starts a cam coupling between the master and slave 
         ErrorID : DINT; (*error number*)
         DataInitialized : BOOL; (*changes to function block inputs initialized*)
         Running : BOOL; (*the coupling is engaged. The slave will follow the master*)
-        StandBy : BOOL; (*cam coupling can be restarted with 'Restart'*)
+        Standby : BOOL; (*cam coupling can be restarted with 'Restart'*)
         InLeadIn : BOOL; (*the slave axis couples with the cam with a lead-in movement*)
         InCam : BOOL; (*cam in the current cam automat state is active*)
         InLeadOut : BOOL; (*he slave axis decouples from the cam with a lead-out movement*)
@@ -1649,6 +1649,25 @@ FUNCTION_BLOCK MC_BR_PowerOnTest (*Tests if a power-on command would be successf
         Busy : BOOL; (*FB is active and needs to be called*)
         Error : BOOL; (*error occurred during operation*)
         ErrorID : DINT; (*error number*)
+    END_VAR
+    VAR
+        Internal : McInternalType; (*internal variable*)
+    END_VAR
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK MC_BR_ProcessSDO (*Reads or writes the value of a SDO parameter according to the input "Mode"*)
+    VAR_INPUT
+        Axis : REFERENCE TO McAxisType;  (*The axis reference establishes the connection between the function block and an axis*)
+        Execute : BOOL; (*Execution of the function block is started on a rising edge of the input*)
+        DataAddress : UDINT; (*Address of the variable or array of data type McProcessSdoType*)
+        NumberOfSdo : UDINT; (*Number of SDO parameters that should be read or written (equal to the number of elements of the array)*)
+        Mode : McProcessSdoModeEnum; (*Mode that defines whether the SDO parameters should be read or written*)
+    END_VAR
+    VAR_OUTPUT
+        Done : BOOL; (*Execution successful, function block finished*)
+        Busy : BOOL; (*The function block is active and must continue to be called*)
+        Error : BOOL; (*An error occurred during execution*)
+        ErrorID : DINT; (*Error number*)
     END_VAR
     VAR
         Internal : McInternalType; (*internal variable*)

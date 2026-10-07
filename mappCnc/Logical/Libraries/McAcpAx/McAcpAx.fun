@@ -470,43 +470,6 @@ FUNCTION_BLOCK MC_BR_AutoTuneFeedForward_AcpAx (*execute auto tuning for feed fo
 	END_VAR
 END_FUNCTION_BLOCK
 
-FUNCTION_BLOCK MC_BR_CamAutomatSetPar_AcpAx (*set parameter for configuration of cam automat*)
-	VAR_INPUT
-		Slave : REFERENCE TO McAxisType; (*axis reference*)
-		Execute : BOOL; (*execution of this FB is started on rising edge of the input*)
-		Command : McCamAutSetParCmdEnum; (*command for sending values*)
-		CamAutomat : McAcpAxCamAutDefineType; (*parameter source for cam automat*)
-		AdvancedParameters : McAcpAxAdvCamAutSetParType; (*advanced parameters for configuration options*)
-	END_VAR
-	VAR_OUTPUT
-		Done : BOOL; (*execution successful. FB finished*)
-		Busy : BOOL; (*FB is active and needs to be called*)
-		Error : BOOL; (*error occurred during operation*)
-		ErrorID : DINT; (*error number*)
-	END_VAR
-	VAR
-		Internal : McInternalType; (*internal variable*)
-	END_VAR
-END_FUNCTION_BLOCK
-
-FUNCTION_BLOCK  MC_BR_CamAutomatGetPar_AcpAx (*get parameter of configured cam automat*)
-	VAR_INPUT
-		Slave : REFERENCE TO McAxisType; (*axis reference*)
-		Execute : BOOL; (*execution of this FB is started on rising edge of the input*)
-		Command :  McCamAutGetParCmdEnum; (*command for sending values*)
-		CamAutomat : McAcpAxCamAutDefineType; (*parameter source for cam automat*)
-	END_VAR
-	VAR_OUTPUT
-		Done : BOOL; (*execution successful. FB finished*)
-		Busy : BOOL; (*FB is active and needs to be called*)
-		Error : BOOL; (*error occurred during operation*)
-		ErrorID : DINT; (*error number*)
-	END_VAR
-	VAR
-		Internal : McInternalType; (*internal variable*)
-	END_VAR
-END_FUNCTION_BLOCK
-
 FUNCTION_BLOCK  MC_BR_PhasingVelocity_AcpAx (*creates phase shift in the master position of a slave axis using a velocity motion profile*)
 	VAR_INPUT
 		Slave : REFERENCE TO McAxisType; (*axis reference*)
@@ -766,3 +729,113 @@ FUNCTION_BLOCK MC_BR_GetCyclicDataInfo_AcpAx (*This function block provides admi
  	END_VAR
 END_FUNCTION_BLOCK
 
+FUNCTION_BLOCK MC_BR_SctrlLimitLoad_AcpAx (*Limits the motor torque using the velocity controller current reference value*)
+	VAR_INPUT
+		Axis : REFERENCE TO McAxisType; (*Axis reference.*)
+		Enable : BOOL; (*The FB is active as long as this input is set.*)
+		InitData : BOOL; (*Initialize new parameters.*)
+		LoadPositive : REAL; (*Positive load (torque) limit value [Nm].*)
+		LoadNegative : REAL; (*Negative load (torque) limit value [Nm].*)
+		Mode : McAcpAxSctrlLimitLoadModeEnum; (*Torque limitation mode.*)
+		AdvancedParameters : McAcpAxAdvSctrlLimitLoadParType; (*Additional advanced parameters.*)
+    END_VAR
+    VAR_OUTPUT
+		Ready : BOOL; (*Torque limitation function on the axis is ready.*)
+		Busy : BOOL; (*FB is active and needs to be called.*)
+		Error : BOOL; (*Error occurred during operation.*)
+		ErrorID : DINT; (*Error number.*)
+		DataInitialized : BOOL; (*New parameters are initialized.*)
+		LimitPositiveActive : BOOL; (*Positive load (torque) limitation is active.*)
+		LimitNegativeActive : BOOL; (*Negative load (torque) limitation is active.*)
+    END_VAR
+    VAR
+		Internal : McInternalType; (*internal variable*)
+    END_VAR
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK MC_BR_SetParIDText_AcpAx (*Set (write) a single ACOPOS parameter in text format.*)
+	VAR_INPUT
+		Axis : REFERENCE TO McAxisType; (*Axis reference.*)
+		Execute : BOOL; (*execution of this FB is started on rising edge of the input*)
+		ParID : UINT; (*ACOPOS parameter ID to be set (read)*)
+		DataText : STRING[32];
+	END_VAR
+	VAR_OUTPUT
+		Done : BOOL; (*execution successful. FB finished*)
+		Busy : BOOL; (*FB is active and needs to be called*)
+		Error : BOOL; (*error occurred during operation*)
+		ErrorID : DINT; (*error number*)
+	END_VAR
+	VAR
+		Internal : McInternalType; (*internal variable*)
+	END_VAR
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK MC_BR_GetParIDText_AcpAx (*Get (read) a single ACOPOS parameter in text format.*)
+	VAR_INPUT
+		Axis : REFERENCE TO McAxisType; (*Axis reference.*)
+		Execute : BOOL; (*execution of this FB is started on rising edge of the input*)
+		ParID : UINT; (*ACOPOS parameter ID to be got (written)*)
+	END_VAR
+	VAR_OUTPUT
+		Done : BOOL; (*execution successful. FB finished*)
+		Busy : BOOL; (*FB is active and needs to be called*)
+		Error : BOOL; (*error occurred during operation*)
+		ErrorID : DINT; (*error number*)
+		DataText : STRING[32];
+	END_VAR
+	VAR
+		Internal : McInternalType; (*internal variable*)
+	END_VAR
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK MC_BR_ReadSafeOutData_AcpAx (*reads SafeOUT data of an SafeMOTION axis*)
+	VAR_INPUT
+		Axis : REFERENCE TO McAxisType;  (*axis reference*)
+		Enable : BOOL; (*FB is active as long as input is set*)
+	END_VAR
+	VAR_OUTPUT
+		Valid : BOOL; (*FB output values can be used*)
+		Busy : BOOL; (*FB is active and needs to be called*)
+		Error : BOOL; (*error occurred during operation*)
+		ErrorID : DINT; (*error number*)
+		SafeOutData : McAcpAxSafeOutDataType; (*SafeOUT data*)
+	END_VAR
+	VAR
+		Internal : McInternalType; (*internal variable*)
+	END_VAR
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK MC_BR_ReadSafeInData_AcpAx (*reads SafeIN data of an SafeMOTION axis*)
+	VAR_INPUT
+		Axis : REFERENCE TO McAxisType;  (*axis reference*)
+		Enable : BOOL; (*FB is active as long as input is set*)
+	END_VAR
+	VAR_OUTPUT
+		Valid : BOOL; (*FB output values can be used*)
+		Busy : BOOL; (*FB is active and needs to be called*)
+		Error : BOOL; (*error occurred during operation*)
+		ErrorID : DINT; (*error number*)
+		SafeInData : McAcpAxSafeInDataType; (*SafeIN data*)
+	END_VAR
+	VAR
+		Internal : McInternalType; (*internal variable*)
+	END_VAR
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK MC_BR_VibrationCtrlStatus_AcpAx (*outputs vibratory control status*)
+	VAR_INPUT
+		Axis : REFERENCE TO McAxisType; (*axis reference*)
+		Enable : BOOL; (*when set limitation is activated*)
+	END_VAR
+    VAR_OUTPUT
+		Valid : BOOL; (*FB output values can be used*)
+		Busy : BOOL; (*FB is active and needs to be called*)
+		Error : BOOL; (*error occurred during operation*)
+		ErrorID : DINT; (*error number*)
+		Status : McAcpAxVibCtrlStatusType; (*Status info*)
+	END_VAR
+    VAR
+		Internal : McInternalType; (*internal variable*)
+    END_VAR
+END_FUNCTION_BLOCK

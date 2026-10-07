@@ -14,7 +14,7 @@ TYPE
 		AxisReference : McCfgReferenceType;
 	END_STRUCT;
 	McAGPGPAJntAxType : STRUCT (*Single axes of AxesGroup for path planning*)
-		JointAxis : McCfgUnboundedArrayType;
+		JointAxis : McCfgUnboundedArrayType; (*Connect array of type McAGPGPAJntAxJntAxType*)
 	END_STRUCT;
 	McAGPGPASASAPADEnum :
 		( (*Periodic axis direction selector setting*)
@@ -30,13 +30,13 @@ TYPE
 		PeriodicAxisDirection : McAGPGPASASAPADType; (*Periodic axis direction*)
 	END_STRUCT;
 	McAGPGPASlAxType : STRUCT (*Axis included in path planning but not part of it*)
-		SlaveAxis : McCfgUnboundedArrayType;
+		SlaveAxis : McCfgUnboundedArrayType; (*Connect array of type McAGPGPASlAxSlAxType*)
 	END_STRUCT;
 	McAGPGPASngAxSngAxType : STRUCT
 		AxisReference : McCfgReferenceType; (*Name of the mapp axis configured in an axis configuration file (e.g. gAxis1)*)
 	END_STRUCT;
 	McAGPGPASngAxType : STRUCT (*Axis inluded in AxesGroup but not part of path planning*)
-		SingleAxis : McCfgUnboundedArrayType;
+		SingleAxis : McCfgUnboundedArrayType; (*Connect array of type McAGPGPASngAxSngAxType*)
 	END_STRUCT;
 	McAGPGPAType : STRUCT (*Specify joint, slave and single axis within AxesGroup*)
 		JointAxes : McAGPGPAJntAxType; (*Single axes of AxesGroup for path planning*)
@@ -58,15 +58,35 @@ TYPE
 		LengthResolution : LREAL; (*Resolution of linear TCP coordinates [measurement units]*)
 		AngleResolution : LREAL; (*Resolution of rotary TCP coordinates [measurement units]*)
 	END_STRUCT;
+	McAGPGGeoPlanBlendingType : STRUCT (*Blending between two movement commands*)
+		MaxRadius : LREAL; (*Defines the maximum path length of the first path that can be used for blending [measurement units]*)
+	END_STRUCT;
 	McAGPGGeoPlanRndSymRndEnum :
 		( (*Rounding distance on both adjacent path sections is the same*)
 		mcAGPGGPRSR_YES := 1, (*Yes - Yes*)
 		mcAGPGGPRSR_NO := 0 (*No - No*)
 		);
+	McAGPGGPRSymRndPathEnum :
+		( (*Symmetric rounding path selector setting*)
+		mcAGPGGPRSymRndPath_STD := 0, (*Standard - Standard (first path)*)
+		mcAGPGGPRSymRndPath_CUS_PATH := 1 (*Custom path - Selects the path by name*)
+		);
+	McAGPGGPRSymRndPathCusPathType : STRUCT (*Type mcAGPGGPRSymRndPath_CUS_PATH settings*)
+		PathName : McCfgString250Type; (*Name of the path on which the symmetric rounding is applied*)
+	END_STRUCT;
+	McAGPGGPRSymRndPathType : STRUCT (*Defines the path to which the symmetric rounding is applied*)
+		Type : McAGPGGPRSymRndPathEnum; (*Symmetric rounding path selector setting*)
+		CustomPath : McAGPGGPRSymRndPathCusPathType; (*Type mcAGPGGPRSymRndPath_CUS_PATH settings*)
+	END_STRUCT;
 	McAGPGGeoPlanRndLatSegEnum :
 		( (*Rounding distance on the last path sections*)
 		mcAGPGGPRLS_WHOLE := 1, (*Whole - Whole length of geometry*)
 		mcAGPGGPRLS_HALF := 0 (*Half - Half length of geometry*)
+		);
+	McAGPGGeoPlanRndFirstSegEnum :
+		( (*Rounding distance on the first path sections*)
+		mcAGPGGPRFS_WHOLE := 1, (*Whole - Whole length of geometry*)
+		mcAGPGGPRFS_HALF := 0 (*Half - Half length of geometry*)
 		);
 	McAGPGGeoPlanRndAvoidZeroCrvEnum :
 		( (*Avoid reducing curvature to zero between two rounded edges*)
@@ -81,7 +101,9 @@ TYPE
 	McAGPGGeoPlanRndType : STRUCT (*Rounding a transition between motion blocks*)
 		PathDistance : LREAL; (*Defines the path length of the Cartesian axes for which rounding between two geometries is added. [measurement units]*)
 		SymmetricRounding : McAGPGGeoPlanRndSymRndEnum; (*Rounding distance on both adjacent path sections is the same*)
+		SymmetricRoundingPath : McAGPGGPRSymRndPathType; (*Defines the path to which the symmetric rounding is applied*)
 		LastSegment : McAGPGGeoPlanRndLatSegEnum; (*Rounding distance on the last path sections*)
+		FirstSegment : McAGPGGeoPlanRndFirstSegEnum; (*Rounding distance on the first path sections*)
 		AvoidZeroCurvature : McAGPGGeoPlanRndAvoidZeroCrvEnum; (*Avoid reducing curvature to zero between two rounded edges*)
 		NonCartesianRounding : McAGPGGeoPlanRndNonCartRndEnum; (*Support rounding between blocks without cartesian movement*)
 	END_STRUCT;
@@ -99,6 +121,7 @@ TYPE
 		);
 	McAGPGGeoPlanType : STRUCT
 		TCPResolution : McAGPGGeoPlanTCPResType;
+		Blending : McAGPGGeoPlanBlendingType; (*Blending between two movement commands*)
 		Rounding : McAGPGGeoPlanRndType; (*Rounding a transition between motion blocks*)
 		RoundingMode : McAGPGGeoPlanRndModEnum; (*Defines the used rounding mode*)
 		MaxCornerDeviation : LREAL; (*Defines the maximum corner deviation for non tangential path transitions [measurement units]*)
@@ -148,7 +171,7 @@ TYPE
 		mcAGPGTPBTLC_APPX := 1 (*Approximation -*)
 		);
 	McAGPGTPBTrqLimConsAppxType : STRUCT (*Type mcAGPGTPBTLC_APPX settings*)
-		StepSize : LREAL; (*Step size for approximation [Factor]*)
+		StepSize : LREAL; (*Step size for approximation [factor]*)
 	END_STRUCT;
 	McAGPGTPBTrqLimConsType : STRUCT (*Defines the type of torque limit consideration*)
 		Type : McAGPGTPBTrqLimConsEnum; (*Torque limit consideration selector setting*)
@@ -200,9 +223,19 @@ TYPE
 	McAGPGMTSOType : STRUCT
 		JerkSuppression : McAGPGMTSOJerkSupType; (*Defines smoothing of time stretch override*)
 	END_STRUCT;
+	McAGPGMAJFEnum :
+		( (*Axis jerk filter selector setting*)
+		mcAGPGMAJF_USE_AX_FLTR := 0, (*Use axis filters -*)
+		mcAGPGMAJF_DEACT_FLTR := 1, (*Deactivate filters -*)
+		mcAGPGMAJF_OVR_FLTR := 2 (*Override filters -*)
+		);
+	McAGPGMAJFType : STRUCT (*During axis group movement, the jerk filters defined at the axis level can be active, deactivated, or overridden*)
+		Type : McAGPGMAJFEnum; (*Axis jerk filter selector setting*)
+	END_STRUCT;
 	McAGPGMiscType : STRUCT
 		NonMovementsLimit : McAGPGMiscNonMoveLimType; (*Limit the count of non-movements executed in one cycle*)
 		TimeStretchOverride : McAGPGMTSOType;
+		AxisJerkFilter : McAGPGMAJFType; (*During axis group movement, the jerk filters defined at the axis level can be active, deactivated, or overridden*)
 	END_STRUCT;
 	McAGPGBSType : STRUCT
 		ModalDataBehaviour : McAGPGModalDatBxType; (*All modal data is reset to the default/configured value for the next program*)
@@ -422,7 +455,7 @@ TYPE
 		FileDevice : STRING[250]; (*Program file device*)
 	END_STRUCT;
 	McAGFPRGLUsrType : STRUCT (*Type mcAGFPRGL_USR settings*)
-		UserProgramLocation : McCfgUnboundedArrayType;
+		UserProgramLocation : McCfgUnboundedArrayType; (*Connect array of type McAGFPRGLUsrUsrPrgLocType*)
 	END_STRUCT;
 	McAGFPRGLType : STRUCT (*Program location*)
 		Type : McAGFPRGLEnum; (*Location selector setting*)
@@ -455,10 +488,10 @@ TYPE
 		Advanced : McAGFPRGPEPVAdvType;
 	END_STRUCT;
 	McAGFPRGPEPVSType : STRUCT (*Declaration of process variables*)
-		ProcessVariable : McCfgUnboundedArrayType;
+		ProcessVariable : McCfgUnboundedArrayType; (*Connect array of type McAGFPRGPEPVType*)
 	END_STRUCT;
 	McAGFPRGPEIVAdvArrDimType : STRUCT (*Array dimensions*)
-		SizeOfArrayDimemsion : McCfgUnboundedArrayType;
+		SizeOfArrayDimemsion : McCfgUnboundedArrayType; (*Connect array of type UDINT*)
 	END_STRUCT;
 	McAGFPRGPEIVAdvSynEnum :
 		( (*Synchronization selector setting*)
@@ -491,7 +524,7 @@ TYPE
 		Advanced : McAGFPRGPEIVAdvType;
 	END_STRUCT;
 	McAGFPRGPEIVSType : STRUCT (*Declaration of variables*)
-		InterpreterVariable : McCfgUnboundedArrayType;
+		InterpreterVariable : McCfgUnboundedArrayType; (*Connect array of type McAGFPRGPEIVType*)
 	END_STRUCT;
 	McAGFPRGPEFUNAdvSynEnum :
 		( (*Synchronization selector setting*)
@@ -530,10 +563,10 @@ TYPE
 		FunctionName : STRING[250]; (*Name of function*)
 		FunctionReturnType : McCfgFunDatTypType; (*Return data type of function*)
 		Advanced : McAGFPRGPEFUNAdvType;
-		Argument : McCfgUnboundedArrayType;
+		Argument : McCfgUnboundedArrayType; (*Connect array of type McAGFPRGPEFUNArgType*)
 	END_STRUCT;
 	McAGFPRGPEFUNSType : STRUCT (*Declaration of functions*)
-		Function : McCfgUnboundedArrayType;
+		Function : McCfgUnboundedArrayType; (*Connect array of type McAGFPRGPEFUNType*)
 	END_STRUCT;
 	McAGFPRGPEFBIAdvSynEnum :
 		( (*Synchronization selector setting*)
@@ -558,7 +591,7 @@ TYPE
 		Advanced : McAGFPRGPEFBIAdvType;
 	END_STRUCT;
 	McAGFPRGPEFBISType : STRUCT (*Declaration of process variable as Function block instance*)
-		FunctionBlockInstance : McCfgUnboundedArrayType;
+		FunctionBlockInstance : McCfgUnboundedArrayType; (*Connect array of type McAGFPRGPEFBIType*)
 	END_STRUCT;
 	McAGFPRGPEPPSRIsPatEnum :
 		( (*Is pattern selector setting*)
@@ -574,10 +607,10 @@ TYPE
 		ReplaceString : STRING[250]; (*The replacement text string*)
 	END_STRUCT;
 	McAGFPRGPEPreProSubstType : STRUCT (*Substitutions rules are applied to the CNC program prior its parsing*)
-		SubstitutionRule : McCfgUnboundedArrayType;
+		SubstitutionRule : McCfgUnboundedArrayType; (*Connect array of type McAGFPRGPEPreProSubstRuleType*)
 	END_STRUCT;
 	McAGFPRGPEAlsAxDefType : STRUCT
-		AliasAxis : McCfgUnboundedArrayType; (*Name of the alias axis*)
+		AliasAxis : McCfgUnboundedArrayType; (*Name of the alias axis (Connect array of type STRING)*)
 	END_STRUCT;
 	McAGFPRGPEType : STRUCT (*Program elements*)
 		ProcessVariables : McAGFPRGPEPVSType; (*Declaration of process variables*)
@@ -644,7 +677,7 @@ TYPE
 		Type : McAGFFFFwdModEnum; (*Feed-forward mode selector setting*)
 	END_STRUCT;
 	McAGFFExJntAxType : STRUCT
-		JointAxisName : McCfgUnboundedArrayType;
+		JointAxisName : McCfgUnboundedArrayType; (*Connect array of type McCfgString250Type*)
 	END_STRUCT;
 	McAGFFParIdentEnum :
 		( (*Parameter identification selector setting*)
@@ -777,7 +810,7 @@ TYPE
 	END_STRUCT;
 	McAGFFHCMachFrmType : STRUCT (*Base of all other coordinate systems of the axes group*)
 		Name : STRING[250]; (*Frame name*)
-		Frame : McCfgUnboundedArrayType;
+		Frame : McCfgUnboundedArrayType; (*Connect array of type McAGFFHCFramesType*)
 	END_STRUCT;
 	McAGFFHCType : STRUCT (*Custom frame-hierarchy of an axes group*)
 		FramePropertyMapping : McAGFFHCFrmPropMappType;
@@ -847,7 +880,7 @@ TYPE
 	END_STRUCT;
 	McCfgAxGrpFeatMFunType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_AXGRP_FEAT_MFUN*)
 		ModalDataBehaviour : McAGFModalDatBxType; (*Defines the modal data behaviour of the feature*)
-		MFunction : McCfgUnboundedArrayType;
+		MFunction : McCfgUnboundedArrayType; (*Connect array of type McAGFMFunType*)
 	END_STRUCT;
 	McAGFMECmbElmType : STRUCT (*Defines the combined monitoring elements*)
 		BasicMonitor : STRING[250]; (*Basic monitor*)
@@ -860,7 +893,6 @@ TYPE
 		mcAGFMESE_PRG_RUNT := 3, (*Program runtime - Program runtime*)
 		mcAGFMESE_SET_POS := 4, (*Set positions - Set positions*)
 		mcAGFMESE_ONL_PATH_INFL := 5, (*Online path influence - Online path influence*)
-		mcAGFMESE_PATH_IDENT := 6, (*Path identification - Path identification*)
 		mcAGFMESE_TOOL := 7, (*Tool - Tool*)
 		mcAGFMESE_IP := 8, (*Interpreter - Interpreter*)
 		mcAGFMESE_LIM := 9, (*Limits - Limits*)
@@ -871,7 +903,9 @@ TYPE
 		mcAGFMESE_CROSS_SEC_LOADS := 14, (*Cross section loads - Cross section loads*)
 		mcAGFMESE_DYN_DEC := 15, (*Dynamic decelerations - Dynamic decelerations*)
 		mcAGFMESE_ORIENT_COMP := 16, (*Orientation compliance - Orientation compliance*)
-		mcAGFMESE_SKIP_BLK := 17 (*Skip block - Skip block*)
+		mcAGFMESE_SKIP_BLK := 17, (*Skip block - Skip block*)
+		mcAGFMESE_WS_MON := 18, (*Workspace monitoring - Workspace monitoring*)
+		mcAGFMESE_ACT_LIM := 19 (*Active limit - Active limit*)
 		);
 	McAGFMESngElmCusType : STRUCT (*Type mcAGFMESE_CUS settings*)
 		ConnectionPoint : STRING[250]; (*Connection point to a custom monitoring element*)
@@ -923,13 +957,6 @@ TYPE
 		ProgrammedSetPositions : McAGFMESngElmOPIPrgSetPosType; (*Programmed position setpoints*)
 		InfluencedSetPositions : McAGFMESngElmOPIInflSetPosType; (*Influenced position setpoints (programmed set positions with configured online path influences)*)
 	END_STRUCT;
-	McAGFMESngElmPathIdentType : STRUCT (*Type mcAGFMESE_PATH_IDENT settings*)
-		CurrentPathSpeed : STRING[250]; (*Current speed of path*)
-		ProgrammedSpeedOfPath : STRING[250]; (*Programmed path speed*)
-		PathPosition : STRING[250]; (*Position of the path*)
-		CurrentLength : STRING[250]; (*Path length of currently executed block*)
-		RemainingDistance : STRING[250]; (*Remaining path distance to the end of currently executed block*)
-	END_STRUCT;
 	McAGFMESngElmToolType : STRUCT (*Type mcAGFMESE_TOOL settings*)
 		ToolIndex : STRING[250]; (*Current tool index*)
 		ToolIdentifier : STRING[250]; (*Current tool identifier*)
@@ -974,6 +1001,12 @@ TYPE
 	McAGFMESngElmSkipBlkType : STRUCT (*Type mcAGFMESE_SKIP_BLK settings*)
 		SkipLevels : STRING[250]; (*Current states of skip block levels*)
 	END_STRUCT;
+	McAGFMESngElmWsMonType : STRUCT (*Type mcAGFMESE_WS_MON settings*)
+		Workspace : STRING[250]; (*Current workspace monitoring status*)
+	END_STRUCT;
+	McAGFMESngElmActLimType : STRUCT (*Type mcAGFMESE_ACT_LIM settings*)
+		Limit : STRING[250]; (*Currently active limit for trajectory planning*)
+	END_STRUCT;
 	McAGFMESngElmType : STRUCT (*Defines the single monitoring element*)
 		Type : McAGFMESngElmEnum; (*Single element selector setting*)
 		Custom : McAGFMESngElmCusType; (*Type mcAGFMESE_CUS settings*)
@@ -982,7 +1015,6 @@ TYPE
 		ProgramRuntime : McAGFMESngElmPrgRunTType; (*Type mcAGFMESE_PRG_RUNT settings*)
 		SetPositions : McAGFMESngElmSetPosType; (*Type mcAGFMESE_SET_POS settings*)
 		OnlinePathInfluence : McAGFMESngElmOPIType; (*Type mcAGFMESE_ONL_PATH_INFL settings*)
-		PathIdentification : McAGFMESngElmPathIdentType; (*Type mcAGFMESE_PATH_IDENT settings*)
 		Tool : McAGFMESngElmToolType; (*Type mcAGFMESE_TOOL settings*)
 		Interpreter : McAGFMESngElmIpType; (*Type mcAGFMESE_IP settings*)
 		Limits : McAGFMESngElmLimType; (*Type mcAGFMESE_LIM settings*)
@@ -994,9 +1026,11 @@ TYPE
 		DynamicDecelerations : McAGFMESngElmDynDecType; (*Type mcAGFMESE_DYN_DEC settings*)
 		OrientationCompliance : McAGFMESngElmOrientCompType; (*Type mcAGFMESE_ORIENT_COMP settings*)
 		SkipBlock : McAGFMESngElmSkipBlkType; (*Type mcAGFMESE_SKIP_BLK settings*)
+		WorkspaceMonitoring : McAGFMESngElmWsMonType; (*Type mcAGFMESE_WS_MON settings*)
+		ActiveLimit : McAGFMESngElmActLimType; (*Type mcAGFMESE_ACT_LIM settings*)
 	END_STRUCT;
 	McAGFMESngElmsType : STRUCT (*Defines the single monitoring elements*)
-		SingleElement : McCfgUnboundedArrayType; (*Defines the single monitoring element*)
+		SingleElement : McCfgUnboundedArrayType; (*Defines the single monitoring element (Connect array of type McAGFMESngElmType)*)
 	END_STRUCT;
 	McCfgAxGrpFeatMonElemType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_AXGRP_FEAT_MON_ELEM*)
 		CombinedElements : McAGFMECmbElmType; (*Defines the combined monitoring elements*)
@@ -1040,7 +1074,8 @@ TYPE
 		mcAGFPDPT_CART_PATH := 0, (*Cartesian path - The path is calculated from all Cartesian coordinates*)
 		mcAGFPDPT_ORIENT_PATH := 1, (*Orientation path - The path is calculated from the orientation coordinates. Only available for mechanical systems with orientation axis.*)
 		mcAGFPDPT_PHS_AX_PATH := 2, (*Physical axes path - Path definition containing all path controlled physical axes*)
-		mcAGFPDPT_CUS_PHS_AX_PATH := 3 (*Custom physical axes path - Path definition containing all selected path controlled physical axes*)
+		mcAGFPDPT_CUS_PHS_AX_PATH := 3, (*Custom physical axes path - Path definition containing all selected path controlled physical axes*)
+		mcAGFPDPT_CUS_TCP_COOR_PATH := 4 (*Custom TCP coordinates path - Path definition containing all selected TCP coordinates*)
 		);
 	McAGFPDCalcInEnum :
 		( (*Calculated in selector setting*)
@@ -1062,13 +1097,18 @@ TYPE
 		CalculatedIn : McAGFPDCalcInType; (*In this frame the path is calculated.*)
 	END_STRUCT;
 	McAGFPDPathTypCusPhsAxPathType : STRUCT (*Type mcAGFPDPT_CUS_PHS_AX_PATH settings*)
-		AxisName : McCfgUnboundedArrayType; (*Name of the axis which is included in limiting the physical axes path*)
+		AxisName : McCfgUnboundedArrayType; (*Name of the axis which is included in limiting the physical axes path (Connect array of type McCfgString250Type)*)
+	END_STRUCT;
+	McAGFPDPathTypCusTCPCoorPathType : STRUCT (*Type mcAGFPDPT_CUS_TCP_COOR_PATH settings*)
+		CalculatedIn : McAGFPDCalcInType; (*In this frame the path is calculated.*)
+		CoordinateName : McCfgUnboundedArrayType; (*Name of the coordinate which is included in the path (Connect array of type McCfgString250Type)*)
 	END_STRUCT;
 	McAGFPDPathTypType : STRUCT (*Type of the path*)
 		Type : McAGFPDPathTypEnum; (*Type selector setting*)
 		CartesianPath : McAGFPDPathTypCartPathType; (*Type mcAGFPDPT_CART_PATH settings*)
 		OrientationPath : McAGFPDPathTypOrientPathType; (*Type mcAGFPDPT_ORIENT_PATH settings*)
 		CustomPhysicalAxesPath : McAGFPDPathTypCusPhsAxPathType; (*Type mcAGFPDPT_CUS_PHS_AX_PATH settings*)
+		CustomTCPCoordinatesPath : McAGFPDPathTypCusTCPCoorPathType; (*Type mcAGFPDPT_CUS_TCP_COOR_PATH settings*)
 	END_STRUCT;
 	McAGFPDPathLimEnum :
 		( (*Path limits selector setting*)
@@ -1129,7 +1169,7 @@ TYPE
 	END_STRUCT;
 	McCfgAxGrpFeatPathDefType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_AXGRP_FEAT_PATH_DEF*)
 		ModalDataBehaviour : McAGFModalDatBxType; (*Defines the modal data behaviour of the feature*)
-		Path : McCfgUnboundedArrayType; (*Predefined path definitions can be used*)
+		Path : McCfgUnboundedArrayType; (*Predefined path definitions can be used (Connect array of type McAGFPDPathType)*)
 	END_STRUCT;
 	McAGFPSCondStopEnum :
 		( (*Conditional stop selector setting*)
@@ -1162,7 +1202,7 @@ TYPE
 	END_STRUCT;
 	McCfgAxGrpFeatSpindlesType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_AXGRP_FEAT_SPINDLES*)
 		ModalDataBehaviour : McAGFModalDatBxType; (*Defines the modal data behaviour of the feature*)
-		Spindle : McCfgUnboundedArrayType;
+		Spindle : McCfgUnboundedArrayType; (*Connect array of type McAGFSSpdlType*)
 	END_STRUCT;
 	McAGFTToolEnum :
 		( (*Tools selector setting*)
@@ -1213,16 +1253,16 @@ TYPE
 		FlangeWorkspace : McAGFWFlgWsType; (*Additional workspace monitoring of flange*)
 	END_STRUCT;
 	McAGFEPCAGrpIntrplExType : STRUCT
-		AxisName : McCfgUnboundedArrayType; (*Name of the axis in axes group*)
+		AxisName : McCfgUnboundedArrayType; (*Name of the axis in axes group (Connect array of type McCfgString250Type)*)
 	END_STRUCT;
 	McAGFEPCAGrpStopExType : STRUCT (*Group stop command will have no effect on the axes referenced in this list if they are excluded from interpolation*)
-		AxisReference : McCfgUnboundedArrayType; (*Name of the axis reference*)
+		AxisReference : McCfgUnboundedArrayType; (*Name of the axis reference (Connect array of type McCfgReferenceType)*)
 	END_STRUCT;
 	McAGFEPCAGrpOvrExType : STRUCT (*Group axis override will have no effect on the axes referenced in this list if they are excluded from interpolation*)
-		AxisReference : McCfgUnboundedArrayType; (*Name of the axis reference*)
+		AxisReference : McCfgUnboundedArrayType; (*Name of the axis reference (Connect array of type McCfgReferenceType)*)
 	END_STRUCT;
 	McAGFEPCAGrpErrStopExType : STRUCT (*Group error stop command will have no effect on the axes referenced in this list if they are excluded from interpolation*)
-		AxisReference : McCfgUnboundedArrayType; (*Name of the axis reference*)
+		AxisReference : McCfgUnboundedArrayType; (*Name of the axis reference (Connect array of type McCfgReferenceType)*)
 	END_STRUCT;
 	McCfgAxGrpFeatExPathAxType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_AXGRP_FEAT_EX_PATH_AX*)
 		ModalDataBehaviour : McAGFModalDatBxType; (*Defines the modal data behaviour of the feature*)
@@ -1292,7 +1332,7 @@ TYPE
 		Type : McAGFPTrgTypType; (*Type of the trigger source*)
 	END_STRUCT;
 	McAGFPTrgsType : STRUCT
-		Trigger : McCfgUnboundedArrayType;
+		Trigger : McCfgUnboundedArrayType; (*Connect array of type McAGFPTrgType*)
 	END_STRUCT;
 	McCfgAxGrpFeatProbeType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_AXGRP_FEAT_PROBE*)
 		Triggers : McAGFPTrgsType;
@@ -1395,7 +1435,7 @@ TYPE
 	END_STRUCT;
 	McAGFSIGSigsType : STRUCT
 		UnConfiguredSignals : McAGFSIGSigsUnCfgSigType; (*Behaviour of signals which are declared direct in a program (non blocking M-Function or path synchronous statements)*)
-		Signal : McCfgUnboundedArrayType;
+		Signal : McCfgUnboundedArrayType; (*Connect array of type McAGFSIGSigType*)
 	END_STRUCT;
 	McCfgAxGrpFeatSigType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_AXGRP_FEAT_SIG*)
 		Prediction : McAGFSIGPredType;
@@ -1424,7 +1464,7 @@ TYPE
 		Compensation : LREAL; (*Compensation value*)
 	END_STRUCT;
 	McAGF2DCCompDatPtLstType : STRUCT (*Type mcAGF2DCCD_PT_LST settings*)
-		Point : McCfgUnboundedArrayType;
+		Point : McCfgUnboundedArrayType; (*Connect array of type McAGF2DCCompDatPtLstPtType*)
 	END_STRUCT;
 	McAGF2DCCompDatCSVFType : STRUCT (*Type mcAGF2DCCD_CSV_F settings*)
 		FileDevice : STRING[250]; (*File device*)
@@ -1442,7 +1482,7 @@ TYPE
 	END_STRUCT;
 	McCfgAxGrpFeat2DCompType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_AXGRP_FEAT_2D_COMP*)
 		ModalDataBehaviour : McAGFModalDatBxType; (*Defines the modal data behaviour of the feature*)
-		Compensation : McCfgUnboundedArrayType;
+		Compensation : McCfgUnboundedArrayType; (*Connect array of type McAGF2DCCompType*)
 	END_STRUCT;
 	McAGF3DCCompTypEnum :
 		( (*Type selector setting*)
@@ -1468,7 +1508,7 @@ TYPE
 		Compensation : LREAL; (*Compensation value*)
 	END_STRUCT;
 	McAGF3DCCompDatPtLstType : STRUCT (*Type mcAGF3DCCD_PT_LST settings*)
-		Point : McCfgUnboundedArrayType;
+		Point : McCfgUnboundedArrayType; (*Connect array of type McAGF3DCCompDatPtLstPtType*)
 	END_STRUCT;
 	McAGF3DCCompDatCSVFType : STRUCT (*Type mcAGF3DCCD_CSV_F settings*)
 		FileDevice : STRING[250]; (*File device*)
@@ -1486,7 +1526,7 @@ TYPE
 	END_STRUCT;
 	McCfgAxGrpFeat3DCompType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_AXGRP_FEAT_3D_COMP*)
 		ModalDataBehaviour : McAGFModalDatBxType; (*Defines the modal data behaviour of the feature*)
-		Compensation : McCfgUnboundedArrayType;
+		Compensation : McCfgUnboundedArrayType; (*Connect array of type McAGF3DCCompType*)
 	END_STRUCT;
 	McAGFPPOutEnum :
 		( (*Output 1-N selector setting*)
@@ -1561,7 +1601,7 @@ TYPE
 		Margin : UDINT; (*Margin of SVG output [pixel]*)
 		Transformation : McAGFPPOFFmtSVGTrfType; (*Transformation of working area to SVG output*)
 		View : McAGFPPOFFmtSVGViewEnum; (*View*)
-		Content : McCfgUnboundedArrayType;
+		Content : McCfgUnboundedArrayType; (*Connect array of type McAGFPPOFFmtSVGContType*)
 	END_STRUCT;
 	McAGFPPOFFmtType : STRUCT (*Format of the output*)
 		Type : McAGFPPOFFmtEnum; (*Format selector setting*)
@@ -1657,7 +1697,7 @@ TYPE
 	McAGFPPOSFmtSVGType : STRUCT (*Type mcAGFPPOSF_SVG settings*)
 		Properties : McAGFPPOSFmtSVGPropType; (*Properties of SVG output*)
 		View : McAGFPPOSFmtSVGViewEnum; (*View*)
-		Content : McCfgUnboundedArrayType;
+		Content : McCfgUnboundedArrayType; (*Connect array of type McAGFPPOSFmtSVGContType*)
 	END_STRUCT;
 	McAGFPPOSFmtType : STRUCT (*Format of the output*)
 		Type : McAGFPPOSFmtEnum; (*Format selector setting*)
@@ -1675,7 +1715,7 @@ TYPE
 		Stream : McAGFPPOSType; (*Type mcAGFPPO_STREAM settings*)
 	END_STRUCT;
 	McCfgAxGrpFeatPathPreviewType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_AXGRP_FEAT_PATH_PREVIEW*)
-		Output : McCfgUnboundedArrayType;
+		Output : McCfgUnboundedArrayType; (*Connect array of type McAGFPPOutType*)
 	END_STRUCT;
 	McAGFTTAlignNonRpdMoveEnum :
 		( (*Orientation alignment for non-rapid movements*)
@@ -1814,14 +1854,28 @@ TYPE
 		mcAGFTRKOOW_ADJ_VEL := 2 (*Adjusted velocity - The system adapts the velocities defined in the motion program, if the target is out-of-workspace.*)
 		);
 	McAGFTrkOoWAdjVelType : STRUCT (*Type mcAGFTRKOOW_ADJ_VEL settings*)
-		Clearance : LREAL; (*Position shift of the target in direction of the tracking path [measurement units]*)
+		Clearance : LREAL; (*Position shift of the target in direction of the TrackingPath [measurement units]*)
 	END_STRUCT;
 	McAGFTrkOoWType : STRUCT (*Defines how to react while track on objects out of workspace*)
 		Type : McAGFTrkOoWEnum; (*Out-of-workspace synchronisation selector setting*)
 		AdjustedVelocity : McAGFTrkOoWAdjVelType; (*Type mcAGFTRKOOW_ADJ_VEL settings*)
 	END_STRUCT;
+	McAGFTrkOoWSEnum :
+		( (*Out-of-workspace synchronized selector setting*)
+		mcAGFTRKOOWS_PRG_VEL := 0, (*Programmed velocity - The system moves with the velocities defined in the motion program*)
+		mcAGFTRKOOWS_PRG_VEL_W_CK := 1, (*Programmed velocity with check - The system moves with the velocities defined in the motion program. The target position is checked for validity. If it is out-of-workspace, an error is generated.*)
+		mcAGFTRKOOWS_ADJ_VEL := 2 (*Adjusted velocity - The system adapts the velocities defined in the motion program, if the target is out-of-workspace.*)
+		);
+	McAGFTrkOoWSAdjVelType : STRUCT (*Type mcAGFTRKOOWS_ADJ_VEL settings*)
+		Clearance : LREAL; (*Position shift of the target in direction of the TrackingPath [measurement units]*)
+	END_STRUCT;
+	McAGFTrkOoWSType : STRUCT (*Defines how to react in synchronous phase if a command would move out of workspace*)
+		Type : McAGFTrkOoWSEnum; (*Out-of-workspace synchronized selector setting*)
+		AdjustedVelocity : McAGFTrkOoWSAdjVelType; (*Type mcAGFTRKOOWS_ADJ_VEL settings*)
+	END_STRUCT;
 	McAGFTRMotBxType : STRUCT (*Defines behaviour of movements while tracking on objects is active*)
 		OutOfWorkspaceSynchronisation : McAGFTrkOoWType; (*Defines how to react while track on objects out of workspace*)
+		OutOfWorkspaceSynchronized : McAGFTrkOoWSType; (*Defines how to react in synchronous phase if a command would move out of workspace*)
 	END_STRUCT;
 	McCfgAxGrpFeatTrkType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_AXGRP_FEAT_TRK*)
 		ModalDataBehaviour : McAGFModalDatBxType; (*Defines the modal data behaviour of the feature*)
@@ -1833,8 +1887,17 @@ TYPE
 		mcAGFPCXC_NOT_USE := 0, (*Not used - Pipe cutting X coordinate is not used*)
 		mcAGFPCXC_USE := 1 (*Used - Pipe cutting X coordinate is used*)
 		);
+	McAGFPCXCoorUseDirEnum :
+		( (*Direction selector setting*)
+		mcAGFPCXCUD_STD := 0, (*Standard - Positive X translates to positive slave movement*)
+		mcAGFPCXCUD_INV := 1 (*Inverse - Positive X translates to negative slave movement*)
+		);
+	McAGFPCXCoorUseDirType : STRUCT (*Pipe cutting direction*)
+		Type : McAGFPCXCoorUseDirEnum; (*Direction selector setting*)
+	END_STRUCT;
 	McAGFPCXCoorUseType : STRUCT (*Type mcAGFPCXC_USE settings*)
 		AxisReference : McCfgReferenceType; (*Name of the axis reference*)
+		Direction : McAGFPCXCoorUseDirType; (*Pipe cutting direction*)
 	END_STRUCT;
 	McAGFPCXCoorType : STRUCT (*Pipe cutting X coordinate*)
 		Type : McAGFPCXCoorEnum; (*X coordinate selector setting*)
@@ -1845,8 +1908,17 @@ TYPE
 		mcAGFPCYC_NOT_USE := 0, (*Not used - Pipe cutting Y coordinate is not used*)
 		mcAGFPCYC_USE := 1 (*Used - Pipe cutting Y coordinate is used*)
 		);
+	McAGFPCYCoorUseDirEnum :
+		( (*Direction selector setting*)
+		mcAGFPCYCUD_STD := 0, (*Standard - Positive Y translates to positive slave movement*)
+		mcAGFPCYCUD_INV := 1 (*Inverse - Positive Y translates to negative slave movement*)
+		);
+	McAGFPCYCoorUseDirType : STRUCT (*Pipe cutting direction*)
+		Type : McAGFPCYCoorUseDirEnum; (*Direction selector setting*)
+	END_STRUCT;
 	McAGFPCYCoorUseType : STRUCT (*Type mcAGFPCYC_USE settings*)
 		AxisReference : McCfgReferenceType; (*Name of the axis reference*)
+		Direction : McAGFPCYCoorUseDirType; (*Pipe cutting direction*)
 	END_STRUCT;
 	McAGFPCYCoorType : STRUCT (*Pipe cutting Y coordinate*)
 		Type : McAGFPCYCoorEnum; (*Y coordinate selector setting*)
@@ -1856,6 +1928,189 @@ TYPE
 		ModalDataBehaviour : McAGFModalDatBxType; (*Defines the modal data behaviour of the feature*)
 		XCoordinate : McAGFPCXCoorType; (*Pipe cutting X coordinate*)
 		YCoordinate : McAGFPCYCoorType; (*Pipe cutting Y coordinate*)
+	END_STRUCT;
+	McAGFTFSSelSelEnum :
+		( (*Selector '{/}' selector setting*)
+		mcAGFTFSSS_SNG_FRM := 0, (*Single frames - Selects a single TrackingFrame at a time*)
+		mcAGFTFSSS_MUL_FRM := 1, (*Multiple frames - Selects a defined number of TrackingFrame at a time*)
+		mcAGFTFSSS_FRM_PAIRS := 2 (*Frame pairs - Selects a pair of frames. E.g.: Select pick and place position based on a combined criterion.*)
+		);
+	McAGFTFSSFStratEnum :
+		( (*Strategy selector setting*)
+		mcAGFTFSSFS_FIFO := 0, (*FIFO - First in, first out: Selects the oldest TrackingFrame*)
+		mcAGFTFSSFS_LIFO := 1, (*LIFO - Last in, first out: Selects the newest TrackingFrame*)
+		mcAGFTFSSFS_MIN_X_VAL_ON_TRKPATH := 2, (*Minimum X value on TrackingPath - Selects the TrackingFrame with the minimum x-value on the TrackingPath.*)
+		mcAGFTFSSFS_MAX_X_VAL_ON_TRKPATH := 3, (*Maximum X value on TrackingPath - Selects the TrackingFrame with the maximum x-value on the TrackingPath*)
+		mcAGFTFSSFS_MIN_DIST_TO_PT := 4, (*Minimum distance to point - Selects the TrackingFrame which is closest to the specified point at selection time*)
+		mcAGFTFSSFS_MAX_DIST_TO_PT := 5, (*Maximum distance to point - Selects the TrackingFrame which is furthest from the specified point at selection time*)
+		mcAGFTFSSFS_MUL_CRIT := 6 (*Multiple criteria - Selects TrackingFrames based on multiple criteria*)
+		);
+	McAGFTFSSFSMinDstPtOgnEnum :
+		( (*Origin selector setting*)
+		mcAGFTFSSFSMinDstPtO_BCS := 0, (*BCS - Robot base coordinate system*)
+		mcAGFTFSSFSMinDstPtO_MCS := 1, (*MCS - Robot machine coordinate system*)
+		mcAGFTFSSFSMinDstPtO_FRM := 2 (*Frame - Standard frame from object hierarchy*)
+		);
+	McAGFTFSSFSMinDstPtOgnBCSType : STRUCT (*Type mcAGFTFSSFSMinDstPtO_BCS settings*)
+		Translation : McCfgTransXYZType; (*Translation parameters*)
+	END_STRUCT;
+	McAGFTFSSFSMinDstPtOgnMCSType : STRUCT (*Type mcAGFTFSSFSMinDstPtO_MCS settings*)
+		Translation : McCfgTransXYZType; (*Translation parameters*)
+	END_STRUCT;
+	McAGFTFSSFSMinDstPtOgnFrmType : STRUCT (*Type mcAGFTFSSFSMinDstPtO_FRM settings*)
+		FrameName : STRING[250]; (*Name of the standard frame defined in the object hierarchy*)
+		Translation : McCfgTransXYZType; (*Translation parameters*)
+	END_STRUCT;
+	McAGFTFSSFSMinDstPtOgnType : STRUCT (*Coordinate system in which the point is formulated*)
+		Type : McAGFTFSSFSMinDstPtOgnEnum; (*Origin selector setting*)
+		BCS : McAGFTFSSFSMinDstPtOgnBCSType; (*Type mcAGFTFSSFSMinDstPtO_BCS settings*)
+		MCS : McAGFTFSSFSMinDstPtOgnMCSType; (*Type mcAGFTFSSFSMinDstPtO_MCS settings*)
+		Frame : McAGFTFSSFSMinDstPtOgnFrmType; (*Type mcAGFTFSSFSMinDstPtO_FRM settings*)
+	END_STRUCT;
+	McAGFTFSSFSMinDstPtType : STRUCT (*Type mcAGFTFSSFS_MIN_DIST_TO_PT settings*)
+		Origin : McAGFTFSSFSMinDstPtOgnType; (*Coordinate system in which the point is formulated*)
+	END_STRUCT;
+	McAGFTFSSFSMaxDstPtOgnEnum :
+		( (*Origin selector setting*)
+		mcAGFTFSSFSMaxDstPtO_BCS := 0, (*BCS - Robot base coordinate system*)
+		mcAGFTFSSFSMaxDstPtO_MCS := 1, (*MCS - Robot machine coordinate system*)
+		mcAGFTFSSFSMaxDstPtO_FRM := 2 (*Frame - Standard frame from object hierarchy*)
+		);
+	McAGFTFSSFSMaxDstPtOgnBCSType : STRUCT (*Type mcAGFTFSSFSMaxDstPtO_BCS settings*)
+		Translation : McCfgTransXYZType; (*Translation parameters*)
+	END_STRUCT;
+	McAGFTFSSFSMaxDstPtOgnMCSType : STRUCT (*Type mcAGFTFSSFSMaxDstPtO_MCS settings*)
+		Translation : McCfgTransXYZType; (*Translation parameters*)
+	END_STRUCT;
+	McAGFTFSSFSMaxDstPtOgnFrmType : STRUCT (*Type mcAGFTFSSFSMaxDstPtO_FRM settings*)
+		FrameName : STRING[250]; (*Name of the standard frame defined in the object hierarchy*)
+		Translation : McCfgTransXYZType; (*Translation parameters*)
+	END_STRUCT;
+	McAGFTFSSFSMaxDstPtOgnType : STRUCT (*Coordinate system in which the point is formulated*)
+		Type : McAGFTFSSFSMaxDstPtOgnEnum; (*Origin selector setting*)
+		BCS : McAGFTFSSFSMaxDstPtOgnBCSType; (*Type mcAGFTFSSFSMaxDstPtO_BCS settings*)
+		MCS : McAGFTFSSFSMaxDstPtOgnMCSType; (*Type mcAGFTFSSFSMaxDstPtO_MCS settings*)
+		Frame : McAGFTFSSFSMaxDstPtOgnFrmType; (*Type mcAGFTFSSFSMaxDstPtO_FRM settings*)
+	END_STRUCT;
+	McAGFTFSSFSMaxDstPtType : STRUCT (*Type mcAGFTFSSFS_MAX_DIST_TO_PT settings*)
+		Origin : McAGFTFSSFSMaxDstPtOgnType; (*Coordinate system in which the point is formulated*)
+	END_STRUCT;
+	McAGFTFSSFStratType : STRUCT (*Defines the strategy according to which the objects are selected*)
+		Type : McAGFTFSSFStratEnum; (*Strategy selector setting*)
+		MinimumDistanceToPoint : McAGFTFSSFSMinDstPtType; (*Type mcAGFTFSSFS_MIN_DIST_TO_PT settings*)
+		MaximumDistanceToPoint : McAGFTFSSFSMaxDstPtType; (*Type mcAGFTFSSFS_MAX_DIST_TO_PT settings*)
+	END_STRUCT;
+	McAGFTFSSFFltrFltrEnum :
+		( (*Filter 1-N selector setting*)
+		mcAGFTFSSFFF_TRKPATHS := 0, (*TrackingPaths - Selects a TrackingFrame only if it belongs to one of the specified TrackingPaths*)
+		mcAGFTFSSFFF_SEL_AREA := 1, (*Selection area - Selects a TrackingFrame only if it lies inside at least one of the specified selection areas*)
+		mcAGFTFSSFFF_ATTR_MASK := 2 (*Attribute mask - Selects a TrackingFrame only if its attribute value matches the specified bitmask*)
+		);
+	McAGFTFSSFSFTPType : STRUCT (*Type mcAGFTFSSFFF_TRKPATHS settings*)
+		TrackingPathReference : McCfgUnboundedArrayType; (*Connect array of type McCfgReferenceType*)
+	END_STRUCT;
+	McAGFTFSSFSFSAAreaEnum :
+		( (*Area 1-N selector setting*)
+		mcAGFTFSSFSFSAA_CUBE := 0, (*Cuboid - Defines a cuboid in which the TrackingFrames must be located to be selected*)
+		mcAGFTFSSFSFSAA_CYLINDER := 1 (*Cylinder - Defines a cylinder in which the TrackingFrames must be located to be selected*)
+		);
+	McAGFTFSSFSFSAACubOgnEnum :
+		( (*Origin selector setting*)
+		mcAGFTFSSFSFSAACubO_BCS := 0, (*BCS - Robot base coordinate system*)
+		mcAGFTFSSFSFSAACubO_MCS := 1, (*MCS - Robot machine coordinate system*)
+		mcAGFTFSSFSFSAACubO_FRM := 2 (*Frame - Standard frame from object hierarchy*)
+		);
+	McAGFTFSSFSFSAACubOgnFrmType : STRUCT (*Type mcAGFTFSSFSFSAACubO_FRM settings*)
+		StandardFrameName : STRING[250]; (*Name of the standard frame defined in the object hierarchy*)
+	END_STRUCT;
+	McAGFTFSSFSFSAACubOgnType : STRUCT (*Origin of the cuboid*)
+		Type : McAGFTFSSFSFSAACubOgnEnum; (*Origin selector setting*)
+		Frame : McAGFTFSSFSFSAACubOgnFrmType; (*Type mcAGFTFSSFSFSAACubO_FRM settings*)
+	END_STRUCT;
+	McAGFTFSSFSFSAACubDimType : STRUCT (*Dimensions of the object*)
+		Length : LREAL; (*Length of the cuboid [measurement units]*)
+		Width : LREAL; (*Width of the cuboid [measurement units]*)
+		Height : LREAL; (*Height of the cuboid [measurement units]*)
+	END_STRUCT;
+	McAGFTFSSFSFSAACubType : STRUCT (*Type mcAGFTFSSFSFSAA_CUBE settings*)
+		Origin : McAGFTFSSFSFSAACubOgnType; (*Origin of the cuboid*)
+		Translation : McCfgTransXYZType; (*Translation parameters*)
+		Orientation : McCfgOrientType; (*Orientation parameters*)
+		Dimensions : McAGFTFSSFSFSAACubDimType; (*Dimensions of the object*)
+	END_STRUCT;
+	McAGFTFSSFSFSAACylOgnEnum :
+		( (*Origin selector setting*)
+		mcAGFTFSSFSFSAACylO_BCS := 0, (*BCS - Robot base coordinate system*)
+		mcAGFTFSSFSFSAACylO_MCS := 1, (*MCS - Robot machine coordinate system*)
+		mcAGFTFSSFSFSAACylO_FRM := 2 (*Frame - Standard frame from object hierarchy*)
+		);
+	McAGFTFSSFSFSAACylOgnFrmType : STRUCT (*Type mcAGFTFSSFSFSAACylO_FRM settings*)
+		StandardFrameName : STRING[250]; (*Name of the standard frame defined in the object hierarchy*)
+	END_STRUCT;
+	McAGFTFSSFSFSAACylOgnType : STRUCT (*Origin of the cylinder*)
+		Type : McAGFTFSSFSFSAACylOgnEnum; (*Origin selector setting*)
+		Frame : McAGFTFSSFSFSAACylOgnFrmType; (*Type mcAGFTFSSFSFSAACylO_FRM settings*)
+	END_STRUCT;
+	McAGFTFSSFSFSAACylDimType : STRUCT (*Dimensions of the object*)
+		Radius : LREAL; (*Radius of the cuboid [measurement units]*)
+		Height : LREAL; (*Height of the cuboid [measurement units]*)
+	END_STRUCT;
+	McAGFTFSSFSFSAACylType : STRUCT (*Type mcAGFTFSSFSFSAA_CYLINDER settings*)
+		Origin : McAGFTFSSFSFSAACylOgnType; (*Origin of the cylinder*)
+		Translation : McCfgTransXYZType; (*Translation parameters*)
+		Orientation : McCfgOrientType; (*Orientation parameters*)
+		Dimensions : McAGFTFSSFSFSAACylDimType; (*Dimensions of the object*)
+	END_STRUCT;
+	McAGFTFSSFSFSAAreaType : STRUCT (*Type of the selection area*)
+		Type : McAGFTFSSFSFSAAreaEnum; (*Area 1-N selector setting*)
+		Cuboid : McAGFTFSSFSFSAACubType; (*Type mcAGFTFSSFSFSAA_CUBE settings*)
+		Cylinder : McAGFTFSSFSFSAACylType; (*Type mcAGFTFSSFSFSAA_CYLINDER settings*)
+	END_STRUCT;
+	McAGFTFSSFSFSAType : STRUCT (*Type mcAGFTFSSFFF_SEL_AREA settings*)
+		Area : McCfgUnboundedArrayType; (*Type of the selection area (Connect array of type McAGFTFSSFSFSAAreaType)*)
+	END_STRUCT;
+	McAGFTFSSFSFAMType : STRUCT (*Type mcAGFTFSSFFF_ATTR_MASK settings*)
+		Mask : UDINT; (*Specifies the bits that must be set to TRUE in a TrackingFrame’s attribute for it to be selected*)
+	END_STRUCT;
+	McAGFTFSSFFltrFltrType : STRUCT (*Type of filter*)
+		Type : McAGFTFSSFFltrFltrEnum; (*Filter 1-N selector setting*)
+		TrackingPaths : McAGFTFSSFSFTPType; (*Type mcAGFTFSSFFF_TRKPATHS settings*)
+		SelectionArea : McAGFTFSSFSFSAType; (*Type mcAGFTFSSFFF_SEL_AREA settings*)
+		AttributeMask : McAGFTFSSFSFAMType; (*Type mcAGFTFSSFFF_ATTR_MASK settings*)
+	END_STRUCT;
+	McAGFTFSSFFltrType : STRUCT (*Defines a set of conditions that must be met to include a TrackingFrame in the selection*)
+		Filter : McCfgUnboundedArrayType; (*Type of filter (Connect array of type McAGFTFSSFFltrFltrType)*)
+	END_STRUCT;
+	McAGFTFSSFLckASelEnum :
+		( (*Locking after selection selector setting*)
+		mcAGFTFSSFLAS_CUR_SEL_ONLY := 0, (*Current selector only - After selection, the TrackingFrame cannot be selected again by this selector*)
+		mcAGFTFSSFLAS_ALL_SEL := 1, (*All selectors - After selection, the TrackingFrame cannot be selected again by any of the selectors*)
+		mcAGFTFSSFLAS_NO_LCK := 2 (*No locking - After selection, the TrackingFrame can be selected again*)
+		);
+	McAGFTFSSFLckASelType : STRUCT (*Defines how the TrackingFrame should be prevented from being selected again*)
+		Type : McAGFTFSSFLckASelEnum; (*Locking after selection selector setting*)
+	END_STRUCT;
+	McAGFTFSSFType : STRUCT (*Type mcAGFTFSSS_SNG_FRM settings*)
+		Name : STRING[250]; (*Unique name of selector, used in motion program*)
+		Strategy : McAGFTFSSFStratType; (*Defines the strategy according to which the objects are selected*)
+		Filters : McAGFTFSSFFltrType; (*Defines a set of conditions that must be met to include a TrackingFrame in the selection*)
+		LockingAfterSelection : McAGFTFSSFLckASelType; (*Defines how the TrackingFrame should be prevented from being selected again*)
+	END_STRUCT;
+	McAGFTFSSelSelType : STRUCT (*Type of TrackingFrame selector*)
+		Type : McAGFTFSSelSelEnum; (*Selector '{/}' selector setting*)
+		SingleFrames : McAGFTFSSFType; (*Type mcAGFTFSSS_SNG_FRM settings*)
+	END_STRUCT;
+	McAGFTFSSelType : STRUCT
+		Selector : McCfgUnboundedArrayType; (*Type of TrackingFrame selector (Connect array of type McAGFTFSSelSelType)*)
+	END_STRUCT;
+	McCfgAxGrpFeatTrkFrmSelType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_AXGRP_FEAT_TRKFRM_SEL*)
+		Selectors : McAGFTFSSelType;
+	END_STRUCT;
+	McAGFTFSAAreaFltrType : STRUCT (*Defines the filters from type selection area that are defined within the specified TrackingFrame selector*)
+		Area : McCfgUnboundedArrayType; (*Type of the selection area (Connect array of type McAGFTFSSFSFSAAreaType)*)
+	END_STRUCT;
+	McCfgAxGrpFeatTrkFrmSelAreaType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_AXGRP_FEAT_TRKFRM_SEL_AREA*)
+		AreaFilter : McCfgUnboundedArrayType; (*Defines the filters from type selection area that are defined within the specified TrackingFrame selector (Connect array of type McAGFTFSAAreaFltrType)*)
 	END_STRUCT;
 	McMSCSDescEnum :
 		( (*Description selector setting*)
@@ -1911,7 +2166,7 @@ TYPE
 		Name : STRING[250]; (*Name of coordinate*)
 	END_STRUCT;
 	McMSCSCNOCAnglesType : STRUCT (*Type mcMSCSCNOC_ANGLES settings*)
-		Coordinate : McCfgUnboundedArrayType;
+		Coordinate : McCfgUnboundedArrayType; (*Connect array of type McMSCSCNOCAnglesCoorType*)
 	END_STRUCT;
 	McMSCSCNOCType : STRUCT (*Orientation coordinates*)
 		Type : McMSCSCNOCEnum; (*Orientation coordinates selector setting*)
@@ -1955,7 +2210,7 @@ TYPE
 		TargetJointAxisUnits : LREAL; (*Units of the joint axis due to influence [measurement units]*)
 	END_STRUCT;
 	McMSCSCplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplgCLinCplgType)*)
 	END_STRUCT;
 	McMSJntAxPosLimEnum :
 		( (*Joint axis 1-15 selector setting*)
@@ -2040,10 +2295,63 @@ TYPE
 		TargetJointAxisUnits : LREAL; (*Units of the joint axis due to influence [measurement units]*)
 	END_STRUCT;
 	McMS2ACXYCplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg2LinCplgType)*)
+	END_STRUCT;
+	McMSJnt2AxRelLimEnum :
+		( (*Relative limits selector setting*)
+		mcMSJ2ARL_NOT_USE := 0, (*Not used - Relative limits not used*)
+		mcMSJ2ARL_STD := 1 (*Standard - Standard relative limit*)
+		);
+	McMSJ2ARLSJALLEnum :
+		( (*Lower limit selector setting*)
+		mcMSJ2ARLSJALL_NOT_USE := 0, (*Not used - Relative limits not used*)
+		mcMSJ2ARLSJALL_STD := 1 (*Standard - Standard relative limit*)
+		);
+	McMSJ2ARLSJALLStdSrcJntAxEnum :
+		( (*Index of the source joint axis for the relative limit*)
+		mcMSJ2ARLSJALLSSJA_AX_1 := 0, (*Axis 1 - Axis 1*)
+		mcMSJ2ARLSJALLSSJA_AX_2 := 1 (*Axis 2 - Axis 2*)
+		);
+	McMSJ2ARLSJALLStdType : STRUCT (*Type mcMSJ2ARLSJALL_STD settings*)
+		SourceJointAxis : McMSJ2ARLSJALLStdSrcJntAxEnum; (*Index of the source joint axis for the relative limit*)
+		Coefficient : LREAL; (*Coefficient [measurement units]*)
+	END_STRUCT;
+	McMSJ2ARLSJALLType : STRUCT (*Lower limit*)
+		Type : McMSJ2ARLSJALLEnum; (*Lower limit selector setting*)
+		Standard : McMSJ2ARLSJALLStdType; (*Type mcMSJ2ARLSJALL_STD settings*)
+	END_STRUCT;
+	McMSJ2ARLSJAULEnum :
+		( (*Upper limit selector setting*)
+		mcMSJ2ARLSJAUL_NOT_USE := 0, (*Not used - Relative limits not used*)
+		mcMSJ2ARLSJAUL_STD := 1 (*Standard - Standard relative limit*)
+		);
+	McMSJ2ARLSJAULStdSrcJntAxEnum :
+		( (*Index of the source joint axis for the relative limit*)
+		mcMSJ2ARLSJAULSSJA_AX_1 := 0, (*Axis 1 - Axis 1*)
+		mcMSJ2ARLSJAULSSJA_AX_2 := 1 (*Axis 2 - Axis 2*)
+		);
+	McMSJ2ARLSJAULStdType : STRUCT (*Type mcMSJ2ARLSJAUL_STD settings*)
+		SourceJointAxis : McMSJ2ARLSJAULStdSrcJntAxEnum; (*Index of the source joint axis for the relative limit*)
+		Coefficient : LREAL; (*Coefficient [measurement units]*)
+	END_STRUCT;
+	McMSJ2ARLSJAULType : STRUCT (*Upper limit*)
+		Type : McMSJ2ARLSJAULEnum; (*Upper limit selector setting*)
+		Standard : McMSJ2ARLSJAULStdType; (*Type mcMSJ2ARLSJAUL_STD settings*)
+	END_STRUCT;
+	McMSJnt2AxRelLimStdJntAxType : STRUCT (*Relative limits for joint axis*)
+		LowerLimit : McMSJ2ARLSJALLType; (*Lower limit*)
+		UpperLimit : McMSJ2ARLSJAULType; (*Upper limit*)
+	END_STRUCT;
+	McMSJnt2AxRelLimStdType : STRUCT (*Type mcMSJ2ARL_STD settings*)
+		JointAxis : ARRAY[0..1] OF McMSJnt2AxRelLimStdJntAxType; (*Relative limits for joint axis*)
+	END_STRUCT;
+	McMSJnt2AxRelLimType : STRUCT (*Relative limits*)
+		Type : McMSJnt2AxRelLimEnum; (*Relative limits selector setting*)
+		Standard : McMSJnt2AxRelLimStdType; (*Type mcMSJ2ARL_STD settings*)
 	END_STRUCT;
 	McMSJnt2AxPosLimType : STRUCT (*Position limits for joint axis*)
 		JointAxis : ARRAY[0..1] OF McMSJntAxPosLimType; (*Limits for joint axis*)
+		RelativeLimits : McMSJnt2AxRelLimType; (*Relative limits*)
 	END_STRUCT;
 	McCfgMS2AxCncXYType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_2AX_CNC_XY*)
 		CoordinatesNames : McMS2ACXYCoorNameType; (*Coordinates names*)
@@ -2071,7 +2379,7 @@ TYPE
 		Standard : McMS2ACXZWFrmMdlStdType; (*Type mcMS2ACXZWFM_STD settings*)
 	END_STRUCT;
 	McMS2ACXZCplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg2LinCplgType)*)
 	END_STRUCT;
 	McCfgMS2AxCncXZType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_2AX_CNC_XZ*)
 		CoordinatesNames : McMS2ACXZCoorNameType; (*Coordinates names*)
@@ -2099,7 +2407,7 @@ TYPE
 		Standard : McMS2ACYZWFrmMdlStdType; (*Type mcMS2ACYZWFM_STD settings*)
 	END_STRUCT;
 	McMS2ACYZCplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg2LinCplgType)*)
 	END_STRUCT;
 	McCfgMS2AxCncYZType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_2AX_CNC_YZ*)
 		CoordinatesNames : McMS2ACYZCoorNameType; (*Coordinates names*)
@@ -2146,10 +2454,65 @@ TYPE
 		TargetJointAxisUnits : LREAL; (*Units of the joint axis due to influence [measurement units]*)
 	END_STRUCT;
 	McMS3ACXYZCplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg3LinCplgType)*)
+	END_STRUCT;
+	McMSJnt3AxRelLimEnum :
+		( (*Relative limits selector setting*)
+		mcMSJ3ARL_NOT_USE := 0, (*Not used - Relative limits not used*)
+		mcMSJ3ARL_STD := 1 (*Standard - Standard relative limit*)
+		);
+	McMSJ3ARLSJALLEnum :
+		( (*Lower limit selector setting*)
+		mcMSJ3ARLSJALL_NOT_USE := 0, (*Not used - Relative limits not used*)
+		mcMSJ3ARLSJALL_STD := 1 (*Standard - Standard relative limit*)
+		);
+	McMSJ3ARLSJALLStdSrcJntAxEnum :
+		( (*Index of the source joint axis for the relative limit*)
+		mcMSJ3ARLSJALLSSJA_AX_1 := 0, (*Axis 1 - Axis 1*)
+		mcMSJ3ARLSJALLSSJA_AX_2 := 1, (*Axis 2 - Axis 2*)
+		mcMSJ3ARLSJALLSSJA_AX_3 := 2 (*Axis 3 - Axis 3*)
+		);
+	McMSJ3ARLSJALLStdType : STRUCT (*Type mcMSJ3ARLSJALL_STD settings*)
+		SourceJointAxis : McMSJ3ARLSJALLStdSrcJntAxEnum; (*Index of the source joint axis for the relative limit*)
+		Coefficient : LREAL; (*Coefficient [measurement units]*)
+	END_STRUCT;
+	McMSJ3ARLSJALLType : STRUCT (*Lower limit*)
+		Type : McMSJ3ARLSJALLEnum; (*Lower limit selector setting*)
+		Standard : McMSJ3ARLSJALLStdType; (*Type mcMSJ3ARLSJALL_STD settings*)
+	END_STRUCT;
+	McMSJ3ARLSJAULEnum :
+		( (*Upper limit selector setting*)
+		mcMSJ3ARLSJAUL_NOT_USE := 0, (*Not used - Relative limits not used*)
+		mcMSJ3ARLSJAUL_STD := 1 (*Standard - Standard relative limit*)
+		);
+	McMSJ3ARLSJAULStdSrcJntAxEnum :
+		( (*Index of the source joint axis for the relative limit*)
+		mcMSJ3ARLSJAULSSJA_AX_1 := 0, (*Axis 1 - Axis 1*)
+		mcMSJ3ARLSJAULSSJA_AX_2 := 1, (*Axis 2 - Axis 2*)
+		mcMSJ3ARLSJAULSSJA_AX_3 := 2 (*Axis 3 - Axis 3*)
+		);
+	McMSJ3ARLSJAULStdType : STRUCT (*Type mcMSJ3ARLSJAUL_STD settings*)
+		SourceJointAxis : McMSJ3ARLSJAULStdSrcJntAxEnum; (*Index of the source joint axis for the relative limit*)
+		Coefficient : LREAL; (*Coefficient [measurement units]*)
+	END_STRUCT;
+	McMSJ3ARLSJAULType : STRUCT (*Upper limit*)
+		Type : McMSJ3ARLSJAULEnum; (*Upper limit selector setting*)
+		Standard : McMSJ3ARLSJAULStdType; (*Type mcMSJ3ARLSJAUL_STD settings*)
+	END_STRUCT;
+	McMSJnt3AxRelLimStdJntAxType : STRUCT (*Relative limits for joint axis*)
+		LowerLimit : McMSJ3ARLSJALLType; (*Lower limit*)
+		UpperLimit : McMSJ3ARLSJAULType; (*Upper limit*)
+	END_STRUCT;
+	McMSJnt3AxRelLimStdType : STRUCT (*Type mcMSJ3ARL_STD settings*)
+		JointAxis : ARRAY[0..2] OF McMSJnt3AxRelLimStdJntAxType; (*Relative limits for joint axis*)
+	END_STRUCT;
+	McMSJnt3AxRelLimType : STRUCT (*Relative limits*)
+		Type : McMSJnt3AxRelLimEnum; (*Relative limits selector setting*)
+		Standard : McMSJnt3AxRelLimStdType; (*Type mcMSJ3ARL_STD settings*)
 	END_STRUCT;
 	McMSJnt3AxPosLimType : STRUCT (*Position limits for joint axis*)
 		JointAxis : ARRAY[0..2] OF McMSJntAxPosLimType; (*Limits for joint axis*)
+		RelativeLimits : McMSJnt3AxRelLimType; (*Relative limits*)
 	END_STRUCT;
 	McCfgMS3AxCncXYZType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_3AX_CNC_XYZ*)
 		CoordinatesNames : McMS3ACXYZCoorNameType; (*Coordinates names*)
@@ -2210,7 +2573,7 @@ TYPE
 		Standard : McMS3ACXZCWFrmMdlStdType; (*Type mcMS3ACXZCWFM_STD settings*)
 	END_STRUCT;
 	McMS3ACXZCCplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg3LinCplgType)*)
 	END_STRUCT;
 	McCfgMS3AxCncXZCType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_3AX_CNC_XZC*)
 		Description : McMS3ACXZCDescType; (*Description of the mechanical system*)
@@ -2272,7 +2635,7 @@ TYPE
 		Standard : McMS3ACXZBWFrmMdlStdType; (*Type mcMS3ACXZBWFM_STD settings*)
 	END_STRUCT;
 	McMS3ACXZBCplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg3LinCplgType)*)
 	END_STRUCT;
 	McCfgMS3AxCncXZBType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_3AX_CNC_XZB*)
 		Description : McMS3ACXZBDescType; (*Description of the mechanical system*)
@@ -2282,16 +2645,16 @@ TYPE
 		Couplings : McMS3ACXZBCplgType; (*Couplings between selected axes and the joint axis*)
 		JointAxesPositionLimits : McMSJnt3AxPosLimType; (*Position limits for joint axis*)
 	END_STRUCT;
-	McMS4ACXYZBDescEnum :
+	McMS4ACXYZADescEnum :
 		( (*Description selector setting*)
-		mcMS4ACXYZBD_STD := 0 (*Standard - Standard description*)
+		mcMS4ACXYZAD_STD := 0 (*Standard - Standard description*)
 		);
-	McMS4ACXYZBDSDimType : STRUCT (*Dimensions of the mechanical system*)
+	McMS4ACXYZADSDimType : STRUCT (*Dimensions of the mechanical system*)
 		TranslationFromBaseToQX : McCfgTransXType; (*Translation from base of the mechanical system to QX*)
 		TranslationFromQXToQY : McCfgTransYType; (*Translation from QX to QY*)
 		TranslationFromQYToQZ : McCfgTransZType; (*Translation from QY to QZ*)
-		TranslationFromQZToQB : McCfgTransXYZType; (*Translation from QZ to QB*)
-		TranslationFromQBToFlange : McCfgTransXYZType; (*Translation from QB to flange*)
+		TranslationFromQZToQA : McCfgTransXYZType; (*Translation from QZ to QA*)
+		TranslationFromQAToFlange : McCfgTransXYZType; (*Translation from QA to flange*)
 	END_STRUCT;
 	McMSMdl4ZeroPosOffType : STRUCT (*Offsets between desired and internal zero position*)
 		JointAxis : ARRAY[0..3] OF LREAL; (*Offset for joint axis [measurement units]*)
@@ -2303,6 +2666,140 @@ TYPE
 		);
 	McMSMdl4CntDirType : STRUCT (*Count direction for joint axes relative to the internal model*)
 		JointAxis : ARRAY[0..3] OF McMSMdl4CntDirJntAxEnum; (*Count direction for joint axis*)
+	END_STRUCT;
+	McMS4ACXYZADSType : STRUCT (*Type mcMS4ACXYZAD_STD settings*)
+		Dimensions : McMS4ACXYZADSDimType; (*Dimensions of the mechanical system*)
+		ModelZeroPositionOffsets : McMSMdl4ZeroPosOffType; (*Offsets between desired and internal zero position*)
+		ModelCountDirections : McMSMdl4CntDirType; (*Count direction for joint axes relative to the internal model*)
+	END_STRUCT;
+	McMS4ACXYZADescType : STRUCT (*Description of the mechanical system*)
+		Type : McMS4ACXYZADescEnum; (*Description selector setting*)
+		Standard : McMS4ACXYZADSType; (*Type mcMS4ACXYZAD_STD settings*)
+	END_STRUCT;
+	McMS4ACXYZACoorNameCmnType : STRUCT (*Common settings for all Type values*)
+		XCoordinateName : STRING[250]; (*X coordinate name*)
+		YCoordinateName : STRING[250]; (*Y coordinate name*)
+		ZCoordinateName : STRING[250]; (*Z coordinate name*)
+		ACoordinateName : STRING[250]; (*A coordinate name*)
+	END_STRUCT;
+	McMS4ACXYZACoorNameType : STRUCT (*Coordinates names*)
+		Type : McMSCNEnum; (*Coordinates names selector setting*)
+		Common : McMS4ACXYZACoorNameCmnType; (*Common settings for all Type values*)
+	END_STRUCT;
+	McMS4ACXYZAWFrmMdlEnum :
+		( (*Wire frame model selector setting*)
+		mcMS4ACXYZAWFM_STD := 0 (*Standard - Standard wire-frame model*)
+		);
+	McMS4ACXYZAWFrmMdlStdType : STRUCT (*Type mcMS4ACXYZAWFM_STD settings*)
+		QZToQA : McMSFrmMdlStdEdgeType; (*Wire frame model edge*)
+		QAToFlange : McMSFrmMdlStdEdgeType; (*Wire frame model edge*)
+		FlangeToTCP : McMSFrmMdlStdEdgeType; (*Wire frame model edge*)
+	END_STRUCT;
+	McMS4ACXYZAWFrmMdlType : STRUCT (*Wire frame model of mechanical system*)
+		Type : McMS4ACXYZAWFrmMdlEnum; (*Wire frame model selector setting*)
+		Standard : McMS4ACXYZAWFrmMdlStdType; (*Type mcMS4ACXYZAWFM_STD settings*)
+	END_STRUCT;
+	McMSCplg4LinCplgSrcAxEnum :
+		( (*Index of the axis which influences the joint axis*)
+		mcMSC4LCSA_AX_1 := 0, (*Axis 1 - Axis 1*)
+		mcMSC4LCSA_AX_2 := 1, (*Axis 2 - Axis 2*)
+		mcMSC4LCSA_AX_3 := 2, (*Axis 3 - Axis 3*)
+		mcMSC4LCSA_AX_4 := 3 (*Axis 4 - Axis 4*)
+		);
+	McMSCplg4LinCplgTgtJntAxEnum :
+		( (*Index of the joint axis which is influenced*)
+		mcMSC4LCTJA_JNT_AX_1 := 0, (*Joint axis 1 - Joint axis 1*)
+		mcMSC4LCTJA_JNT_AX_2 := 1, (*Joint axis 2 - Joint axis 2*)
+		mcMSC4LCTJA_JNT_AX_3 := 2, (*Joint axis 3 - Joint axis 3*)
+		mcMSC4LCTJA_JNT_AX_4 := 3 (*Joint axis 4 - Joint axis 4*)
+		);
+	McMSCplg4LinCplgType : STRUCT (*Linear coupling*)
+		SourceAxis : McMSCplg4LinCplgSrcAxEnum; (*Index of the axis which influences the joint axis*)
+		SourceAxisUnits : LREAL; (*Units of the axis which influences the joint axis [measurement units]*)
+		TargetJointAxis : McMSCplg4LinCplgTgtJntAxEnum; (*Index of the joint axis which is influenced*)
+		TargetJointAxisUnits : LREAL; (*Units of the joint axis due to influence [measurement units]*)
+	END_STRUCT;
+	McMS4ACXYZACplgType : STRUCT (*Couplings between selected axes and the joint axis*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg4LinCplgType)*)
+	END_STRUCT;
+	McMSJnt4AxRelLimEnum :
+		( (*Relative limits selector setting*)
+		mcMSJ4ARL_NOT_USE := 0, (*Not used - Relative limits not used*)
+		mcMSJ4ARL_STD := 1 (*Standard - Standard relative limit*)
+		);
+	McMSJ4ARLSJALLEnum :
+		( (*Lower limit selector setting*)
+		mcMSJ4ARLSJALL_NOT_USE := 0, (*Not used - Relative limits not used*)
+		mcMSJ4ARLSJALL_STD := 1 (*Standard - Standard relative limit*)
+		);
+	McMSJ4ARLSJALLStdSrcJntAxEnum :
+		( (*Index of the source joint axis for the relative limit*)
+		mcMSJ4ARLSJALLSSJA_AX_1 := 0, (*Axis 1 - Axis 1*)
+		mcMSJ4ARLSJALLSSJA_AX_2 := 1, (*Axis 2 - Axis 2*)
+		mcMSJ4ARLSJALLSSJA_AX_3 := 2, (*Axis 3 - Axis 3*)
+		mcMSJ4ARLSJALLSSJA_AX_4 := 3 (*Axis 4 - Axis 4*)
+		);
+	McMSJ4ARLSJALLStdType : STRUCT (*Type mcMSJ4ARLSJALL_STD settings*)
+		SourceJointAxis : McMSJ4ARLSJALLStdSrcJntAxEnum; (*Index of the source joint axis for the relative limit*)
+		Coefficient : LREAL; (*Coefficient [measurement units]*)
+	END_STRUCT;
+	McMSJ4ARLSJALLType : STRUCT (*Lower limit*)
+		Type : McMSJ4ARLSJALLEnum; (*Lower limit selector setting*)
+		Standard : McMSJ4ARLSJALLStdType; (*Type mcMSJ4ARLSJALL_STD settings*)
+	END_STRUCT;
+	McMSJ4ARLSJAULEnum :
+		( (*Upper limit selector setting*)
+		mcMSJ4ARLSJAUL_NOT_USE := 0, (*Not used - Relative limits not used*)
+		mcMSJ4ARLSJAUL_STD := 1 (*Standard - Standard relative limit*)
+		);
+	McMSJ4ARLSJAULStdSrcJntAxEnum :
+		( (*Index of the source joint axis for the relative limit*)
+		mcMSJ4ARLSJAULSSJA_AX_1 := 0, (*Axis 1 - Axis 1*)
+		mcMSJ4ARLSJAULSSJA_AX_2 := 1, (*Axis 2 - Axis 2*)
+		mcMSJ4ARLSJAULSSJA_AX_3 := 2, (*Axis 3 - Axis 3*)
+		mcMSJ4ARLSJAULSSJA_AX_4 := 3 (*Axis 4 - Axis 4*)
+		);
+	McMSJ4ARLSJAULStdType : STRUCT (*Type mcMSJ4ARLSJAUL_STD settings*)
+		SourceJointAxis : McMSJ4ARLSJAULStdSrcJntAxEnum; (*Index of the source joint axis for the relative limit*)
+		Coefficient : LREAL; (*Coefficient [measurement units]*)
+	END_STRUCT;
+	McMSJ4ARLSJAULType : STRUCT (*Upper limit*)
+		Type : McMSJ4ARLSJAULEnum; (*Upper limit selector setting*)
+		Standard : McMSJ4ARLSJAULStdType; (*Type mcMSJ4ARLSJAUL_STD settings*)
+	END_STRUCT;
+	McMSJnt4AxRelLimStdJntAxType : STRUCT (*Relative limits for joint axis*)
+		LowerLimit : McMSJ4ARLSJALLType; (*Lower limit*)
+		UpperLimit : McMSJ4ARLSJAULType; (*Upper limit*)
+	END_STRUCT;
+	McMSJnt4AxRelLimStdType : STRUCT (*Type mcMSJ4ARL_STD settings*)
+		JointAxis : ARRAY[0..3] OF McMSJnt4AxRelLimStdJntAxType; (*Relative limits for joint axis*)
+	END_STRUCT;
+	McMSJnt4AxRelLimType : STRUCT (*Relative limits*)
+		Type : McMSJnt4AxRelLimEnum; (*Relative limits selector setting*)
+		Standard : McMSJnt4AxRelLimStdType; (*Type mcMSJ4ARL_STD settings*)
+	END_STRUCT;
+	McMSJnt4AxPosLimType : STRUCT (*Position limits for joint axis*)
+		JointAxis : ARRAY[0..3] OF McMSJntAxPosLimType; (*Limits for joint axis*)
+		RelativeLimits : McMSJnt4AxRelLimType; (*Relative limits*)
+	END_STRUCT;
+	McCfgMS4AxCncXYZAType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_4AX_CNC_XYZA*)
+		Description : McMS4ACXYZADescType; (*Description of the mechanical system*)
+		CoordinatesNames : McMS4ACXYZACoorNameType; (*Coordinates names*)
+		TCPOrientation : McMSTCPOType; (*Handling of TCP orientation coordinates*)
+		WireFrameModel : McMS4ACXYZAWFrmMdlType; (*Wire frame model of mechanical system*)
+		Couplings : McMS4ACXYZACplgType; (*Couplings between selected axes and the joint axis*)
+		JointAxesPositionLimits : McMSJnt4AxPosLimType; (*Position limits for joint axis*)
+	END_STRUCT;
+	McMS4ACXYZBDescEnum :
+		( (*Description selector setting*)
+		mcMS4ACXYZBD_STD := 0 (*Standard - Standard description*)
+		);
+	McMS4ACXYZBDSDimType : STRUCT (*Dimensions of the mechanical system*)
+		TranslationFromBaseToQX : McCfgTransXType; (*Translation from base of the mechanical system to QX*)
+		TranslationFromQXToQY : McCfgTransYType; (*Translation from QX to QY*)
+		TranslationFromQYToQZ : McCfgTransZType; (*Translation from QY to QZ*)
+		TranslationFromQZToQB : McCfgTransXYZType; (*Translation from QZ to QB*)
+		TranslationFromQBToFlange : McCfgTransXYZType; (*Translation from QB to flange*)
 	END_STRUCT;
 	McMS4ACXYZBDSType : STRUCT (*Type mcMS4ACXYZBD_STD settings*)
 		Dimensions : McMS4ACXYZBDSDimType; (*Dimensions of the mechanical system*)
@@ -2336,31 +2833,8 @@ TYPE
 		Type : McMS4ACXYZBWFrmMdlEnum; (*Wire frame model selector setting*)
 		Standard : McMS4ACXYZBWFrmMdlStdType; (*Type mcMS4ACXYZBWFM_STD settings*)
 	END_STRUCT;
-	McMSCplg4LinCplgSrcAxEnum :
-		( (*Index of the axis which influences the joint axis*)
-		mcMSC4LCSA_AX_1 := 0, (*Axis 1 - Axis 1*)
-		mcMSC4LCSA_AX_2 := 1, (*Axis 2 - Axis 2*)
-		mcMSC4LCSA_AX_3 := 2, (*Axis 3 - Axis 3*)
-		mcMSC4LCSA_AX_4 := 3 (*Axis 4 - Axis 4*)
-		);
-	McMSCplg4LinCplgTgtJntAxEnum :
-		( (*Index of the joint axis which is influenced*)
-		mcMSC4LCTJA_JNT_AX_1 := 0, (*Joint axis 1 - Joint axis 1*)
-		mcMSC4LCTJA_JNT_AX_2 := 1, (*Joint axis 2 - Joint axis 2*)
-		mcMSC4LCTJA_JNT_AX_3 := 2, (*Joint axis 3 - Joint axis 3*)
-		mcMSC4LCTJA_JNT_AX_4 := 3 (*Joint axis 4 - Joint axis 4*)
-		);
-	McMSCplg4LinCplgType : STRUCT (*Linear coupling*)
-		SourceAxis : McMSCplg4LinCplgSrcAxEnum; (*Index of the axis which influences the joint axis*)
-		SourceAxisUnits : LREAL; (*Units of the axis which influences the joint axis [measurement units]*)
-		TargetJointAxis : McMSCplg4LinCplgTgtJntAxEnum; (*Index of the joint axis which is influenced*)
-		TargetJointAxisUnits : LREAL; (*Units of the joint axis due to influence [measurement units]*)
-	END_STRUCT;
 	McMS4ACXYZBCplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
-	END_STRUCT;
-	McMSJnt4AxPosLimType : STRUCT (*Position limits for joint axis*)
-		JointAxis : ARRAY[0..3] OF McMSJntAxPosLimType; (*Limits for joint axis*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg4LinCplgType)*)
 	END_STRUCT;
 	McCfgMS4AxCncXYZBType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_4AX_CNC_XYZB*)
 		Description : McMS4ACXYZBDescType; (*Description of the mechanical system*)
@@ -2414,7 +2888,7 @@ TYPE
 		Standard : McMS4ACXYZCWFrmMdlStdType; (*Type mcMS4ACXYZCWFM_STD settings*)
 	END_STRUCT;
 	McMS4ACXYZCCplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg4LinCplgType)*)
 	END_STRUCT;
 	McCfgMS4AxCncXYZCType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_4AX_CNC_XYZC*)
 		Description : McMS4ACXYZCDescType; (*Description of the mechanical system*)
@@ -2504,10 +2978,69 @@ TYPE
 		TargetJointAxisUnits : LREAL; (*Units of the joint axis due to influence [measurement units]*)
 	END_STRUCT;
 	McMS5ACXYZBACplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg5LinCplgType)*)
+	END_STRUCT;
+	McMSJnt5AxRelLimEnum :
+		( (*Relative limits selector setting*)
+		mcMSJ5ARL_NOT_USE := 0, (*Not used - Relative limits not used*)
+		mcMSJ5ARL_STD := 1 (*Standard - Standard relative limit*)
+		);
+	McMSJ5ARLSJALLEnum :
+		( (*Lower limit selector setting*)
+		mcMSJ5ARLSJALL_NOT_USE := 0, (*Not used - Relative limits not used*)
+		mcMSJ5ARLSJALL_STD := 1 (*Standard - Standard relative limit*)
+		);
+	McMSJ5ARLSJALLStdSrcJntAxEnum :
+		( (*Index of the source joint axis for the relative limit*)
+		mcMSJ5ARLSJALLSSJA_AX_1 := 0, (*Axis 1 - Axis 1*)
+		mcMSJ5ARLSJALLSSJA_AX_2 := 1, (*Axis 2 - Axis 2*)
+		mcMSJ5ARLSJALLSSJA_AX_3 := 2, (*Axis 3 - Axis 3*)
+		mcMSJ5ARLSJALLSSJA_AX_4 := 3, (*Axis 4 - Axis 4*)
+		mcMSJ5ARLSJALLSSJA_AX_5 := 4 (*Axis 5 - Axis 5*)
+		);
+	McMSJ5ARLSJALLStdType : STRUCT (*Type mcMSJ5ARLSJALL_STD settings*)
+		SourceJointAxis : McMSJ5ARLSJALLStdSrcJntAxEnum; (*Index of the source joint axis for the relative limit*)
+		Coefficient : LREAL; (*Coefficient [measurement units]*)
+	END_STRUCT;
+	McMSJ5ARLSJALLType : STRUCT (*Lower limit*)
+		Type : McMSJ5ARLSJALLEnum; (*Lower limit selector setting*)
+		Standard : McMSJ5ARLSJALLStdType; (*Type mcMSJ5ARLSJALL_STD settings*)
+	END_STRUCT;
+	McMSJ5ARLSJAULEnum :
+		( (*Upper limit selector setting*)
+		mcMSJ5ARLSJAUL_NOT_USE := 0, (*Not used - Relative limits not used*)
+		mcMSJ5ARLSJAUL_STD := 1 (*Standard - Standard relative limit*)
+		);
+	McMSJ5ARLSJAULStdSrcJntAxEnum :
+		( (*Index of the source joint axis for the relative limit*)
+		mcMSJ5ARLSJAULSSJA_AX_1 := 0, (*Axis 1 - Axis 1*)
+		mcMSJ5ARLSJAULSSJA_AX_2 := 1, (*Axis 2 - Axis 2*)
+		mcMSJ5ARLSJAULSSJA_AX_3 := 2, (*Axis 3 - Axis 3*)
+		mcMSJ5ARLSJAULSSJA_AX_4 := 3, (*Axis 4 - Axis 4*)
+		mcMSJ5ARLSJAULSSJA_AX_5 := 4 (*Axis 5 - Axis 5*)
+		);
+	McMSJ5ARLSJAULStdType : STRUCT (*Type mcMSJ5ARLSJAUL_STD settings*)
+		SourceJointAxis : McMSJ5ARLSJAULStdSrcJntAxEnum; (*Index of the source joint axis for the relative limit*)
+		Coefficient : LREAL; (*Coefficient [measurement units]*)
+	END_STRUCT;
+	McMSJ5ARLSJAULType : STRUCT (*Upper limit*)
+		Type : McMSJ5ARLSJAULEnum; (*Upper limit selector setting*)
+		Standard : McMSJ5ARLSJAULStdType; (*Type mcMSJ5ARLSJAUL_STD settings*)
+	END_STRUCT;
+	McMSJnt5AxRelLimStdJntAxType : STRUCT (*Relative limits for joint axis*)
+		LowerLimit : McMSJ5ARLSJALLType; (*Lower limit*)
+		UpperLimit : McMSJ5ARLSJAULType; (*Upper limit*)
+	END_STRUCT;
+	McMSJnt5AxRelLimStdType : STRUCT (*Type mcMSJ5ARL_STD settings*)
+		JointAxis : ARRAY[0..4] OF McMSJnt5AxRelLimStdJntAxType; (*Relative limits for joint axis*)
+	END_STRUCT;
+	McMSJnt5AxRelLimType : STRUCT (*Relative limits*)
+		Type : McMSJnt5AxRelLimEnum; (*Relative limits selector setting*)
+		Standard : McMSJnt5AxRelLimStdType; (*Type mcMSJ5ARL_STD settings*)
 	END_STRUCT;
 	McMSJnt5AxPosLimType : STRUCT (*Position limits for joint axis*)
 		JointAxis : ARRAY[0..4] OF McMSJntAxPosLimType; (*Limits for joint axis*)
+		RelativeLimits : McMSJnt5AxRelLimType; (*Relative limits*)
 	END_STRUCT;
 	McCfgMS5AxCncXYZBAType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_5AX_CNC_XYZBA*)
 		Description : McMS5ACXYZBADescType; (*Description of the mechanical system*)
@@ -2515,6 +3048,62 @@ TYPE
 		TCPOrientation : McMSTCPOType; (*Handling of TCP orientation coordinates*)
 		WireFrameModel : McMS5ACXYZBAWFrmMdlType; (*Wire frame model of mechanical system*)
 		Couplings : McMS5ACXYZBACplgType; (*Couplings between selected axes and the joint axis*)
+		JointAxesPositionLimits : McMSJnt5AxPosLimType; (*Position limits for joint axis*)
+	END_STRUCT;
+	McMS5ACXYZBCDescEnum :
+		( (*Description selector setting*)
+		mcMS5ACXYZBCD_STD := 0 (*Standard - Standard description*)
+		);
+	McMS5ACXYZBCDSDimType : STRUCT (*Dimensions of the mechanical system*)
+		TranslationFromBaseToQX : McCfgTransXType; (*Translation from base of the mechanical system to QX*)
+		TranslationFromQXToQY : McCfgTransYType; (*Translation from QX to QY*)
+		TranslationFromQYToQZ : McCfgTransZType; (*Translation from QY to QZ*)
+		TranslationFromQZToQB : McCfgTransXYZType; (*Translation from QZ to QB*)
+		TranslationFromQBToQC : McCfgTransXYZType; (*Translation from QB to QC*)
+		TranslationFromQCToFlange : McCfgTransXYZType; (*Translation from QC to flange*)
+	END_STRUCT;
+	McMS5ACXYZBCDSType : STRUCT (*Type mcMS5ACXYZBCD_STD settings*)
+		Dimensions : McMS5ACXYZBCDSDimType; (*Dimensions of the mechanical system*)
+		ModelZeroPositionOffsets : McMSMdl5ZeroPosOffType; (*Offsets between desired and internal zero position*)
+		ModelCountDirections : McMSMdl5CntDirType; (*Count direction for joint axes relative to the internal model*)
+	END_STRUCT;
+	McMS5ACXYZBCDescType : STRUCT (*Description of the mechanical system*)
+		Type : McMS5ACXYZBCDescEnum; (*Description selector setting*)
+		Standard : McMS5ACXYZBCDSType; (*Type mcMS5ACXYZBCD_STD settings*)
+	END_STRUCT;
+	McMS5ACXYZBCCoorNameCmnType : STRUCT (*Common settings for all Type values*)
+		XCoordinateName : STRING[250]; (*X coordinate name*)
+		YCoordinateName : STRING[250]; (*Y coordinate name*)
+		ZCoordinateName : STRING[250]; (*Z coordinate name*)
+		BCoordinateName : STRING[250]; (*B coordinate name*)
+		CCoordinateName : STRING[250]; (*C coordinate name*)
+	END_STRUCT;
+	McMS5ACXYZBCCoorNameType : STRUCT (*Coordinates names*)
+		Type : McMSCNEnum; (*Coordinates names selector setting*)
+		Common : McMS5ACXYZBCCoorNameCmnType; (*Common settings for all Type values*)
+	END_STRUCT;
+	McMS5ACXYZBCWFrmMdlEnum :
+		( (*Wire frame model selector setting*)
+		mcMS5ACXYZBCWFM_STD := 0 (*Standard - Standard wire-frame model*)
+		);
+	McMS5ACXYZBCWFrmMdlStdType : STRUCT (*Type mcMS5ACXYZBCWFM_STD settings*)
+		QZToQB : McMSFrmMdlStdEdgeType; (*Wire frame model edge*)
+		QBToQC : McMSFrmMdlStdEdgeType; (*Wire frame model edge*)
+		QCToFlange : McMSFrmMdlStdEdgeType; (*Wire frame model edge*)
+		FlangeToTCP : McMSFrmMdlStdEdgeType; (*Wire frame model edge*)
+	END_STRUCT;
+	McMS5ACXYZBCWFrmMdlType : STRUCT (*Wire frame model of mechanical system*)
+		Type : McMS5ACXYZBCWFrmMdlEnum; (*Wire frame model selector setting*)
+		Standard : McMS5ACXYZBCWFrmMdlStdType; (*Type mcMS5ACXYZBCWFM_STD settings*)
+	END_STRUCT;
+	McMS5ACXYZBCCplgType : STRUCT (*Couplings between selected axes and the joint axis*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg5LinCplgType)*)
+	END_STRUCT;
+	McCfgMS5AxCncXYZBCType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_5AX_CNC_XYZBC*)
+		Description : McMS5ACXYZBCDescType; (*Description of the mechanical system*)
+		CoordinatesNames : McMS5ACXYZBCCoorNameType; (*Coordinates names*)
+		WireFrameModel : McMS5ACXYZBCWFrmMdlType; (*Wire frame model of mechanical system*)
+		Couplings : McMS5ACXYZBCCplgType; (*Couplings between selected axes and the joint axis*)
 		JointAxesPositionLimits : McMSJnt5AxPosLimType; (*Position limits for joint axis*)
 	END_STRUCT;
 	McMS5ACXYZCADescEnum :
@@ -2564,13 +3153,69 @@ TYPE
 		Standard : McMS5ACXYZCAWFrmMdlStdType; (*Type mcMS5ACXYZCAWFM_STD settings*)
 	END_STRUCT;
 	McMS5ACXYZCACplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg5LinCplgType)*)
 	END_STRUCT;
 	McCfgMS5AxCncXYZCAType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_5AX_CNC_XYZCA*)
 		Description : McMS5ACXYZCADescType; (*Description of the mechanical system*)
 		CoordinatesNames : McMS5ACXYZCACoorNameType; (*Coordinates names*)
 		WireFrameModel : McMS5ACXYZCAWFrmMdlType; (*Wire frame model of mechanical system*)
 		Couplings : McMS5ACXYZCACplgType; (*Couplings between selected axes and the joint axis*)
+		JointAxesPositionLimits : McMSJnt5AxPosLimType; (*Position limits for joint axis*)
+	END_STRUCT;
+	McMS5ACXYZCBDescEnum :
+		( (*Description selector setting*)
+		mcMS5ACXYZCBD_STD := 0 (*Standard - Standard description*)
+		);
+	McMS5ACXYZCBDSDimType : STRUCT (*Dimensions of the mechanical system*)
+		TranslationFromBaseToQX : McCfgTransXType; (*Translation from base of the mechanical system to QX*)
+		TranslationFromQXToQY : McCfgTransYType; (*Translation from QX to QY*)
+		TranslationFromQYToQZ : McCfgTransZType; (*Translation from QY to QZ*)
+		TranslationFromQZToQC : McCfgTransXYZType; (*Translation from QZ to QC*)
+		TranslationFromQCToQB : McCfgTransXYZType; (*Translation from QC to QB*)
+		TranslationFromQBToFlange : McCfgTransXYZType; (*Translation from QB to flange*)
+	END_STRUCT;
+	McMS5ACXYZCBDSType : STRUCT (*Type mcMS5ACXYZCBD_STD settings*)
+		Dimensions : McMS5ACXYZCBDSDimType; (*Dimensions of the mechanical system*)
+		ModelZeroPositionOffsets : McMSMdl5ZeroPosOffType; (*Offsets between desired and internal zero position*)
+		ModelCountDirections : McMSMdl5CntDirType; (*Count direction for joint axes relative to the internal model*)
+	END_STRUCT;
+	McMS5ACXYZCBDescType : STRUCT (*Description of the mechanical system*)
+		Type : McMS5ACXYZCBDescEnum; (*Description selector setting*)
+		Standard : McMS5ACXYZCBDSType; (*Type mcMS5ACXYZCBD_STD settings*)
+	END_STRUCT;
+	McMS5ACXYZCBCoorNameCmnType : STRUCT (*Common settings for all Type values*)
+		XCoordinateName : STRING[250]; (*X coordinate name*)
+		YCoordinateName : STRING[250]; (*Y coordinate name*)
+		ZCoordinateName : STRING[250]; (*Z coordinate name*)
+		CCoordinateName : STRING[250]; (*C coordinate name*)
+		BCoordinateName : STRING[250]; (*B coordinate name*)
+	END_STRUCT;
+	McMS5ACXYZCBCoorNameType : STRUCT (*Coordinates names*)
+		Type : McMSCNEnum; (*Coordinates names selector setting*)
+		Common : McMS5ACXYZCBCoorNameCmnType; (*Common settings for all Type values*)
+	END_STRUCT;
+	McMS5ACXYZCBWFrmMdlEnum :
+		( (*Wire frame model selector setting*)
+		mcMS5ACXYZCBWFM_STD := 0 (*Standard - Standard wire-frame model*)
+		);
+	McMS5ACXYZCBWFrmMdlStdType : STRUCT (*Type mcMS5ACXYZCBWFM_STD settings*)
+		QZToQC : McMSFrmMdlStdEdgeType; (*Wire frame model edge*)
+		QCToQB : McMSFrmMdlStdEdgeType; (*Wire frame model edge*)
+		QBToFlange : McMSFrmMdlStdEdgeType; (*Wire frame model edge*)
+		FlangeToTCP : McMSFrmMdlStdEdgeType; (*Wire frame model edge*)
+	END_STRUCT;
+	McMS5ACXYZCBWFrmMdlType : STRUCT (*Wire frame model of mechanical system*)
+		Type : McMS5ACXYZCBWFrmMdlEnum; (*Wire frame model selector setting*)
+		Standard : McMS5ACXYZCBWFrmMdlStdType; (*Type mcMS5ACXYZCBWFM_STD settings*)
+	END_STRUCT;
+	McMS5ACXYZCBCplgType : STRUCT (*Couplings between selected axes and the joint axis*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg5LinCplgType)*)
+	END_STRUCT;
+	McCfgMS5AxCncXYZCBType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_5AX_CNC_XYZCB*)
+		Description : McMS5ACXYZCBDescType; (*Description of the mechanical system*)
+		CoordinatesNames : McMS5ACXYZCBCoorNameType; (*Coordinates names*)
+		WireFrameModel : McMS5ACXYZCBWFrmMdlType; (*Wire frame model of mechanical system*)
+		Couplings : McMS5ACXYZCBCplgType; (*Couplings between selected axes and the joint axis*)
 		JointAxesPositionLimits : McMSJnt5AxPosLimType; (*Position limits for joint axis*)
 	END_STRUCT;
 	McMS6ACZXYBCADescEnum :
@@ -2658,10 +3303,71 @@ TYPE
 		TargetJointAxisUnits : LREAL; (*Units of the joint axis due to influence [measurement units]*)
 	END_STRUCT;
 	McMS6ACZXYBCACplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg6LinCplgType)*)
+	END_STRUCT;
+	McMSJnt6AxRelLimEnum :
+		( (*Relative limits selector setting*)
+		mcMSJ6ARL_NOT_USE := 0, (*Not used - Relative limits not used*)
+		mcMSJ6ARL_STD := 1 (*Standard - Standard relative limit*)
+		);
+	McMSJ6ARLSJALLEnum :
+		( (*Lower limit selector setting*)
+		mcMSJ6ARLSJALL_NOT_USE := 0, (*Not used - Relative limits not used*)
+		mcMSJ6ARLSJALL_STD := 1 (*Standard - Standard relative limit*)
+		);
+	McMSJ6ARLSJALLStdSrcJntAxEnum :
+		( (*Index of the source joint axis for the relative limit*)
+		mcMSJ6ARLSJALLSSJA_AX_1 := 0, (*Axis 1 - Axis 1*)
+		mcMSJ6ARLSJALLSSJA_AX_2 := 1, (*Axis 2 - Axis 2*)
+		mcMSJ6ARLSJALLSSJA_AX_3 := 2, (*Axis 3 - Axis 3*)
+		mcMSJ6ARLSJALLSSJA_AX_4 := 3, (*Axis 4 - Axis 4*)
+		mcMSJ6ARLSJALLSSJA_AX_5 := 4, (*Axis 5 - Axis 5*)
+		mcMSJ6ARLSJALLSSJA_AX_6 := 5 (*Axis 6 - Axis 6*)
+		);
+	McMSJ6ARLSJALLStdType : STRUCT (*Type mcMSJ6ARLSJALL_STD settings*)
+		SourceJointAxis : McMSJ6ARLSJALLStdSrcJntAxEnum; (*Index of the source joint axis for the relative limit*)
+		Coefficient : LREAL; (*Coefficient [measurement units]*)
+	END_STRUCT;
+	McMSJ6ARLSJALLType : STRUCT (*Lower limit*)
+		Type : McMSJ6ARLSJALLEnum; (*Lower limit selector setting*)
+		Standard : McMSJ6ARLSJALLStdType; (*Type mcMSJ6ARLSJALL_STD settings*)
+	END_STRUCT;
+	McMSJ6ARLSJAULEnum :
+		( (*Upper limit selector setting*)
+		mcMSJ6ARLSJAUL_NOT_USE := 0, (*Not used - Relative limits not used*)
+		mcMSJ6ARLSJAUL_STD := 1 (*Standard - Standard relative limit*)
+		);
+	McMSJ6ARLSJAULStdSrcJntAxEnum :
+		( (*Index of the source joint axis for the relative limit*)
+		mcMSJ6ARLSJAULSSJA_AX_1 := 0, (*Axis 1 - Axis 1*)
+		mcMSJ6ARLSJAULSSJA_AX_2 := 1, (*Axis 2 - Axis 2*)
+		mcMSJ6ARLSJAULSSJA_AX_3 := 2, (*Axis 3 - Axis 3*)
+		mcMSJ6ARLSJAULSSJA_AX_4 := 3, (*Axis 4 - Axis 4*)
+		mcMSJ6ARLSJAULSSJA_AX_5 := 4, (*Axis 5 - Axis 5*)
+		mcMSJ6ARLSJAULSSJA_AX_6 := 5 (*Axis 6 - Axis 6*)
+		);
+	McMSJ6ARLSJAULStdType : STRUCT (*Type mcMSJ6ARLSJAUL_STD settings*)
+		SourceJointAxis : McMSJ6ARLSJAULStdSrcJntAxEnum; (*Index of the source joint axis for the relative limit*)
+		Coefficient : LREAL; (*Coefficient [measurement units]*)
+	END_STRUCT;
+	McMSJ6ARLSJAULType : STRUCT (*Upper limit*)
+		Type : McMSJ6ARLSJAULEnum; (*Upper limit selector setting*)
+		Standard : McMSJ6ARLSJAULStdType; (*Type mcMSJ6ARLSJAUL_STD settings*)
+	END_STRUCT;
+	McMSJnt6AxRelLimStdJntAxType : STRUCT (*Relative limits for joint axis*)
+		LowerLimit : McMSJ6ARLSJALLType; (*Lower limit*)
+		UpperLimit : McMSJ6ARLSJAULType; (*Upper limit*)
+	END_STRUCT;
+	McMSJnt6AxRelLimStdType : STRUCT (*Type mcMSJ6ARL_STD settings*)
+		JointAxis : ARRAY[0..5] OF McMSJnt6AxRelLimStdJntAxType; (*Relative limits for joint axis*)
+	END_STRUCT;
+	McMSJnt6AxRelLimType : STRUCT (*Relative limits*)
+		Type : McMSJnt6AxRelLimEnum; (*Relative limits selector setting*)
+		Standard : McMSJnt6AxRelLimStdType; (*Type mcMSJ6ARL_STD settings*)
 	END_STRUCT;
 	McMSJnt6AxPosLimType : STRUCT (*Position limits for joint axis*)
 		JointAxis : ARRAY[0..5] OF McMSJntAxPosLimType; (*Limits for joint axis*)
+		RelativeLimits : McMSJnt6AxRelLimType; (*Relative limits*)
 	END_STRUCT;
 	McCfgMS6AxCncZXYBCAType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_6AX_CNC_ZXYBCA*)
 		Description : McMS6ACZXYBCADescType; (*Description of the mechanical system*)
@@ -2670,11 +3376,230 @@ TYPE
 		Couplings : McMS6ACZXYBCACplgType; (*Couplings between selected axes and the joint axis*)
 		JointAxesPositionLimits : McMSJnt6AxPosLimType; (*Position limits for joint axis*)
 	END_STRUCT;
-	McMS4ASASceneViewerObjEnum :
-		( (*Defines if and which Scene Viewer Object should be used*)
-		mcMS4ASASVO_NOT_USE := 0, (*Not used*)
-		mcMS4ASASVO_COMAU_REBEL_S6_060 := 2 (*Comau Rebel S6 0.60*)
+	McMSSVOEnum :
+		( (*Scene Viewer Object selector setting*)
+		mcMSSVO_NOT_USE := 0, (*Not used -*)
+		mcMSSVO_GEN := 1, (*Generic -*)
+		mcMSSVO_OBJ_ID := 2 (*Object Id -*)
 		);
+	McMSSVOObjIdType : STRUCT (*Type mcMSSVO_OBJ_ID settings*)
+		ID : UDINT; (*Scene viewer object ID*)
+	END_STRUCT;
+	McMSSVOType : STRUCT (*Defines if and which Scene Viewer Object should be used*)
+		Type : McMSSVOEnum; (*Scene Viewer Object selector setting*)
+		ObjectId : McMSSVOObjIdType; (*Type mcMSSVO_OBJ_ID settings*)
+	END_STRUCT;
+	McMS3ASADescEnum :
+		( (*Description selector setting*)
+		mcMS3ASAD_STD := 0 (*Standard - Standard description*)
+		);
+	McMS3ASADSDimTransFromQ1ToQ2Type : STRUCT (*Translation from Q1 to Q2*)
+		XY : LREAL; (*Distance in the plane XY [measurement units]*)
+		Z : LREAL; (*Translation in Z direction [measurement units]*)
+	END_STRUCT;
+	McMS3ASADSDimTransFromQ2ToQ3Type : STRUCT (*Translation from Q2 to Q3*)
+		XY : LREAL; (*Distance in the plane XY [measurement units]*)
+		Z : LREAL; (*Translation in Z direction [measurement units]*)
+	END_STRUCT;
+	McMS3ASADSDimType : STRUCT (*Dimensions of the mechanical system*)
+		TranslationFromBaseToQ1 : McCfgTransXYZType; (*Translation from base to Q1*)
+		TranslationFromQ1ToQ2 : McMS3ASADSDimTransFromQ1ToQ2Type; (*Translation from Q1 to Q2*)
+		TranslationFromQ2ToQ3 : McMS3ASADSDimTransFromQ2ToQ3Type; (*Translation from Q2 to Q3*)
+		TranslationFromQ3ToFlange : McCfgTransXYZType; (*Translation from Q3 to flange*)
+	END_STRUCT;
+	McMS3ASADSType : STRUCT (*Type mcMS3ASAD_STD settings*)
+		Dimensions : McMS3ASADSDimType; (*Dimensions of the mechanical system*)
+		ModelZeroPositionOffsets : McMSMdl3ZeroPosOffType; (*Offsets between desired and internal zero position*)
+		ModelCountDirections : McMSMdl3CntDirType; (*Count direction for joint axes relative to the internal model*)
+	END_STRUCT;
+	McMS3ASADescType : STRUCT (*Description of the mechanical system*)
+		Type : McMS3ASADescEnum; (*Description selector setting*)
+		Standard : McMS3ASADSType; (*Type mcMS3ASAD_STD settings*)
+	END_STRUCT;
+	McMS3ASACoorNameCmnType : STRUCT (*Common settings for all Type values*)
+		XCoordinateName : STRING[250]; (*X coordinate name*)
+		YCoordinateName : STRING[250]; (*Y coordinate name*)
+		ZCoordinateName : STRING[250]; (*Z coordinate name*)
+	END_STRUCT;
+	McMS3ASACoorNameType : STRUCT (*Coordinates names*)
+		Type : McMSCNEnum; (*Coordinates names selector setting*)
+		Common : McMS3ASACoorNameCmnType; (*Common settings for all Type values*)
+	END_STRUCT;
+	McMS3ASAWFrmMdlEnum :
+		( (*Wire frame model selector setting*)
+		mcMS3ASAWFM_STD := 0 (*Standard - Standard wire-frame model*)
+		);
+	McMS3ASAWFrmMdlStdType : STRUCT (*Type mcMS3ASAWFM_STD settings*)
+		Q1ToQ2 : McMSFrmMdlStdEdgeType; (*Wire frame model edge*)
+		Q2ToQ3 : McMSFrmMdlStdEdgeType; (*Wire frame model edge*)
+		Q3ToFlange : McMSFrmMdlStdEdgeType; (*Wire frame model edge*)
+		FlangeToTCP : McMSFrmMdlStdEdgeType; (*Wire frame model edge*)
+	END_STRUCT;
+	McMS3ASAWFrmMdlType : STRUCT (*Wire frame model of mechanical system*)
+		Type : McMS3ASAWFrmMdlEnum; (*Wire frame model selector setting*)
+		Standard : McMS3ASAWFrmMdlStdType; (*Type mcMS3ASAWFM_STD settings*)
+	END_STRUCT;
+	McMSDynMdlEnum :
+		( (*Dynamic model selector setting*)
+		mcMSDM_DYNPARTABLE := 0 (*DynParTable - Table definition of dynamic model parameters*)
+		);
+	McMSDynMdlDynParTableType : STRUCT (*Type mcMSDM_DYNPARTABLE settings*)
+		TableReference : McCfgReferenceType; (*Name of the table reference*)
+	END_STRUCT;
+	McMSDynMdlType : STRUCT (*Dynamic model of the mechanical system*)
+		Type : McMSDynMdlEnum; (*Dynamic model selector setting*)
+		DynParTable : McMSDynMdlDynParTableType; (*Type mcMSDM_DYNPARTABLE settings*)
+	END_STRUCT;
+	McMSIDMEnum :
+		( (*Dynamic model selector setting*)
+		mcMSIDM_DYNPARTABLE := 0, (*DynParTable -*)
+		mcMSIDM_INT := 1 (*Internal -*)
+		);
+	McMSIDMIntRowType : STRUCT
+		Index : UINT;
+		Value : LREAL;
+		Unit : STRING[250];
+		Description : STRING[250];
+	END_STRUCT;
+	McMSIDMIntType : STRUCT (*Type mcMSIDM_INT settings*)
+		Type : STRING[250]; (*Type of dynamic model*)
+		Row : McCfgUnboundedArrayType; (*Connect array of type McMSIDMIntRowType*)
+	END_STRUCT;
+	McMSIDMType : STRUCT
+		Type : McMSIDMEnum; (*Dynamic model selector setting*)
+		Internal : McMSIDMIntType; (*Type mcMSIDM_INT settings*)
+	END_STRUCT;
+	McMSDynLimEnum :
+		( (*Dynamic limits selector setting*)
+		mcMSDL_DYNPARTABLES := 0 (*DynParTables - Table definition of dynamic model parameters*)
+		);
+	McMSDynLimDynParTablesType : STRUCT (*Type mcMSDL_DYNPARTABLES settings*)
+		GearboxLimitsTableReference : McCfgReferenceType; (*Name of the table reference*)
+		CrossSecLimTableReference : McCfgReferenceType; (*Name of the table reference*)
+	END_STRUCT;
+	McMSDynLimType : STRUCT (*Dynamic limits of the mechanical system*)
+		Type : McMSDynLimEnum; (*Dynamic limits selector setting*)
+		DynParTables : McMSDynLimDynParTablesType; (*Type mcMSDL_DYNPARTABLES settings*)
+	END_STRUCT;
+	McMSIDLEnum :
+		( (*Dynamic limits selector setting*)
+		mcMSIDL_DYNPARTABLES := 0, (*DynParTables -*)
+		mcMSIDL_INT := 1 (*Internal -*)
+		);
+	McMSIDLIntGBLimRowType : STRUCT
+		Index : UINT;
+		Value : LREAL;
+		Unit : STRING[250];
+		Description : STRING[250];
+	END_STRUCT;
+	McMSIDLIntGBLimType : STRUCT
+		Row : McCfgUnboundedArrayType; (*Connect array of type McMSIDLIntGBLimRowType*)
+	END_STRUCT;
+	McMSIDLIntCrossSecLimRowType : STRUCT
+		Index : UINT;
+		Value : LREAL;
+		Unit : STRING[250];
+		Description : STRING[250];
+	END_STRUCT;
+	McMSIDLIntCrossSecLimType : STRUCT
+		Row : McCfgUnboundedArrayType; (*Connect array of type McMSIDLIntCrossSecLimRowType*)
+	END_STRUCT;
+	McMSIDLIntType : STRUCT (*Type mcMSIDL_INT settings*)
+		Type : STRING[250]; (*Type of dynamic model*)
+		GearboxLimits : McMSIDLIntGBLimType;
+		CrossSectionLimits : McMSIDLIntCrossSecLimType;
+	END_STRUCT;
+	McMSIDLType : STRUCT
+		Type : McMSIDLEnum; (*Dynamic limits selector setting*)
+		Internal : McMSIDLIntType; (*Type mcMSIDL_INT settings*)
+	END_STRUCT;
+	McMS3AxConLimRedEnum :
+		( (*Conditional limit reduction selector setting*)
+		mcMS3CLR_NOT_USE := 0, (*Not used - Conditiona limit reduction not used*)
+		mcMS3CLR_USE := 1 (*Used - Conditional limit reduction used*)
+		);
+	McMS3CLRULEnum :
+		( (*Condition 1-5 selector setting*)
+		mcMS3CLRUL_NOT_USE := 0, (*Not Used - NotUsed*)
+		mcMS3CLRUL_USE := 1 (*Used - Used*)
+		);
+	McMSCLRULSEnum :
+		( (*Source selector setting*)
+		mcMSCLRULS_MASS := 0, (*Mass - Mass of tool and product*)
+		mcMSCLRULS_MOM_OF_INERTIA_ARD_Z := 1 (*Moment of inertia around Z - Moment of inertia around Z*)
+		);
+	McMSCLRULSType : STRUCT (*Source of reduction*)
+		Type : McMSCLRULSEnum; (*Source selector setting*)
+	END_STRUCT;
+	McMSCLRULTEnum :
+		( (*Target selector setting*)
+		mcMSCLRULT_JERK := 0 (*Jerk - Jerk*)
+		);
+	McMSCLRULTType : STRUCT (*Target of reduction*)
+		Type : McMSCLRULTEnum; (*Target selector setting*)
+	END_STRUCT;
+	McMS3CLRULIEnum :
+		( (*Influence on selector setting*)
+		mcMS3CLRULI_AX := 0 (*Axes - Influence on axes*)
+		);
+	McMS3CLRULIAxAxEnum :
+		( (*Activation of limit reduction*)
+		mcMS3CLRULIAA_NO := 0, (*No - No*)
+		mcMS3CLRULIAA_YES := 1 (*Yes - Yes*)
+		);
+	McMS3CLRULIAxType : STRUCT (*Type mcMS3CLRULI_AX settings*)
+		Axis : ARRAY[0..2] OF McMS3CLRULIAxAxEnum; (*Activation of limit reduction*)
+	END_STRUCT;
+	McMS3CLRULIType : STRUCT (*Reduction of axes limits*)
+		Type : McMS3CLRULIEnum; (*Influence on selector setting*)
+		Axes : McMS3CLRULIAxType; (*Type mcMS3CLRULI_AX settings*)
+	END_STRUCT;
+	McMSCLRULPType : STRUCT (*Limit reduction point*)
+		Value : LREAL; (*Mass in kg / Moment of inertia in kgm2 [measurement units]*)
+		Reduction : LREAL; (*Limit reduction in percent [%]*)
+	END_STRUCT;
+	McMS3CLRULUseType : STRUCT (*Type mcMS3CLRUL_USE settings*)
+		Source : McMSCLRULSType; (*Source of reduction*)
+		Target : McMSCLRULTType; (*Target of reduction*)
+		InfluenceOn : McMS3CLRULIType; (*Reduction of axes limits*)
+		LimitReductionPoint : ARRAY[0..9] OF McMSCLRULPType; (*Limit reduction point*)
+	END_STRUCT;
+	McMS3CLRULType : STRUCT (*Condition*)
+		Type : McMS3CLRULEnum; (*Condition 1-5 selector setting*)
+		Used : McMS3CLRULUseType; (*Type mcMS3CLRUL_USE settings*)
+	END_STRUCT;
+	McMS3CLRUType : STRUCT (*Type mcMS3CLR_USE settings*)
+		Condition : ARRAY[0..4] OF McMS3CLRULType; (*Condition*)
+	END_STRUCT;
+	McMS3AxConLimRedType : STRUCT (*Conditional limit reduction*)
+		Type : McMS3AxConLimRedEnum; (*Conditional limit reduction selector setting*)
+		Used : McMS3CLRUType; (*Type mcMS3CLR_USE settings*)
+	END_STRUCT;
+	McMS3ASACplgType : STRUCT (*Couplings between selected axes and the joint axis*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg3LinCplgType)*)
+	END_STRUCT;
+	McMS3ASAMonPtEnum :
+		( (*Monitoring points selector setting*)
+		mcMS3ASAMP_NOT_USE := 0, (*Not used - Monitoring points not used*)
+		mcMS3ASAMP_STD := 1 (*Standard - Monitoring points used*)
+		);
+	McMS3ASAMonPtType : STRUCT (*Enable robot monitoring points*)
+		Type : McMS3ASAMonPtEnum; (*Monitoring points selector setting*)
+	END_STRUCT;
+	McCfgMS3AxScaraAType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_3AX_SCARA_A*)
+		SceneViewerObject : McMSSVOType; (*Defines if and which Scene Viewer Object should be used*)
+		Description : McMS3ASADescType; (*Description of the mechanical system*)
+		CoordinatesNames : McMS3ASACoorNameType; (*Coordinates names*)
+		WireFrameModel : McMS3ASAWFrmMdlType; (*Wire frame model of mechanical system*)
+		DynamicModel : McMSDynMdlType; (*Dynamic model of the mechanical system*)
+		InternalDynamicModel : McMSIDMType;
+		DynamicLimits : McMSDynLimType; (*Dynamic limits of the mechanical system*)
+		InternalDynamicLimits : McMSIDLType;
+		ConditionalLimitReduction : McMS3AxConLimRedType; (*Conditional limit reduction*)
+		Couplings : McMS3ASACplgType; (*Couplings between selected axes and the joint axis*)
+		JointAxesPositionLimits : McMSJnt3AxPosLimType; (*Position limits for joint axis*)
+		MonitoringPoints : McMS3ASAMonPtType; (*Enable robot monitoring points*)
+	END_STRUCT;
 	McMS4ASADescEnum :
 		( (*Description selector setting*)
 		mcMS4ASAD_STD := 0 (*Standard - Standard description*)
@@ -2728,31 +3653,51 @@ TYPE
 		Type : McMS4ASAWFrmMdlEnum; (*Wire frame model selector setting*)
 		Standard : McMS4ASAWFrmMdlStdType; (*Type mcMS4ASAWFM_STD settings*)
 	END_STRUCT;
-	McMSDynMdlEnum :
-		( (*Dynamic model selector setting*)
-		mcMSDM_DYNPARTABLE := 0 (*DynParTable - Table definition of dynamic model parameters*)
+	McMS4AxConLimRedEnum :
+		( (*Conditional limit reduction selector setting*)
+		mcMS4CLR_NOT_USE := 0, (*Not used - Conditiona limit reduction not used*)
+		mcMS4CLR_USE := 1 (*Used - Conditional limit reduction used*)
 		);
-	McMSDynMdlDynParTableType : STRUCT (*Type mcMSDM_DYNPARTABLE settings*)
-		TableReference : McCfgReferenceType; (*Name of the table reference*)
-	END_STRUCT;
-	McMSDynMdlType : STRUCT (*Dynamic model of the mechanical system*)
-		Type : McMSDynMdlEnum; (*Dynamic model selector setting*)
-		DynParTable : McMSDynMdlDynParTableType; (*Type mcMSDM_DYNPARTABLE settings*)
-	END_STRUCT;
-	McMSDynLimEnum :
-		( (*Dynamic limits selector setting*)
-		mcMSDL_DYNPARTABLES := 0 (*DynParTables - Table definition of dynamic model parameters*)
+	McMS4CLRULEnum :
+		( (*Condition 1-5 selector setting*)
+		mcMS4CLRUL_NOT_USE := 0, (*Not Used - NotUsed*)
+		mcMS4CLRUL_USE := 1 (*Used - Used*)
 		);
-	McMSDynLimDynParTablesType : STRUCT (*Type mcMSDL_DYNPARTABLES settings*)
-		GearboxLimitsTableReference : McCfgReferenceType; (*Name of the table reference*)
-		CrossSecLimTableReference : McCfgReferenceType; (*Name of the table reference*)
+	McMS4CLRULIEnum :
+		( (*Influence on selector setting*)
+		mcMS4CLRULI_AX := 0 (*Axes - Influence on axes*)
+		);
+	McMS4CLRULIAxAxEnum :
+		( (*Activation of limit reduction*)
+		mcMS4CLRULIAA_NO := 0, (*No - No*)
+		mcMS4CLRULIAA_YES := 1 (*Yes - Yes*)
+		);
+	McMS4CLRULIAxType : STRUCT (*Type mcMS4CLRULI_AX settings*)
+		Axis : ARRAY[0..3] OF McMS4CLRULIAxAxEnum; (*Activation of limit reduction*)
 	END_STRUCT;
-	McMSDynLimType : STRUCT (*Dynamic limits of the mechanical system*)
-		Type : McMSDynLimEnum; (*Dynamic limits selector setting*)
-		DynParTables : McMSDynLimDynParTablesType; (*Type mcMSDL_DYNPARTABLES settings*)
+	McMS4CLRULIType : STRUCT (*Reduction of axes limits*)
+		Type : McMS4CLRULIEnum; (*Influence on selector setting*)
+		Axes : McMS4CLRULIAxType; (*Type mcMS4CLRULI_AX settings*)
+	END_STRUCT;
+	McMS4CLRULUseType : STRUCT (*Type mcMS4CLRUL_USE settings*)
+		Source : McMSCLRULSType; (*Source of reduction*)
+		Target : McMSCLRULTType; (*Target of reduction*)
+		InfluenceOn : McMS4CLRULIType; (*Reduction of axes limits*)
+		LimitReductionPoint : ARRAY[0..9] OF McMSCLRULPType; (*Limit reduction point*)
+	END_STRUCT;
+	McMS4CLRULType : STRUCT (*Condition*)
+		Type : McMS4CLRULEnum; (*Condition 1-5 selector setting*)
+		Used : McMS4CLRULUseType; (*Type mcMS4CLRUL_USE settings*)
+	END_STRUCT;
+	McMS4CLRUType : STRUCT (*Type mcMS4CLR_USE settings*)
+		Condition : ARRAY[0..4] OF McMS4CLRULType; (*Condition*)
+	END_STRUCT;
+	McMS4AxConLimRedType : STRUCT (*Conditional limit reduction*)
+		Type : McMS4AxConLimRedEnum; (*Conditional limit reduction selector setting*)
+		Used : McMS4CLRUType; (*Type mcMS4CLR_USE settings*)
 	END_STRUCT;
 	McMS4ASACplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg4LinCplgType)*)
 	END_STRUCT;
 	McMS4ASAMonPtEnum :
 		( (*Monitoring points selector setting*)
@@ -2763,26 +3708,20 @@ TYPE
 		Type : McMS4ASAMonPtEnum; (*Monitoring points selector setting*)
 	END_STRUCT;
 	McCfgMS4AxScaraAType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_4AX_SCARA_A*)
-		SceneViewerObject : McMS4ASASceneViewerObjEnum; (*Defines if and which Scene Viewer Object should be used*)
+		SceneViewerObject : McMSSVOType; (*Defines if and which Scene Viewer Object should be used*)
 		Description : McMS4ASADescType; (*Description of the mechanical system*)
 		CoordinatesNames : McMS4ASACoorNameType; (*Coordinates names*)
 		TCPOrientation : McMSTCPOType; (*Handling of TCP orientation coordinates*)
 		WireFrameModel : McMS4ASAWFrmMdlType; (*Wire frame model of mechanical system*)
 		DynamicModel : McMSDynMdlType; (*Dynamic model of the mechanical system*)
+		InternalDynamicModel : McMSIDMType;
 		DynamicLimits : McMSDynLimType; (*Dynamic limits of the mechanical system*)
+		InternalDynamicLimits : McMSIDLType;
+		ConditionalLimitReduction : McMS4AxConLimRedType; (*Conditional limit reduction*)
 		Couplings : McMS4ASACplgType; (*Couplings between selected axes and the joint axis*)
 		JointAxesPositionLimits : McMSJnt4AxPosLimType; (*Position limits for joint axis*)
 		MonitoringPoints : McMS4ASAMonPtType; (*Enable robot monitoring points*)
 	END_STRUCT;
-	McMS2ADASceneViewerObjEnum :
-		( (*Defines if and which Scene Viewer Object should be used*)
-		mcMS2ADASVO_NOT_USE := 0, (*Not used*)
-		mcMS2ADASVO_GEN := 1, (*Generic*)
-		mcMS2ADASVO_CODIAN_D2500S020 := 2, (*CODIAN D2-500-S020*)
-		mcMS2ADASVO_CODIAN_D2800S020 := 3, (*CODIAN D2-800-S020*)
-		mcMS2ADASVO_CODIAN_D21000S030 := 4, (*CODIAN D2-1000-S030*)
-		mcMS2ADASVO_CODIAN_D21500S030 := 5 (*CODIAN D2-1500-S030*)
-		);
 	McMS2ADADescEnum :
 		( (*Description selector setting*)
 		mcMS2ADAD_STD := 0 (*Standard - Standard description*)
@@ -2860,27 +3799,18 @@ TYPE
 		Standard : McMS2ADAWFrmMdlStdType; (*Type mcMS2ADAWFM_STD settings*)
 	END_STRUCT;
 	McMS2ADACplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg2LinCplgType)*)
 	END_STRUCT;
 	McCfgMS2AxDeltaAType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_2AX_DELTA_A*)
-		SceneViewerObject : McMS2ADASceneViewerObjEnum; (*Defines if and which Scene Viewer Object should be used*)
+		SceneViewerObject : McMSSVOType; (*Defines if and which Scene Viewer Object should be used*)
 		Description : McMS2ADADescType; (*Description of the mechanical system*)
 		CoordinatesNames : McMS2ADACoorNameType; (*Coordinates names*)
 		WireFrameModel : McMS2ADAWFrmMdlType; (*Wire frame model of mechanical system*)
 		DynamicModel : McMSDynMdlType; (*Dynamic model of the mechanical system*)
+		InternalDynamicModel : McMSIDMType;
 		Couplings : McMS2ADACplgType; (*Couplings between selected axes and the joint axis*)
 		JointAxesPositionLimits : McMSJnt2AxPosLimType; (*Position limits for joint axis*)
 	END_STRUCT;
-	McMS2ADBSceneViewerObjEnum :
-		( (*Defines if and which Scene Viewer Object should be used*)
-		mcMS2ADBSVO_NOT_USE := 0, (*Not used*)
-		mcMS2ADBSVO_GEN := 1, (*Generic*)
-		mcMS2ADBSVO_CODIAN_D2500S020 := 2, (*CODIAN D2-500-S020*)
-		mcMS2ADBSVO_CODIAN_D2800S020 := 3, (*CODIAN D2-800-S020*)
-		mcMS2ADBSVO_CODIAN_D21000S030 := 4, (*CODIAN D2-1000-S030*)
-		mcMS2ADBSVO_CODIAN_D21500S030 := 5, (*CODIAN D2-1500-S030*)
-		mcMS2ADBSVO_D21500TW06X := 6 (*D2-1500-TW06x*)
-		);
 	McMS2ADBDescEnum :
 		( (*Description selector setting*)
 		mcMS2ADBD_STD := 0 (*Standard - Standard description*)
@@ -2941,19 +3871,20 @@ TYPE
 		JerkLimitReduction : LREAL; (*Jerk limit reduction in percent*)
 	END_STRUCT;
 	McMSLDJLPDJRType : STRUCT (*Type mcMSLDJL_PAYLOAD_DEP_JERK_RED settings*)
-		JerkReduction : McCfgUnboundedArrayType;
+		JerkReduction : McCfgUnboundedArrayType; (*Connect array of type McMSLDJLPDJRJerkRedType*)
 	END_STRUCT;
 	McMSLoadDepJerkLimType : STRUCT
 		Type : McMSLoadDepJerkLimEnum; (*Load dependent jerk limits selector setting*)
 		PayloadDependentJerkReduction : McMSLDJLPDJRType; (*Type mcMSLDJL_PAYLOAD_DEP_JERK_RED settings*)
 	END_STRUCT;
 	McMS2ADBCplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg2LinCplgType)*)
 	END_STRUCT;
 	McMSDelta2DWrkRngEnum :
 		( (*Working range selector setting*)
 		mcMSD2DWR_NOT_USE := 0, (*Not used -*)
 		mcMSD2DWR_STD := 1, (*Standard -*)
+		mcMSD2DWR_EXT := 3, (*Extended -*)
 		mcMSD2DWR_MAIN_AREA_W_EX_ZONES := 2 (*Main area with exclusion zones -*)
 		);
 	McMSDelta2DWrkRngStdType : STRUCT (*Type mcMSD2DWR_STD settings*)
@@ -2964,6 +3895,17 @@ TYPE
 		TopRadius : LREAL; (*Radius of top truncated cone upperside [measurement units]*)
 		MiddleRadius : LREAL; (*Radius of middle cylindrical part [measurement units]*)
 		BottomRadius : LREAL; (*Radius of bottom truncated cone underside [measurement units]*)
+	END_STRUCT;
+	McMSDelta2DWrkRngExtType : STRUCT (*Type mcMSD2DWR_EXT settings*)
+		MainCylinderDiameter : LREAL; (*A: Diameter of the main cylinder [measurement units]*)
+		BaseToTopCone : LREAL; (*B: Distance from base platform center point to the top of the working range area [measurement units]*)
+		MainCylinderOffset : LREAL; (*C: Distance from the top of the working range to the bottom of the main cylinder [measurement units]*)
+		MainConeOffset : LREAL; (*D: Distance from the top of the working range to the bottom of the main cone [measurement units]*)
+		BottomConeOffset : LREAL; (*E: Distance from the top of the working range to the bottom of the bottom cone [measurement units]*)
+		MainConeDiameter : LREAL; (*F: Lower diameter of the main cone [measurement units]*)
+		BottomConeDiameter : LREAL; (*G: Lower diameter of the bottom cone [measurement units]*)
+		TopConeOffset : LREAL; (*H: Distance from the top of the working range to the bottom of the top cone [measurement units]*)
+		TopConeDiameter : LREAL; (*I: Upper diameter of the top cone [measurement units]*)
 	END_STRUCT;
 	McMSD2DWRMAWEZZone1Enum :
 		( (*Exclusion zone 1 selector setting*)
@@ -3012,6 +3954,7 @@ TYPE
 	McMSDelta2DWrkRngType : STRUCT (*Working range description related to end-effector platform center point*)
 		Type : McMSDelta2DWrkRngEnum; (*Working range selector setting*)
 		Standard : McMSDelta2DWrkRngStdType; (*Type mcMSD2DWR_STD settings*)
+		Extended : McMSDelta2DWrkRngExtType; (*Type mcMSD2DWR_EXT settings*)
 		MainAreaWithExclusionZones : McMSD2DWRMainAreaWExZonesType; (*Type mcMSD2DWR_MAIN_AREA_W_EX_ZONES settings*)
 	END_STRUCT;
 	McMS2ADBMonPtEnum :
@@ -3023,56 +3966,20 @@ TYPE
 		Type : McMS2ADBMonPtEnum; (*Monitoring points selector setting*)
 	END_STRUCT;
 	McCfgMS2AxDeltaBType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_2AX_DELTA_B*)
-		SceneViewerObject : McMS2ADBSceneViewerObjEnum; (*Defines if and which Scene Viewer Object should be used*)
+		SceneViewerObject : McMSSVOType; (*Defines if and which Scene Viewer Object should be used*)
 		Description : McMS2ADBDescType; (*Description of the mechanical system*)
 		CoordinatesNames : McMS2ADBCoorNameType; (*Coordinates names*)
 		WireFrameModel : McMS2ADBWFrmMdlType; (*Wire frame model of mechanical system*)
 		DynamicModel : McMSDynMdlType; (*Dynamic model of the mechanical system*)
+		InternalDynamicModel : McMSIDMType;
 		DynamicLimits : McMSDynLimType; (*Dynamic limits of the mechanical system*)
+		InternalDynamicLimits : McMSIDLType;
 		LoadDependentJerkLimits : McMSLoadDepJerkLimType;
 		Couplings : McMS2ADBCplgType; (*Couplings between selected axes and the joint axis*)
 		JointAxesPositionLimits : McMSJnt2AxPosLimType; (*Position limits for joint axis*)
 		WorkingRange : McMSDelta2DWrkRngType; (*Working range description related to end-effector platform center point*)
 		MonitoringPoints : McMS2ADBMonPtType; (*Enable robot monitoring points*)
 	END_STRUCT;
-	McMS3ADASceneViewerObjEnum :
-		( (*Defines if and which Scene Viewer Object should be used*)
-		mcMS3ADASVO_NOT_USE := 0, (*Not used*)
-		mcMS3ADASVO_GEN := 1, (*Generic*)
-		mcMS3ADASVO_D40500S01X := 2, (*D4-0500-S01x*)
-		mcMS3ADASVO_D40650S02X := 3, (*D4-0650-S02x*)
-		mcMS3ADASVO_D40800S02X := 4, (*D4-0800-S02x*)
-		mcMS3ADASVO_D41100S02X := 5, (*D4-1100-S02x*)
-		mcMS3ADASVO_D41300S02X := 6, (*D4-1300-S02x*)
-		mcMS3ADASVO_D41600S02X := 7, (*D4-1600-S02x*)
-		mcMS3ADASVO_D41600S05X := 8, (*D4-1600-S05x*)
-		mcMS3ADASVO_TD40500S01X := 9, (*TD4-0500-S01x*)
-		mcMS3ADASVO_TD40650S02X := 10, (*TD4-0650-S02x*)
-		mcMS3ADASVO_D40650HD02X := 11, (*D4-0650-HD02x*)
-		mcMS3ADASVO_D40800HD02X := 12, (*D4-0800-HD02x*)
-		mcMS3ADASVO_D41100HD02X := 13, (*D4-1100-HD02x*)
-		mcMS3ADASVO_D41100HD04X := 14, (*D4-1100-HD04x*)
-		mcMS3ADASVO_D41300HD02X := 15, (*D4-1300-HD02x*)
-		mcMS3ADASVO_D41300HD04X := 16, (*D4-1300-HD04x*)
-		mcMS3ADASVO_D41600HD02X := 17, (*D4-1600-HD02x*)
-		mcMS3ADASVO_D41600HD04X := 18, (*D4-1600-HD04x*)
-		mcMS3ADASVO_D4ST210700 := 19, (*D4-ST21-0700*)
-		mcMS3ADASVO_D4ST210900 := 20, (*D4-ST21-0900*)
-		mcMS3ADASVO_D4ST211100 := 21, (*D4-ST21-1100*)
-		mcMS3ADASVO_D4ST211300 := 22, (*D4-ST21-1300*)
-		mcMS3ADASVO_D4ST211600 := 23, (*D4-ST21-1600*)
-		mcMS3ADASVO_D41100S04X := 24, (*D4-1100-S04x*)
-		mcMS3ADASVO_D41300S04X := 25, (*D4-1300-S04x*)
-		mcMS3ADASVO_D41300S05X := 26, (*D4-1300-S05x*)
-		mcMS3ADASVO_D41600S04X := 27, (*D4-1600-S04x*)
-		mcMS3ADASVO_D42100S05X := 29, (*D4-2100-S05x*)
-		mcMS3ADASVO_TD40800S02X := 30, (*TD4-0800-S02x*)
-		mcMS3ADASVO_TD41100S02X := 31, (*TD4-1100-S02x*)
-		mcMS3ADASVO_TD41300S02X := 32, (*TD4-1300-S02x*)
-		mcMS3ADASVO_TD41300S04X := 33, (*TD4-1300-S04x*)
-		mcMS3ADASVO_TD41600S04X := 34, (*TD4-1600-S04x*)
-		mcMS3ADASVO_D4500S01XDEMO := 35 (*D4-500-S01x-DEMO*)
-		);
 	McMS3ADADescEnum :
 		( (*Description selector setting*)
 		mcMS3ADAD_STD := 0 (*Standard - Standard description*)
@@ -3140,24 +4047,71 @@ TYPE
 		Standard : McMS3ADAWFrmMdlStdType; (*Type mcMS3ADAWFM_STD settings*)
 	END_STRUCT;
 	McMS3ADACplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg3LinCplgType)*)
+	END_STRUCT;
+	McMSDeltaWrkRngEnum :
+		( (*Working range selector setting*)
+		mcMSDWR_NOT_USE := 0, (*Not used -*)
+		mcMSDWR_STD := 1, (*Standard -*)
+		mcMSDWR_EXT := 2 (*Extended -*)
+		);
+	McWRScnObjEnum :
+		( (*Scene Viewer Object selector setting*)
+		mcWRSO_NOT_USE := 0, (*Not used -*)
+		mcWRSO_USE := 1 (*Used - Working range is added*)
+		);
+	McWRScnObjType : STRUCT (*Working range settings*)
+		Type : McWRScnObjEnum; (*Scene Viewer Object selector setting*)
+	END_STRUCT;
+	McMSDeltaWrkRngStdType : STRUCT (*Type mcMSDWR_STD settings*)
+		SceneViewerObject : McWRScnObjType; (*Working range settings*)
+		BaseToTop : LREAL; (*Distance from base platform center point to the top of the working range area [measurement units]*)
+		TopHeight : LREAL; (*Height of the top truncated cone [measurement units]*)
+		MiddleHeight : LREAL; (*Height of the middle cylindrical part [measurement units]*)
+		BottomHeight : LREAL; (*Height of the bottom truncated cone [measurement units]*)
+		TopRadius : LREAL; (*Radius of top truncated cone upperside [measurement units]*)
+		MiddleRadius : LREAL; (*Radius of middle cylindrical part [measurement units]*)
+		BottomRadius : LREAL; (*Radius of bottom truncated cone underside [measurement units]*)
+	END_STRUCT;
+	McWRScnObjExtEnum :
+		( (*Scene Viewer Object selector setting*)
+		mcWRSOE_NOT_USE := 0, (*Not used -*)
+		mcWRSOE_USE := 1 (*Used - Working range is added*)
+		);
+	McWRScnObjExtType : STRUCT (*Working range extended settings*)
+		Type : McWRScnObjExtEnum; (*Scene Viewer Object selector setting*)
+	END_STRUCT;
+	McMSDeltaWrkRngExtType : STRUCT (*Type mcMSDWR_EXT settings*)
+		SceneViewerObject : McWRScnObjExtType; (*Working range extended settings*)
+		MainCylinderDiameter : LREAL; (*A: Diameter of the main cylinder [measurement units]*)
+		BaseToTopCone : LREAL; (*B: Distance from base platform center point to the top of the working range area [measurement units]*)
+		MainCylinderOffset : LREAL; (*C: Distance from the top of the working range to the bottom of the main cylinder [measurement units]*)
+		MainConeOffset : LREAL; (*D: Distance from the top of the working range to the bottom of the main cone [measurement units]*)
+		BottomConeOffset : LREAL; (*E: Distance from the top of the working range to the bottom of the bottom cone [measurement units]*)
+		MainConeDiameter : LREAL; (*F: Lower diameter of the main cone [measurement units]*)
+		BottomConeDiameter : LREAL; (*G: Lower diameter of the bottom cone [measurement units]*)
+		TopConeOffset : LREAL; (*H: Distance from the top of the working range to the bottom of the top cone [measurement units]*)
+		TopConeDiameter : LREAL; (*I: Upper diameter of the top cone [measurement units]*)
+	END_STRUCT;
+	McMSDeltaWrkRngType : STRUCT (*Working range description related to end-effector platform center point*)
+		Type : McMSDeltaWrkRngEnum; (*Working range selector setting*)
+		Standard : McMSDeltaWrkRngStdType; (*Type mcMSDWR_STD settings*)
+		Extended : McMSDeltaWrkRngExtType; (*Type mcMSDWR_EXT settings*)
 	END_STRUCT;
 	McCfgMS3AxDeltaAType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_3AX_DELTA_A*)
-		SceneViewerObject : McMS3ADASceneViewerObjEnum; (*Defines if and which Scene Viewer Object should be used*)
+		SceneViewerObject : McMSSVOType; (*Defines if and which Scene Viewer Object should be used*)
 		Description : McMS3ADADescType; (*Description of the mechanical system*)
 		CoordinatesNames : McMS3ADACoorNameType; (*Coordinates names*)
 		WireFrameModel : McMS3ADAWFrmMdlType; (*Wire frame model of mechanical system*)
 		DynamicModel : McMSDynMdlType; (*Dynamic model of the mechanical system*)
+		InternalDynamicModel : McMSIDMType;
 		DynamicLimits : McMSDynLimType; (*Dynamic limits of the mechanical system*)
+		InternalDynamicLimits : McMSIDLType;
 		LoadDependentJerkLimits : McMSLoadDepJerkLimType;
 		Couplings : McMS3ADACplgType; (*Couplings between selected axes and the joint axis*)
 		JointAxesPositionLimits : McMSJnt3AxPosLimType; (*Position limits for joint axis*)
+		WorkingRange : McMSDeltaWrkRngType; (*Working range description related to end-effector platform center point*)
 	END_STRUCT;
-	McMS3ADXZBSceneViewerObjEnum :
-		( (*Defines if and which Scene Viewer Object should be used*)
-		mcMS3ADXZBSVO_NOT_USE := 0, (*Not used*)
-		mcMS3ADXZBSVO_GEN := 1 (*Generic*)
-		);
 	McMS3ADXZBDescEnum :
 		( (*Description selector setting*)
 		mcMS3ADXZBD_STD := 0 (*Standard - Standard description*)
@@ -3236,23 +4190,30 @@ TYPE
 		Standard : McMS3ADXZBWFrmMdlStdType; (*Type mcMS3ADXZBWFM_STD settings*)
 	END_STRUCT;
 	McMS3ADXZBCplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg3LinCplgType)*)
+	END_STRUCT;
+	McMS3ADXZBMonPtEnum :
+		( (*Monitoring points selector setting*)
+		mcMS3ADXZBMP_NOT_USE := 0, (*Not used - Monitoring points not used*)
+		mcMS3ADXZBMP_STD := 1 (*Standard - Monitoring points used*)
+		);
+	McMS3ADXZBMonPtType : STRUCT (*Enable robot monitoring points*)
+		Type : McMS3ADXZBMonPtEnum; (*Monitoring points selector setting*)
 	END_STRUCT;
 	McCfgMS3AxDeltaXZBType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_3AX_DELTA_XZB*)
-		SceneViewerObject : McMS3ADXZBSceneViewerObjEnum; (*Defines if and which Scene Viewer Object should be used*)
+		SceneViewerObject : McMSSVOType; (*Defines if and which Scene Viewer Object should be used*)
 		Description : McMS3ADXZBDescType; (*Description of the mechanical system*)
 		CoordinatesNames : McMS3ADXZBCoorNameType; (*Coordinates names*)
 		TCPOrientation : McMSTCPOType; (*Handling of TCP orientation coordinates*)
 		WireFrameModel : McMS3ADXZBWFrmMdlType; (*Wire frame model of mechanical system*)
 		DynamicModel : McMSDynMdlType; (*Dynamic model of the mechanical system*)
+		InternalDynamicModel : McMSIDMType;
+		DynamicLimits : McMSDynLimType; (*Dynamic limits of the mechanical system*)
+		InternalDynamicLimits : McMSIDLType;
 		Couplings : McMS3ADXZBCplgType; (*Couplings between selected axes and the joint axis*)
 		JointAxesPositionLimits : McMSJnt3AxPosLimType; (*Position limits for joint axis*)
+		MonitoringPoints : McMS3ADXZBMonPtType; (*Enable robot monitoring points*)
 	END_STRUCT;
-	McMS3ADBSceneViewerObjEnum :
-		( (*Defines if and which Scene Viewer Object should be used*)
-		mcMS3ADBSVO_NOT_USE := 0, (*Not used*)
-		mcMS3ADBSVO_GEN := 1 (*Generic*)
-		);
 	McMS3ADBDescEnum :
 		( (*Description selector setting*)
 		mcMS3ADBD_STD := 0 (*Standard - Standard description*)
@@ -3315,25 +4276,18 @@ TYPE
 		Standard : McMS3ADBWFrmMdlStdType; (*Type mcMS3ADBWFM_STD settings*)
 	END_STRUCT;
 	McMS3ADBCplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg3LinCplgType)*)
 	END_STRUCT;
 	McCfgMS3AxDeltaBType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_3AX_DELTA_B*)
-		SceneViewerObject : McMS3ADBSceneViewerObjEnum; (*Defines if and which Scene Viewer Object should be used*)
+		SceneViewerObject : McMSSVOType; (*Defines if and which Scene Viewer Object should be used*)
 		Description : McMS3ADBDescType; (*Description of the mechanical system*)
 		CoordinatesNames : McMS3ADBCoorNameType; (*Coordinates names*)
 		WireFrameModel : McMS3ADBWFrmMdlType; (*Wire frame model of mechanical system*)
 		DynamicModel : McMSDynMdlType; (*Dynamic model of the mechanical system*)
+		InternalDynamicModel : McMSIDMType;
 		Couplings : McMS3ADBCplgType; (*Couplings between selected axes and the joint axis*)
 		JointAxesPositionLimits : McMSJnt3AxPosLimType; (*Position limits for joint axis*)
 	END_STRUCT;
-	McMS3ADXZCSceneViewerObjEnum :
-		( (*Defines if and which Scene Viewer Object should be used*)
-		mcMS3ADXZCSVO_NOT_USE := 0, (*Not used*)
-		mcMS3ADXZCSVO_GEN := 1, (*Generic*)
-		mcMS3ADXZCSVO_D2500S02XR100 := 3, (*D2-500-S02x-R100*)
-		mcMS3ADXZCSVO_D2800S02XR100 := 2, (*D2-800-S02x-R100*)
-		mcMS3ADXZCSVO_D21000S03XDR8X := 4 (*D2-1000-S03x-DR8x*)
-		);
 	McMS3ADXZCDescEnum :
 		( (*Description selector setting*)
 		mcMS3ADXZCD_STD := 0 (*Standard - Standard description*)
@@ -3386,7 +4340,7 @@ TYPE
 		Standard : McMS3ADXZCWFrmMdlStdType; (*Type mcMS3ADXZCWFM_STD settings*)
 	END_STRUCT;
 	McMS3ADXZCCplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg3LinCplgType)*)
 	END_STRUCT;
 	McMS3ADXZCMonPtEnum :
 		( (*Monitoring points selector setting*)
@@ -3397,68 +4351,20 @@ TYPE
 		Type : McMS3ADXZCMonPtEnum; (*Monitoring points selector setting*)
 	END_STRUCT;
 	McCfgMS3AxDeltaXZCType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_3AX_DELTA_XZC*)
-		SceneViewerObject : McMS3ADXZCSceneViewerObjEnum; (*Defines if and which Scene Viewer Object should be used*)
+		SceneViewerObject : McMSSVOType; (*Defines if and which Scene Viewer Object should be used*)
 		Description : McMS3ADXZCDescType; (*Description of the mechanical system*)
 		CoordinatesNames : McMS3ADXZCCoorNameType; (*Coordinates names*)
 		WireFrameModel : McMS3ADXZCWFrmMdlType; (*Wire frame model of mechanical system*)
 		DynamicModel : McMSDynMdlType; (*Dynamic model of the mechanical system*)
+		InternalDynamicModel : McMSIDMType;
 		DynamicLimits : McMSDynLimType; (*Dynamic limits of the mechanical system*)
+		InternalDynamicLimits : McMSIDLType;
 		LoadDependentJerkLimits : McMSLoadDepJerkLimType;
 		Couplings : McMS3ADXZCCplgType; (*Couplings between selected axes and the joint axis*)
 		JointAxesPositionLimits : McMSJnt3AxPosLimType; (*Position limits for joint axis*)
 		WorkingRange : McMSDelta2DWrkRngType; (*Working range description related to end-effector platform center point*)
 		MonitoringPoints : McMS3ADXZCMonPtType; (*Enable robot monitoring points*)
 	END_STRUCT;
-	McMS4ADASceneViewerObjEnum :
-		( (*Defines if and which Scene Viewer Object should be used*)
-		mcMS4ADASVO_NOT_USE := 0, (*Not used*)
-		mcMS4ADASVO_GEN := 1, (*Generic*)
-		mcMS4ADASVO_D40650S02XR10X := 2, (*D4-0650-S02x-R10x*)
-		mcMS4ADASVO_D40800S02XR10X := 3, (*D4-0800-S02x-R10x*)
-		mcMS4ADASVO_D41100S02XR20X := 4, (*D4-1100-S02x-R20x*)
-		mcMS4ADASVO_D41300S02XR20X := 5, (*D4-1300-S02x-R20x*)
-		mcMS4ADASVO_D41600S02XR10X := 6, (*D4-1600-S02x-R10x*)
-		mcMS4ADASVO_D41600S04XR20X := 7, (*D4-1600-S04x-R20x*)
-		mcMS4ADASVO_D41600S05XR30X := 8, (*D4-1600-S05x-R30x*)
-		mcMS4ADASVO_D42100S05XR75X := 9, (*D4-2100-S05x-R75x*)
-		mcMS4ADASVO_TD40800S02XR10X := 10, (*TD4-0800-S02x-R10x*)
-		mcMS4ADASVO_D41100HD02XRH09X := 11, (*D4-1100-HD02x-RH09x*)
-		mcMS4ADASVO_D41100HD02XRH10X := 12, (*D4-1100-HD02x-RH10x*)
-		mcMS4ADASVO_D41100HD04XRH21X := 13, (*D4-1100-HD04x-RH21x*)
-		mcMS4ADASVO_D40650HD02XRH10X := 14, (*D4-0650-HD02x-RH10x*)
-		mcMS4ADASVO_D40800HD02XRH10X := 15, (*D4-0800-HD02x-RH10x*)
-		mcMS4ADASVO_D41100HD02XRH21X := 16, (*D4-1100-HD02x-RH21x*)
-		mcMS4ADASVO_D41300HD02XRH10X := 17, (*D4-1300-HD02x-RH10x*)
-		mcMS4ADASVO_D41300HD02XRH21X := 18, (*D4-1300-HD02x-RH21x*)
-		mcMS4ADASVO_D41300HD04XRH21X := 19, (*D4-1300-HD04x-RH21x*)
-		mcMS4ADASVO_D41600HD02XRH10X := 20, (*D4-1600-HD02x-RH10x*)
-		mcMS4ADASVO_D41600HD02XRH21X := 21, (*D4-1600-HD02x-RH21x*)
-		mcMS4ADASVO_D41600HD04XRH21X := 22, (*D4-1600-HD04x-RH21x*)
-		mcMS4ADASVO_D4500S010R109 := 23, (*D4-500-S010-R109*)
-		mcMS4ADASVO_D4ST210700R11 := 24, (*D4-ST21-0700-R11*)
-		mcMS4ADASVO_D4ST210700R20 := 25, (*D4-ST21-0700-R20*)
-		mcMS4ADASVO_D4ST210900R11 := 26, (*D4-ST21-0900-R11*)
-		mcMS4ADASVO_D4ST210900R20 := 27, (*D4-ST21-0900-R20*)
-		mcMS4ADASVO_D4ST211100R11 := 28, (*D4-ST21-1100-R11*)
-		mcMS4ADASVO_D4ST211100R20 := 29, (*D4-ST21-1100-R20*)
-		mcMS4ADASVO_D4ST211300R11 := 30, (*D4-ST21-1300-R11*)
-		mcMS4ADASVO_D4ST211300R20 := 31, (*D4-ST21-1300-R20*)
-		mcMS4ADASVO_D4ST211600R11 := 32, (*D4-ST21-1600-R11*)
-		mcMS4ADASVO_D4ST211600R20 := 33, (*D4-ST21-1600-R20*)
-		mcMS4ADASVO_D41100S02XR10X := 34, (*D4-1100-S02x-R10x*)
-		mcMS4ADASVO_D41100S04XR20X := 35, (*D4-1100-S04x-R20x*)
-		mcMS4ADASVO_D41300S02XR10X := 36, (*D4-1300-S02x-R10x*)
-		mcMS4ADASVO_D41300S04XR20X := 37, (*D4-1300-S04x-R20x*)
-		mcMS4ADASVO_D41300S05XR75X := 38, (*D4-1300-S05x-R75x*)
-		mcMS4ADASVO_D41600S02XR20X := 39, (*D4-1600-S02x-R20x*)
-		mcMS4ADASVO_D41600S05XR75X := 40, (*D4-1600-S05x-R75x*)
-		mcMS4ADASVO_TD40500S01XR10X := 41, (*TD4-0500-S01x-R10x*)
-		mcMS4ADASVO_TD40650S02XR10X := 42, (*TD4-0650-S02x-R10x*)
-		mcMS4ADASVO_TD41100S02XR10X := 43, (*TD4-1100-S02x-R10x*)
-		mcMS4ADASVO_TD41300S02XR10X := 44, (*TD4-1300-S02x-R10x*)
-		mcMS4ADASVO_TD41300S04XR20X := 45, (*TD4-1300-S04x-R20x*)
-		mcMS4ADASVO_TD41600S04XR20X := 46 (*TD4-1600-S04x-R20x*)
-		);
 	McMS4ADADescEnum :
 		( (*Description selector setting*)
 		mcMS4ADAD_STD := 0 (*Standard - Standard description*)
@@ -3518,44 +4424,23 @@ TYPE
 		Standard : McMS4ADAWFrmMdlStdType; (*Type mcMS4ADAWFM_STD settings*)
 	END_STRUCT;
 	McMS4ADACplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
-	END_STRUCT;
-	McMSDeltaWrkRngEnum :
-		( (*Working range selector setting*)
-		mcMSDWR_NOT_USE := 0, (*Not used -*)
-		mcMSDWR_STD := 1 (*Standard -*)
-		);
-	McMSDeltaWrkRngStdType : STRUCT (*Type mcMSDWR_STD settings*)
-		BaseToTop : LREAL; (*Distance from base platform center point to the top of the working range area [measurement units]*)
-		TopHeight : LREAL; (*Height of the top truncated cone [measurement units]*)
-		MiddleHeight : LREAL; (*Height of the middle cylindrical part [measurement units]*)
-		BottomHeight : LREAL; (*Height of the bottom truncated cone [measurement units]*)
-		TopRadius : LREAL; (*Radius of top truncated cone upperside [measurement units]*)
-		MiddleRadius : LREAL; (*Radius of middle cylindrical part [measurement units]*)
-		BottomRadius : LREAL; (*Radius of bottom truncated cone underside [measurement units]*)
-	END_STRUCT;
-	McMSDeltaWrkRngType : STRUCT (*Working range description related to end-effector platform center point*)
-		Type : McMSDeltaWrkRngEnum; (*Working range selector setting*)
-		Standard : McMSDeltaWrkRngStdType; (*Type mcMSDWR_STD settings*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg4LinCplgType)*)
 	END_STRUCT;
 	McCfgMS4AxDeltaAType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_4AX_DELTA_A*)
-		SceneViewerObject : McMS4ADASceneViewerObjEnum; (*Defines if and which Scene Viewer Object should be used*)
+		SceneViewerObject : McMSSVOType; (*Defines if and which Scene Viewer Object should be used*)
 		Description : McMS4ADADescType; (*Description of the mechanical system*)
 		CoordinatesNames : McMS4ADACoorNameType; (*Coordinates names*)
 		TCPOrientation : McMSTCPOType; (*Handling of TCP orientation coordinates*)
 		WireFrameModel : McMS4ADAWFrmMdlType; (*Wire frame model of mechanical system*)
 		DynamicModel : McMSDynMdlType; (*Dynamic model of the mechanical system*)
+		InternalDynamicModel : McMSIDMType;
 		DynamicLimits : McMSDynLimType; (*Dynamic limits of the mechanical system*)
+		InternalDynamicLimits : McMSIDLType;
 		LoadDependentJerkLimits : McMSLoadDepJerkLimType;
 		Couplings : McMS4ADACplgType; (*Couplings between selected axes and the joint axis*)
 		JointAxesPositionLimits : McMSJnt4AxPosLimType; (*Position limits for joint axis*)
 		WorkingRange : McMSDeltaWrkRngType; (*Working range description related to end-effector platform center point*)
 	END_STRUCT;
-	McMS4ADBSceneViewerObjEnum :
-		( (*Defines if and which Scene Viewer Object should be used*)
-		mcMS4ADBSVO_NOT_USE := 0, (*Not used*)
-		mcMS4ADBSVO_GEN := 1 (*Generic*)
-		);
 	McMS4ADBDescEnum :
 		( (*Description selector setting*)
 		mcMS4ADBD_STD := 0 (*Standard - Standard description*)
@@ -3618,24 +4503,20 @@ TYPE
 		Standard : McMS4ADBWFrmMdlStdType; (*Type mcMS4ADBWFM_STD settings*)
 	END_STRUCT;
 	McMS4ADBCplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg4LinCplgType)*)
 	END_STRUCT;
 	McCfgMS4AxDeltaBType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_4AX_DELTA_B*)
-		SceneViewerObject : McMS4ADBSceneViewerObjEnum; (*Defines if and which Scene Viewer Object should be used*)
+		SceneViewerObject : McMSSVOType; (*Defines if and which Scene Viewer Object should be used*)
 		Description : McMS4ADBDescType; (*Description of the mechanical system*)
 		CoordinatesNames : McMS4ADBCoorNameType; (*Coordinates names*)
 		TCPOrientation : McMSTCPOType; (*Handling of TCP orientation coordinates*)
 		WireFrameModel : McMS4ADBWFrmMdlType; (*Wire frame model of mechanical system*)
 		DynamicModel : McMSDynMdlType; (*Dynamic model of the mechanical system*)
+		InternalDynamicModel : McMSIDMType;
 		Couplings : McMS4ADBCplgType; (*Couplings between selected axes and the joint axis*)
 		JointAxesPositionLimits : McMSJnt4AxPosLimType; (*Position limits for joint axis*)
 		WorkingRange : McMSDeltaWrkRngType; (*Working range description related to end-effector platform center point*)
 	END_STRUCT;
-	McMS4ADCSceneViewerObjEnum :
-		( (*Defines if and which Scene Viewer Object should be used*)
-		mcMS4ADCSVO_NOT_USE := 0, (*Not used*)
-		mcMS4ADCSVO_GEN := 1 (*Generic*)
-		);
 	McMS4ADCDescEnum :
 		( (*Description selector setting*)
 		mcMS4ADCD_STD := 0 (*Standard - Standard description*)
@@ -3704,29 +4585,20 @@ TYPE
 		Standard : McMS4ADCWFrmMdlStdType; (*Type mcMS4ADCWFM_STD settings*)
 	END_STRUCT;
 	McMS4ADCCplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg4LinCplgType)*)
 	END_STRUCT;
 	McCfgMS4AxDeltaCType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_4AX_DELTA_C*)
-		SceneViewerObject : McMS4ADCSceneViewerObjEnum; (*Defines if and which Scene Viewer Object should be used*)
+		SceneViewerObject : McMSSVOType; (*Defines if and which Scene Viewer Object should be used*)
 		Description : McMS4ADCDescType; (*Description of the mechanical system*)
 		CoordinatesNames : McMS4ADCCoorNameType; (*Coordinates names*)
 		TCPOrientation : McMSTCPOType; (*Handling of TCP orientation coordinates*)
 		WireFrameModel : McMS4ADCWFrmMdlType; (*Wire frame model of mechanical system*)
 		DynamicModel : McMSDynMdlType; (*Dynamic model of the mechanical system*)
+		InternalDynamicModel : McMSIDMType;
 		Couplings : McMS4ADCCplgType; (*Couplings between selected axes and the joint axis*)
 		JointAxesPositionLimits : McMSJnt4AxPosLimType; (*Position limits for joint axis*)
 		WorkingRange : McMSDeltaWrkRngType; (*Working range description related to end-effector platform center point*)
 	END_STRUCT;
-	McMS5ADASceneViewerObjEnum :
-		( (*Defines if and which Scene Viewer Object should be used*)
-		mcMS5ADASVO_NOT_USE := 0, (*Not used*)
-		mcMS5ADASVO_GEN := 1, (*Generic*)
-		mcMS5ADASVO_D51100S02XR10X := 2, (*D5-1100-S02x-R10x*)
-		mcMS5ADASVO_TD50650S02XR10X := 3, (*TD5-0650-S02x-R10x*)
-		mcMS5ADASVO_TD50800S02XR10X := 4, (*TD5-0800-S02x-R10x*)
-		mcMS5ADASVO_TD51100S02XR10X := 5, (*TD5-1100-S02x-R10x*)
-		mcMS5ADASVO_TD51300S02XR10X := 6 (*TD5-1300-S02x-R10x*)
-		);
 	McMS5ADADescEnum :
 		( (*Description selector setting*)
 		mcMS5ADAD_STD := 0 (*Standard - Standard description*)
@@ -3791,16 +4663,18 @@ TYPE
 		Standard : McMS5ADAWFrmMdlStdType; (*Type mcMS5ADAWFM_STD settings*)
 	END_STRUCT;
 	McMS5ADACplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg5LinCplgType)*)
 	END_STRUCT;
 	McCfgMS5AxDeltaAType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_5AX_DELTA_A*)
-		SceneViewerObject : McMS5ADASceneViewerObjEnum; (*Defines if and which Scene Viewer Object should be used*)
+		SceneViewerObject : McMSSVOType; (*Defines if and which Scene Viewer Object should be used*)
 		Description : McMS5ADADescType; (*Description of the mechanical system*)
 		CoordinatesNames : McMS5ADACoorNameType; (*Coordinates names*)
 		TCPOrientation : McMSTCPOType; (*Handling of TCP orientation coordinates*)
 		WireFrameModel : McMS5ADAWFrmMdlType; (*Wire frame model of mechanical system*)
 		DynamicModel : McMSDynMdlType; (*Dynamic model of the mechanical system*)
+		InternalDynamicModel : McMSIDMType;
 		DynamicLimits : McMSDynLimType; (*Dynamic limits of the mechanical system*)
+		InternalDynamicLimits : McMSIDLType;
 		LoadDependentJerkLimits : McMSLoadDepJerkLimType;
 		Couplings : McMS5ADACplgType; (*Couplings between selected axes and the joint axis*)
 		JointAxesPositionLimits : McMSJnt5AxPosLimType; (*Position limits for joint axis*)
@@ -3849,22 +4723,17 @@ TYPE
 		Standard : McMS3ARAWFrmMdlStdType; (*Type mcMS3ARAWFM_STD settings*)
 	END_STRUCT;
 	McMS3ARACplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg3LinCplgType)*)
 	END_STRUCT;
 	McCfgMS3AxRobAType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_3AX_ROB_A*)
 		Description : McMS3ARADescType; (*Description of the mechanical system*)
 		CoordinatesNames : McMS3ARACoorNameType; (*Coordinates names*)
 		WireFrameModel : McMS3ARAWFrmMdlType; (*Wire frame model of mechanical system*)
 		DynamicModel : McMSDynMdlType; (*Dynamic model of the mechanical system*)
+		InternalDynamicModel : McMSIDMType;
 		Couplings : McMS3ARACplgType; (*Couplings between selected axes and the joint axis*)
 		JointAxesPositionLimits : McMSJnt3AxPosLimType; (*Position limits for joint axis*)
 	END_STRUCT;
-	McMS4ARASceneViewerObjEnum :
-		( (*Defines if and which Scene Viewer Object should be used*)
-		mcMS4ARASVO_NOT_USE := 0, (*Not used*)
-		mcMS4ARASVO_GEN := 1, (*Generic*)
-		mcMS4ARASVO_COMAU_PAL_180_31 := 2 (*Comau PAL 180 3.1*)
-		);
 	McMS4ARADescEnum :
 		( (*Description selector setting*)
 		mcMS4ARAD_STD := 0 (*Standard - Standard description*)
@@ -3900,6 +4769,56 @@ TYPE
 		( (*Wire frame model selector setting*)
 		mcMS4ARAWFM_STD := 0 (*Standard - Standard wire-frame model*)
 		);
+	McMS4ARAWFrmMdlStdCusEdgTypEnum :
+		( (*Type selector setting*)
+		mcMS4ARAWFMSCET_CXN_LIN := 0, (*Connection line - Edge is considered as a whole connection line*)
+		mcMS4ARAWFMSCET_PT := 1, (*Point - Only the end point of the edge is considered*)
+		mcMS4ARAWFMSCET_NOT_USE := 2 (*Not used - Edge is not considered*)
+		);
+	McMS4ARAFMSCETParentPtEnum :
+		( (*Parent point selector setting*)
+		mcMS4ARAFMSCETPP_Q1 := 0, (*Q1 - Point Q1*)
+		mcMS4ARAFMSCETPP_Q2 := 1, (*Q2 - Point Q2*)
+		mcMS4ARAFMSCETPP_Q3 := 2, (*Q3 - Point Q3*)
+		mcMS4ARAFMSCETPP_PQ1 := 3, (*PQ1 - Point PQ1*)
+		mcMS4ARAFMSCETPP_Q4 := 4, (*Q4 - Point Q4*)
+		mcMS4ARAFMSCETPP_FLG := 5, (*Flange - Point Flange*)
+		mcMS4ARAFMSCETPP_TCP := 6 (*TCP - Point TCP*)
+		);
+	McMS4ARAFMSCETParentPtType : STRUCT (*Parent point*)
+		Type : McMS4ARAFMSCETParentPtEnum; (*Parent point selector setting*)
+	END_STRUCT;
+	McMS4ARAFMSCETCxnLinOffType : STRUCT (*Offset in the coordinate system of the parent point*)
+		X : LREAL; (*Translation in X direction [measurement units]*)
+		Y : LREAL; (*Translation in Y direction [measurement units]*)
+		Z : LREAL; (*Translation in Z direction [measurement units]*)
+	END_STRUCT;
+	McMS4ARAFMSCETCxnLinType : STRUCT (*Type mcMS4ARAWFMSCET_CXN_LIN settings*)
+		ParentPoint : McMS4ARAFMSCETParentPtType; (*Parent point*)
+		Offset : McMS4ARAFMSCETCxnLinOffType; (*Offset in the coordinate system of the parent point*)
+		Distance : LREAL; (*Edge distance to prevent collisions [measurement units]*)
+	END_STRUCT;
+	McMS4ARAFMSCETPtOffType : STRUCT (*Offset in the coordinate system of the parent point*)
+		X : LREAL; (*Translation in X direction [measurement units]*)
+		Y : LREAL; (*Translation in Y direction [measurement units]*)
+		Z : LREAL; (*Translation in Z direction [measurement units]*)
+	END_STRUCT;
+	McMS4ARAFMSCETPtType : STRUCT (*Type mcMS4ARAWFMSCET_PT settings*)
+		ParentPoint : McMS4ARAFMSCETParentPtType; (*Parent point*)
+		Offset : McMS4ARAFMSCETPtOffType; (*Offset in the coordinate system of the parent point*)
+		Distance : LREAL; (*Edge distance to prevent collisions [measurement units]*)
+	END_STRUCT;
+	McMS4ARAWFrmMdlStdCusEdgTypType : STRUCT (*Type of the custom edge of the wire frame model*)
+		Type : McMS4ARAWFrmMdlStdCusEdgTypEnum; (*Type selector setting*)
+		ConnectionLine : McMS4ARAFMSCETCxnLinType; (*Type mcMS4ARAWFMSCET_CXN_LIN settings*)
+		Point : McMS4ARAFMSCETPtType; (*Type mcMS4ARAWFMSCET_PT settings*)
+	END_STRUCT;
+	McMS4ARAWFrmMdlStdCusEdgType : STRUCT (*Custom edges of the wire frame model*)
+		Type : McMS4ARAWFrmMdlStdCusEdgTypType; (*Type of the custom edge of the wire frame model*)
+	END_STRUCT;
+	McMS4ARAWFrmMdlStdCusType : STRUCT (*Custom edges of the wire frame model*)
+		Edge : McCfgUnboundedArrayType; (*Custom edges of the wire frame model (Connect array of type McMS4ARAWFrmMdlStdCusEdgType)*)
+	END_STRUCT;
 	McMS4ARAWFrmMdlStdType : STRUCT (*Type mcMS4ARAWFM_STD settings*)
 		Q1ToQ2 : McMSFrmMdlStdEdgeType; (*Wire frame model edge*)
 		Q2ToQ3 : McMSFrmMdlStdEdgeType; (*Wire frame model edge*)
@@ -3907,13 +4826,14 @@ TYPE
 		PQ1ToQ4 : McMSFrmMdlStdEdgeType; (*Wire frame model edge*)
 		Q4ToFlange : McMSFrmMdlStdEdgeType; (*Wire frame model edge*)
 		FlangeToTCP : McMSFrmMdlStdEdgeType; (*Wire frame model edge*)
+		Custom : McMS4ARAWFrmMdlStdCusType; (*Custom edges of the wire frame model*)
 	END_STRUCT;
 	McMS4ARAWFrmMdlType : STRUCT (*Wire frame model of mechanical system*)
 		Type : McMS4ARAWFrmMdlEnum; (*Wire frame model selector setting*)
 		Standard : McMS4ARAWFrmMdlStdType; (*Type mcMS4ARAWFM_STD settings*)
 	END_STRUCT;
 	McMS4ARACplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg4LinCplgType)*)
 	END_STRUCT;
 	McMS4ARAMonPtEnum :
 		( (*Monitoring points selector setting*)
@@ -3924,13 +4844,15 @@ TYPE
 		Type : McMS4ARAMonPtEnum; (*Monitoring points selector setting*)
 	END_STRUCT;
 	McCfgMS4AxRobAType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_4AX_ROB_A*)
-		SceneViewerObject : McMS4ARASceneViewerObjEnum; (*Defines if and which Scene Viewer Object should be used*)
+		SceneViewerObject : McMSSVOType; (*Defines if and which Scene Viewer Object should be used*)
 		Description : McMS4ARADescType; (*Description of the mechanical system*)
 		CoordinatesNames : McMS4ARACoorNameType; (*Coordinates names*)
 		TCPOrientation : McMSTCPOType; (*Handling of TCP orientation coordinates*)
 		WireFrameModel : McMS4ARAWFrmMdlType; (*Wire frame model of mechanical system*)
 		DynamicModel : McMSDynMdlType; (*Dynamic model of the mechanical system*)
+		InternalDynamicModel : McMSIDMType;
 		DynamicLimits : McMSDynLimType; (*Dynamic limits of the mechanical system*)
+		InternalDynamicLimits : McMSIDLType;
 		Couplings : McMS4ARACplgType; (*Couplings between selected axes and the joint axis*)
 		JointAxesPositionLimits : McMSJnt4AxPosLimType; (*Position limits for joint axis*)
 		MonitoringPoints : McMS4ARAMonPtType; (*Enable robot monitoring points*)
@@ -3998,6 +4920,7 @@ TYPE
 		TCPOrientation : McMSTCPOType; (*Handling of TCP orientation coordinates*)
 		WireFrameModel : McMS4ARBWFrmMdlType; (*Wire frame model of mechanical system*)
 		DynamicModel : McMSDynMdlType; (*Dynamic model of the mechanical system*)
+		InternalDynamicModel : McMSIDMType;
 		JointAxesPositionLimits : McMSJnt4AxPosLimType; (*Position limits for joint axis*)
 	END_STRUCT;
 	McMS5ARADescEnum :
@@ -4049,13 +4972,14 @@ TYPE
 		Standard : McMS5ARAWFrmMdlStdType; (*Type mcMS5ARAWFM_STD settings*)
 	END_STRUCT;
 	McMS5ARACplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg5LinCplgType)*)
 	END_STRUCT;
 	McCfgMS5AxRobAType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_5AX_ROB_A*)
 		Description : McMS5ARADescType; (*Description of the mechanical system*)
 		CoordinatesNames : McMS5ARACoorNameType; (*Coordinates names*)
 		WireFrameModel : McMS5ARAWFrmMdlType; (*Wire frame model of mechanical system*)
 		DynamicModel : McMSDynMdlType; (*Dynamic model of the mechanical system*)
+		InternalDynamicModel : McMSIDMType;
 		Couplings : McMS5ARACplgType; (*Couplings between selected axes and the joint axis*)
 		JointAxesPositionLimits : McMSJnt5AxPosLimType; (*Position limits for joint axis*)
 	END_STRUCT;
@@ -4108,21 +5032,27 @@ TYPE
 		Standard : McMS5ARBWFrmMdlStdType; (*Type mcMS5ARBWFM_STD settings*)
 	END_STRUCT;
 	McMS5ARBCplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg5LinCplgType)*)
+	END_STRUCT;
+	McMS5ARBMonPtEnum :
+		( (*Monitoring points selector setting*)
+		mcMS5ARBMP_NOT_USE := 0, (*Not used - Monitoring points not used*)
+		mcMS5ARBMP_STD := 1 (*Standard - Monitoring points used*)
+		);
+	McMS5ARBMonPtType : STRUCT (*Enable robot monitoring points*)
+		Type : McMS5ARBMonPtEnum; (*Monitoring points selector setting*)
 	END_STRUCT;
 	McCfgMS5AxRobBType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_5AX_ROB_B*)
+		SceneViewerObject : McMSSVOType; (*Defines if and which Scene Viewer Object should be used*)
 		Description : McMS5ARBDescType; (*Description of the mechanical system*)
 		CoordinatesNames : McMS5ARBCoorNameType; (*Coordinates names*)
 		WireFrameModel : McMS5ARBWFrmMdlType; (*Wire frame model of mechanical system*)
 		DynamicModel : McMSDynMdlType; (*Dynamic model of the mechanical system*)
+		InternalDynamicModel : McMSIDMType;
 		Couplings : McMS5ARBCplgType; (*Couplings between selected axes and the joint axis*)
 		JointAxesPositionLimits : McMSJnt5AxPosLimType; (*Position limits for joint axis*)
+		MonitoringPoints : McMS5ARBMonPtType; (*Enable robot monitoring points*)
 	END_STRUCT;
-	McMS6ARASceneViewerObjEnum :
-		( (*Defines if and which Scene Viewer Object should be used*)
-		mcMS6ARASVO_NOT_USE := 0, (*Not used*)
-		mcMS6ARASVO_GEN := 1 (*Generic*)
-		);
 	McMS6ARADescEnum :
 		( (*Description selector setting*)
 		mcMS6ARAD_STD := 0 (*Standard - Standard description*)
@@ -4175,29 +5105,29 @@ TYPE
 		Standard : McMS6ARAWFrmMdlStdType; (*Type mcMS6ARAWFM_STD settings*)
 	END_STRUCT;
 	McMS6ARACplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg6LinCplgType)*)
+	END_STRUCT;
+	McMS6ARAMonPtEnum :
+		( (*Monitoring points selector setting*)
+		mcMS6ARAMP_NOT_USE := 0, (*Not used - Monitoring points not used*)
+		mcMS6ARAMP_STD := 1 (*Standard - Monitoring points used*)
+		);
+	McMS6ARAMonPtType : STRUCT (*Enable robot monitoring points*)
+		Type : McMS6ARAMonPtEnum; (*Monitoring points selector setting*)
 	END_STRUCT;
 	McCfgMS6AxRobAType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_6AX_ROB_A*)
-		SceneViewerObject : McMS6ARASceneViewerObjEnum; (*Defines if and which Scene Viewer Object should be used*)
+		SceneViewerObject : McMSSVOType; (*Defines if and which Scene Viewer Object should be used*)
 		Description : McMS6ARADescType; (*Description of the mechanical system*)
 		CoordinatesNames : McMS6ARACoorNameType; (*Coordinates names*)
 		WireFrameModel : McMS6ARAWFrmMdlType; (*Wire frame model of mechanical system*)
 		DynamicModel : McMSDynMdlType; (*Dynamic model of the mechanical system*)
+		InternalDynamicModel : McMSIDMType;
 		DynamicLimits : McMSDynLimType; (*Dynamic limits of the mechanical system*)
+		InternalDynamicLimits : McMSIDLType;
 		Couplings : McMS6ARACplgType; (*Couplings between selected axes and the joint axis*)
 		JointAxesPositionLimits : McMSJnt6AxPosLimType; (*Position limits for joint axis*)
+		MonitoringPoints : McMS6ARAMonPtType; (*Enable robot monitoring points*)
 	END_STRUCT;
-	McMS6ARBSceneViewerObjEnum :
-		( (*Defines if and which Scene Viewer Object should be used*)
-		mcMS6ARBSVO_NOT_USE := 0, (*Not used*)
-		mcMS6ARBSVO_GEN := 1, (*Generic*)
-		mcMS6ARBSVO_COMAU_RACER_3 := 20, (*Comau Racer 3*)
-		mcMS6ARBSVO_COMAU_RACER_5063 := 30, (*Comau Racer 5-0.63*)
-		mcMS6ARBSVO_COMAU_RACER_5080 := 31, (*Comau Racer 5-0.80*)
-		mcMS6ARBSVO_COMAU_RACER_714 := 40, (*Comau Racer 7-1.4*)
-		mcMS6ARBSVO_COMAU_NS12185 := 50, (*Comau NS12-1.85*)
-		mcMS6ARBSVO_COMAU_NS16165 := 60 (*Comau NS16-1.65*)
-		);
 	McMS6ARBDescEnum :
 		( (*Description selector setting*)
 		mcMS6ARBD_STD := 0 (*Standard - Standard description*)
@@ -4250,22 +5180,18 @@ TYPE
 		Standard : McMS6ARBWFrmMdlStdType; (*Type mcMS6ARBWFM_STD settings*)
 	END_STRUCT;
 	McMS6ARBCplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg6LinCplgType)*)
 	END_STRUCT;
 	McCfgMS6AxRobBType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_6AX_ROB_B*)
-		SceneViewerObject : McMS6ARBSceneViewerObjEnum; (*Defines if and which Scene Viewer Object should be used*)
+		SceneViewerObject : McMSSVOType; (*Defines if and which Scene Viewer Object should be used*)
 		Description : McMS6ARBDescType; (*Description of the mechanical system*)
 		CoordinatesNames : McMS6ARBCoorNameType; (*Coordinates names*)
 		WireFrameModel : McMS6ARBWFrmMdlType; (*Wire frame model of mechanical system*)
 		DynamicModel : McMSDynMdlType; (*Dynamic model of the mechanical system*)
+		InternalDynamicModel : McMSIDMType;
 		Couplings : McMS6ARBCplgType; (*Couplings between selected axes and the joint axis*)
 		JointAxesPositionLimits : McMSJnt6AxPosLimType; (*Position limits for joint axis*)
 	END_STRUCT;
-	McMS6ARCSceneViewerObjEnum :
-		( (*Defines if and which Scene Viewer Object should be used*)
-		mcMS6ARCSVO_NOT_USE := 0, (*Not used*)
-		mcMS6ARCSVO_GEN := 1 (*Generic*)
-		);
 	McMS6ARCDescEnum :
 		( (*Description selector setting*)
 		mcMS6ARCD_STD := 0 (*Standard - Standard description*)
@@ -4342,7 +5268,7 @@ TYPE
 		Standard : McMS6ARCWFrmMdlStdType; (*Type mcMS6ARCWFM_STD settings*)
 	END_STRUCT;
 	McMS6ARCCplgType : STRUCT (*Couplings between selected axes and the joint axis*)
-		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling*)
+		LinearCoupling : McCfgUnboundedArrayType; (*Linear coupling (Connect array of type McMSCplg6LinCplgType)*)
 	END_STRUCT;
 	McMS6ARCMonPtEnum :
 		( (*Monitoring points selector setting*)
@@ -4375,12 +5301,13 @@ TYPE
 		Standard : McMS6ARCPrgToolOffStdType; (*Type mcMS6ARCPTO_STD settings*)
 	END_STRUCT;
 	McCfgMS6AxRobCType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MS_6AX_ROB_C*)
-		SceneViewerObject : McMS6ARCSceneViewerObjEnum; (*Defines if and which Scene Viewer Object should be used*)
+		SceneViewerObject : McMSSVOType; (*Defines if and which Scene Viewer Object should be used*)
 		Description : McMS6ARCDescType; (*Description of the mechanical system*)
 		CoordinatesNames : McMS6ARCCoorNameType; (*Coordinates names*)
 		SingularityHandling : McMS6ARCSingHndlgType; (*Behaviour near and inside mechanical singularities*)
 		WireFrameModel : McMS6ARCWFrmMdlType; (*Wire frame model of mechanical system*)
 		DynamicModel : McMSDynMdlType; (*Dynamic model of the mechanical system*)
+		InternalDynamicModel : McMSIDMType;
 		Couplings : McMS6ARCCplgType; (*Couplings between selected axes and the joint axis*)
 		JointAxesPositionLimits : McMSJnt6AxPosLimType; (*Position limits for joint axis*)
 		MonitoringPoints : McMS6ARCMonPtType; (*Enable robot monitoring points*)

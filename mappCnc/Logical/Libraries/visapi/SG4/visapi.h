@@ -3,9 +3,6 @@
 
 #ifndef _VISAPI_
 #define _VISAPI_
-#ifndef _BUR_PUBLIC
-#define _BUR_PUBLIC
-#endif
 #ifdef __cplusplus
 extern "C" 
 {
@@ -13,92 +10,9 @@ extern "C"
 
 #include <bur/plctypes.h>
 
-#ifndef _IEC_CONST
-#define _IEC_CONST _WEAK const
+#ifndef _BUR_PUBLIC
+#define _BUR_PUBLIC
 #endif
-
-/* Constants */
-#ifdef _REPLACE_CONST
- #define vaALS_CURRENT 65536U
- #define vaALS_NOTBYPASSSED 512U
- #define vaALS_BYPASSSED 256U
- #define vaALS_NOTACKNOWLEDGED 32U
- #define vaALS_ACKNOWLEDGED 16U
- #define vaALS_ACTIVE 2U
- #define vaALS_INACTIVE 1U
- #define vaERR_EMPTY_HISTORYLIST 248U
- #define vaERR_BUSY 7000U
- #define vaERR_EMPTY_ALARMLIST 240U
- #define vaERR_NOALARMQUIT 245U
- #define vaERR_DELHISLIST 246U
- #define vaERR_BUSY_ALARMSYSTEM 247U
- #define vaERR_INTERPRETER_NOT_READY 7010U
- #define vaERR_DRIVER_NOT_FOUND 7020U
- #define vaERR_WRONG_MODULE_NAME 7030U
- #define vaERR_UNDEFINED_ERROR_CODE 7050U
- #define vaERR_FONTMODULE_NOT_FOUND 7060U
- #define vaERR_KEYMATRIX_NOT_VALID 7070U
- #define vaERR_NOT_SUPPORTED 7080U
- #define vaERR_PARAMETER 7090U
- #define vaERR_CREATE_TASK_FAILED 7100U
- #define vaERR_EXISTS 7101U
- #define vaERR_NO_ACCESS 7110U
- #define vaERR_ACCESS 7111U
- #define vaERR_OVERFLOW 7120U
- #define vaERR_CONNECTION_LOST 7130U
- #define vaERR_TIMEOUT 7140U
- #define vaERR_ARGUMENT 7150U
- #define vaERR_VERSION 7160U
- #define vaERR_MEMORY 7170U
- #define vaERR_RESOURCES 7180U
- #define vaERR_ALREADY 7190U
- #define vaERR_NO_MORE 7195U
- #define vaERR_RESOURCE_NOT_FOUND 7196U
- #define vaERR_RESOURCE_WRONG_FORMAT 7197U
- #define vaERR_VISAPI_NOT_INITIALIZED 100U
-#else
- _IEC_CONST unsigned long vaALS_CURRENT = 65536U;
- _IEC_CONST unsigned long vaALS_NOTBYPASSSED = 512U;
- _IEC_CONST unsigned long vaALS_BYPASSSED = 256U;
- _IEC_CONST unsigned long vaALS_NOTACKNOWLEDGED = 32U;
- _IEC_CONST unsigned long vaALS_ACKNOWLEDGED = 16U;
- _IEC_CONST unsigned long vaALS_ACTIVE = 2U;
- _IEC_CONST unsigned long vaALS_INACTIVE = 1U;
- _IEC_CONST unsigned short vaERR_EMPTY_HISTORYLIST = 248U;
- _IEC_CONST unsigned short vaERR_BUSY = 7000U;
- _IEC_CONST unsigned short vaERR_EMPTY_ALARMLIST = 240U;
- _IEC_CONST unsigned short vaERR_NOALARMQUIT = 245U;
- _IEC_CONST unsigned short vaERR_DELHISLIST = 246U;
- _IEC_CONST unsigned short vaERR_BUSY_ALARMSYSTEM = 247U;
- _IEC_CONST unsigned short vaERR_INTERPRETER_NOT_READY = 7010U;
- _IEC_CONST unsigned short vaERR_DRIVER_NOT_FOUND = 7020U;
- _IEC_CONST unsigned short vaERR_WRONG_MODULE_NAME = 7030U;
- _IEC_CONST unsigned short vaERR_UNDEFINED_ERROR_CODE = 7050U;
- _IEC_CONST unsigned short vaERR_FONTMODULE_NOT_FOUND = 7060U;
- _IEC_CONST unsigned short vaERR_KEYMATRIX_NOT_VALID = 7070U;
- _IEC_CONST unsigned short vaERR_NOT_SUPPORTED = 7080U;
- _IEC_CONST unsigned short vaERR_PARAMETER = 7090U;
- _IEC_CONST unsigned short vaERR_CREATE_TASK_FAILED = 7100U;
- _IEC_CONST unsigned short vaERR_EXISTS = 7101U;
- _IEC_CONST unsigned short vaERR_NO_ACCESS = 7110U;
- _IEC_CONST unsigned short vaERR_ACCESS = 7111U;
- _IEC_CONST unsigned short vaERR_OVERFLOW = 7120U;
- _IEC_CONST unsigned short vaERR_CONNECTION_LOST = 7130U;
- _IEC_CONST unsigned short vaERR_TIMEOUT = 7140U;
- _IEC_CONST unsigned short vaERR_ARGUMENT = 7150U;
- _IEC_CONST unsigned short vaERR_VERSION = 7160U;
- _IEC_CONST unsigned short vaERR_MEMORY = 7170U;
- _IEC_CONST unsigned short vaERR_RESOURCES = 7180U;
- _IEC_CONST unsigned short vaERR_ALREADY = 7190U;
- _IEC_CONST unsigned short vaERR_NO_MORE = 7195U;
- _IEC_CONST unsigned short vaERR_RESOURCE_NOT_FOUND = 7196U;
- _IEC_CONST unsigned short vaERR_RESOURCE_WRONG_FORMAT = 7197U;
- _IEC_CONST unsigned short vaERR_VISAPI_NOT_INITIALIZED = 100U;
-#endif
-
-
-
-
 /* Datatypes and datatypes of function blocks */
 typedef struct display_info
 {	unsigned short width;
@@ -120,6 +34,7 @@ typedef struct sVCBitmap
 	signed long iBPP;
 	signed long iHeight;
 	signed long iWidth;
+	unsigned long ulFlags;
 } sVCBitmap;
 
 typedef unsigned long VCHANDLE;
@@ -187,9 +102,9 @@ _BUR_PUBLIC unsigned short VA_wcGetActAlarmList(plcbit enable, unsigned long VCH
 _BUR_PUBLIC unsigned short VA_wcGetExAlarmList(plcbit enable, unsigned long VCHandle, signed long pcAlarmLine, signed long plLen, unsigned short iFunction, unsigned short usSeperator, unsigned char cDateTimeFormat);
 _BUR_PUBLIC unsigned short VA_wcGetTextByTextGroup(plcbit enable, unsigned long VCHandle, unsigned long TG_id, unsigned short TGT_id, unsigned long pwText, unsigned long psTextLength);
 _BUR_PUBLIC unsigned short VA_wcTextout(plcbit enable, unsigned long VCHandle, unsigned short font_index, unsigned short x, unsigned short y, unsigned char fC, unsigned char bC, unsigned long pwText);
-_BUR_PUBLIC unsigned short VA_GetActualLang();
-_BUR_PUBLIC unsigned short VA_ClearTouchEventBuffer();
-_BUR_PUBLIC unsigned short VA_RegisterClient();
+_BUR_PUBLIC unsigned short VA_GetActualLang(void);
+_BUR_PUBLIC unsigned short VA_ClearTouchEventBuffer(void);
+_BUR_PUBLIC unsigned short VA_RegisterClient(void);
 _BUR_PUBLIC unsigned short VA_StartProcess(plcbit enable, unsigned long VCHandle, unsigned long uiProcessID, unsigned long psArguments, unsigned long puiExtendedErrorCode);
 _BUR_PUBLIC unsigned short VA_TerminateProcess(plcbit enable, unsigned long VCHandle, unsigned long uiProcessID, unsigned long puiExtendedErrorCode);
 _BUR_PUBLIC unsigned short VA_GetProcessExitCode(plcbit enable, unsigned long VCHandle, unsigned long uiProcessID, unsigned long puiExitCode, unsigned long puiExtendedErrorCode);
@@ -197,6 +112,90 @@ _BUR_PUBLIC unsigned short VA_SetProcessZOrder(plcbit enable, unsigned long VCHa
 _BUR_PUBLIC unsigned short VA_SetVisualizationZOrder(plcbit enable, unsigned long VCHandle, unsigned long uiZOrderFlags);
 _BUR_PUBLIC unsigned short VA_RunJScript(plcbit enable, unsigned long VCHandle, unsigned long uiJSStatusDP, unsigned long pScriptName);
 _BUR_PUBLIC unsigned short VA_SetBeep(plcbit enable, unsigned long VCHandle, unsigned long uiFrequency, unsigned long uiBeepTime);
+
+
+/* Constants */
+#ifdef _REPLACE_CONST
+ #define vaATTRIBUTE_ALPHA 128U
+ #define vaALS_CURRENT 65536U
+ #define vaALS_NOTBYPASSSED 512U
+ #define vaALS_BYPASSSED 256U
+ #define vaALS_NOTACKNOWLEDGED 32U
+ #define vaALS_ACKNOWLEDGED 16U
+ #define vaALS_ACTIVE 2U
+ #define vaALS_INACTIVE 1U
+ #define vaERR_EMPTY_HISTORYLIST 248U
+ #define vaERR_BUSY 7000U
+ #define vaERR_EMPTY_ALARMLIST 240U
+ #define vaERR_NOALARMQUIT 245U
+ #define vaERR_DELHISLIST 246U
+ #define vaERR_BUSY_ALARMSYSTEM 247U
+ #define vaERR_INTERPRETER_NOT_READY 7010U
+ #define vaERR_DRIVER_NOT_FOUND 7020U
+ #define vaERR_WRONG_MODULE_NAME 7030U
+ #define vaERR_UNDEFINED_ERROR_CODE 7050U
+ #define vaERR_FONTMODULE_NOT_FOUND 7060U
+ #define vaERR_KEYMATRIX_NOT_VALID 7070U
+ #define vaERR_NOT_SUPPORTED 7080U
+ #define vaERR_PARAMETER 7090U
+ #define vaERR_CREATE_TASK_FAILED 7100U
+ #define vaERR_EXISTS 7101U
+ #define vaERR_NO_ACCESS 7110U
+ #define vaERR_ACCESS 7111U
+ #define vaERR_OVERFLOW 7120U
+ #define vaERR_CONNECTION_LOST 7130U
+ #define vaERR_TIMEOUT 7140U
+ #define vaERR_ARGUMENT 7150U
+ #define vaERR_VERSION 7160U
+ #define vaERR_MEMORY 7170U
+ #define vaERR_RESOURCES 7180U
+ #define vaERR_ALREADY 7190U
+ #define vaERR_NO_MORE 7195U
+ #define vaERR_RESOURCE_NOT_FOUND 7196U
+ #define vaERR_RESOURCE_WRONG_FORMAT 7197U
+ #define vaERR_VISAPI_NOT_INITIALIZED 100U
+#else
+ _GLOBAL_CONST unsigned char vaATTRIBUTE_ALPHA;
+ _GLOBAL_CONST unsigned long vaALS_CURRENT;
+ _GLOBAL_CONST unsigned long vaALS_NOTBYPASSSED;
+ _GLOBAL_CONST unsigned long vaALS_BYPASSSED;
+ _GLOBAL_CONST unsigned long vaALS_NOTACKNOWLEDGED;
+ _GLOBAL_CONST unsigned long vaALS_ACKNOWLEDGED;
+ _GLOBAL_CONST unsigned long vaALS_ACTIVE;
+ _GLOBAL_CONST unsigned long vaALS_INACTIVE;
+ _GLOBAL_CONST unsigned short vaERR_EMPTY_HISTORYLIST;
+ _GLOBAL_CONST unsigned short vaERR_BUSY;
+ _GLOBAL_CONST unsigned short vaERR_EMPTY_ALARMLIST;
+ _GLOBAL_CONST unsigned short vaERR_NOALARMQUIT;
+ _GLOBAL_CONST unsigned short vaERR_DELHISLIST;
+ _GLOBAL_CONST unsigned short vaERR_BUSY_ALARMSYSTEM;
+ _GLOBAL_CONST unsigned short vaERR_INTERPRETER_NOT_READY;
+ _GLOBAL_CONST unsigned short vaERR_DRIVER_NOT_FOUND;
+ _GLOBAL_CONST unsigned short vaERR_WRONG_MODULE_NAME;
+ _GLOBAL_CONST unsigned short vaERR_UNDEFINED_ERROR_CODE;
+ _GLOBAL_CONST unsigned short vaERR_FONTMODULE_NOT_FOUND;
+ _GLOBAL_CONST unsigned short vaERR_KEYMATRIX_NOT_VALID;
+ _GLOBAL_CONST unsigned short vaERR_NOT_SUPPORTED;
+ _GLOBAL_CONST unsigned short vaERR_PARAMETER;
+ _GLOBAL_CONST unsigned short vaERR_CREATE_TASK_FAILED;
+ _GLOBAL_CONST unsigned short vaERR_EXISTS;
+ _GLOBAL_CONST unsigned short vaERR_NO_ACCESS;
+ _GLOBAL_CONST unsigned short vaERR_ACCESS;
+ _GLOBAL_CONST unsigned short vaERR_OVERFLOW;
+ _GLOBAL_CONST unsigned short vaERR_CONNECTION_LOST;
+ _GLOBAL_CONST unsigned short vaERR_TIMEOUT;
+ _GLOBAL_CONST unsigned short vaERR_ARGUMENT;
+ _GLOBAL_CONST unsigned short vaERR_VERSION;
+ _GLOBAL_CONST unsigned short vaERR_MEMORY;
+ _GLOBAL_CONST unsigned short vaERR_RESOURCES;
+ _GLOBAL_CONST unsigned short vaERR_ALREADY;
+ _GLOBAL_CONST unsigned short vaERR_NO_MORE;
+ _GLOBAL_CONST unsigned short vaERR_RESOURCE_NOT_FOUND;
+ _GLOBAL_CONST unsigned short vaERR_RESOURCE_WRONG_FORMAT;
+ _GLOBAL_CONST unsigned short vaERR_VISAPI_NOT_INITIALIZED;
+#endif
+
+
 
 
 #ifdef __cplusplus

@@ -4,7 +4,7 @@
   <Objects>
     <Object Type="File">Config_1.axesgroup</Object>
     <Object Type="File">Config_2.axis</Object>
-    <Object Type="File">Config_3.mechanicalsystem</Object>
-    <Object Type="File">Config_4.axesgroupfeature</Object>
+    <Object Type="File" Description="Migrated from Config_3.mechanicalsystem (mapp Motion Version 5)">Config_3.mechanicalsystem</Object>
+    <Object Type="File" Description="Migrated from Config_4.axesgroupfeature (mapp Motion Version 5)">Config_4.axesgroupfeature</Object>
   </Objects>
 </Package>

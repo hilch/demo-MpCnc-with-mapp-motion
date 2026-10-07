@@ -33,7 +33,8 @@ TYPE
 		mcBLENDING_LOW, (*The velocity is blended with the lowest velocity of both FBs*)
 		mcBLENDING_PREVIOUS, (*The velocity is blended with the velocity of the first FB*)
 		mcBLENDING_NEXT, (*The velocity is blended with velocity of the second FB*)
-		mcBLENDING_HIGH	(*The velocity is blended with highest velocity of both FBs*)
+		mcBLENDING_HIGH, (*The velocity is blended with highest velocity of both FBs*)
+		mcBLENDING	(*The geometry blended and split into two parts, each with its own velocity limit set by the FB*)
 	);
 
 	McBrakeCmdEnum :
@@ -60,7 +61,6 @@ TYPE
 		mcHOMING_DCM := 7,				 (*Homing using interval-encoded reference marks*)
 		mcHOMING_BLOCK_TORQUE := 9,	     (*Performs homing to mechanical limit, torque as criteria*)
 		mcHOMING_BLOCK_LAG_ERROR := 10,	 (*Performs homing to mechanical limit, lag error as criteria*)
-		mcHOMING_ABSOLUTE_INTERNAL := 11,(*Performs homing with homing offset, which is determined by drive*)
 		mcHOMING_ABSOLUTE_CORRECTION := 133,  (*Homing by setting the "Position" homing offset for an absolute encoder with counter range correction. This mode must be used if the overflow of the absolute encoder is within the axis range of movement*)
 		mcHOMING_DCM_CORRECTION := 135,	 (*Homing using distance-coded reference marks with counting range correction*)
 		mcHOMING_DEFAULT := 140,		 (*All parameters, including "Position", are taken from the initial configuration for the axis*)
@@ -116,7 +116,9 @@ TYPE
 
 	McTransitionModeEnum :
 		( (*FB internals*)
-		mcTM_NONE (*No transition is added*)
+		mcTM_NONE, (*No transition is added*)
+		mcTM_CORNER_DISTANCE,
+		mcTM_MAX_CORNER_DEVIATION
 		);
 
 	McExecutionModeEnum:
@@ -187,11 +189,14 @@ TYPE
 
 	McProcessConfigModeEnum:
 	(
-		mcPCM_LOAD 	:= 0,	 	(*Load from Config*)
-		mcPCM_SAVE	:= 1,	 	(*Save to Config*)
-		mcPCM_CREATE:= 2,	 	(*Create Config*)
-		mcPCM_DELETE:= 3,		(*Delete Config*)
-		mcPCM_DEFAULT_VALUES:= 4(*Default Config Values*)
+		mcPCM_LOAD 	:= 0,	 		(*Load from Config*)
+		mcPCM_SAVE	:= 1,	 		(*Save to Config*)
+		mcPCM_CREATE:= 2,	 		(*Create Config*)
+		mcPCM_DELETE:= 3,			(*Delete Config*)
+		mcPCM_DEFAULT_VALUES:= 4,	(*Default Config Values*)
+		
+		mcPCM_LIST_ALL := 5,		(*Lists all Config*)
+		mcPCM_DELETE_ALL := 6		(*Deletes all Configs*)
 	);
 
 	McCommunicationStateEnum :
@@ -242,13 +247,13 @@ TYPE
 		ID : UDINT; (**)
 		Check : UDINT; (**)
 		ParamHash : UDINT; (**)
+		Data : UDINT; (**)
 		State : WORD; (**)
 		Error : UINT; (**)
 		Treating : REFERENCE TO McInternalFubProcessingType; (**)
-		Memory : ARRAY[0..13] OF UDINT; (**)
-		Flags : USINT; (**)
 		ControlIf : REFERENCE TO McInternalControlIfType; (**)
 		SeqNo : DINT; (**)
+		Flags : USINT; (**)
 	END_STRUCT;
 
 	McInternalFubProcessingType : 	STRUCT  (*Partial struct type (C only)*)
@@ -322,7 +327,7 @@ TYPE
 	McComponentType : UDINT;
 
 	McGetCoordSystemIdentParType : STRUCT
-		AxesGroup : REFERENCE TO McAxesGroupType; (*The axis group reference establishes the connection between the function block and the axis group.*)
+		Component : McComponentType; (*Reference to the component (optional)*)
 	END_STRUCT;
 
 	McTransformPositionParType : STRUCT

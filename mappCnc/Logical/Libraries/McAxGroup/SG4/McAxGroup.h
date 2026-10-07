@@ -1,6 +1,6 @@
 /* Automation Studio generated header file */
 /* Do not edit ! */
-/* McAxGroup 5.31.3 */
+/* McAxGroup 6.7.2 */
 
 #ifndef _MCAXGROUP_
 #define _MCAXGROUP_
@@ -9,7 +9,7 @@ extern "C"
 {
 #endif
 #ifndef _McAxGroup_VERSION
-#define _McAxGroup_VERSION 5.31.3
+#define _McAxGroup_VERSION 6.7.2
 #endif
 
 #include <bur/plctypes.h>
@@ -21,11 +21,11 @@ extern "C"
 #ifdef _SG4
 #include <McBase.h>
 #endif
- 
+
 #ifdef _SG3
 #include <McBase.h>
 #endif
- 
+
 #ifdef _SGC
 #include <McBase.h>
 #endif
@@ -225,12 +225,18 @@ typedef struct McGroupQuickstopInfoType
 	plcbit PowerOffAfterStop;
 } McGroupQuickstopInfoType;
 
+typedef struct McGroupBlendingInfoType
+{	plcbit IsPossible;
+	plcbit NeedsImmediateStart;
+} McGroupBlendingInfoType;
+
 typedef struct McAddGroupReadInfoType
 {	plcbit InMotion;
 	plcbit GroupInterrupted;
 	plcbit WaitForContinue;
 	enum McGroupPLCopenStateEnum PLCopenState;
 	struct McGroupQuickstopInfoType Quickstop;
+	struct McGroupBlendingInfoType Blending;
 } McAddGroupReadInfoType;
 
 typedef struct McAdvGroupHome_15_Type
@@ -1377,6 +1383,25 @@ typedef struct MC_BR_GroupInterrupt
 	plcbit Error;
 } MC_BR_GroupInterrupt_typ;
 
+typedef struct MC_BR_PauseWorkspaceMonitoring
+{
+	/* VAR_INPUT (analog) */
+	struct McAxesGroupType* AxesGroup;
+	float ReductionFactor;
+	/* VAR_OUTPUT (analog) */
+	signed long ErrorID;
+	/* VAR (analog) */
+	struct McInternalType Internal;
+	/* VAR_INPUT (digital) */
+	plcbit Enable;
+	/* VAR_OUTPUT (digital) */
+	plcbit Enabled;
+	plcbit Busy;
+	plcbit CommandAborted;
+	plcbit Error;
+	plcbit MonitoringPaused;
+} MC_BR_PauseWorkspaceMonitoring_typ;
+
 
 
 /* Prototyping of functions and function blocks */
@@ -1424,6 +1449,7 @@ _BUR_PUBLIC void MC_BR_VelLimitMonPoints(struct MC_BR_VelLimitMonPoints* inst);
 _BUR_PUBLIC void MC_BR_SkipBlock(struct MC_BR_SkipBlock* inst);
 _BUR_PUBLIC void MC_BR_GroupAxisExclusion(struct MC_BR_GroupAxisExclusion* inst);
 _BUR_PUBLIC void MC_BR_GroupInterrupt(struct MC_BR_GroupInterrupt* inst);
+_BUR_PUBLIC void MC_BR_PauseWorkspaceMonitoring(struct MC_BR_PauseWorkspaceMonitoring* inst);
 
 
 #ifdef __cplusplus

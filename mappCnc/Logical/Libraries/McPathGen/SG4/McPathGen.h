@@ -1,6 +1,6 @@
 /* Automation Studio generated header file */
 /* Do not edit ! */
-/* McPathGen 5.31.3 */
+/* McPathGen 6.7.2 */
 
 #ifndef _MCPATHGEN_
 #define _MCPATHGEN_
@@ -9,7 +9,7 @@ extern "C"
 {
 #endif
 #ifndef _McPathGen_VERSION
-#define _McPathGen_VERSION 5.31.3
+#define _McPathGen_VERSION 6.7.2
 #endif
 
 #include <bur/plctypes.h>
@@ -19,20 +19,20 @@ extern "C"
 #endif
 
 #ifdef _SG4
-#include <McBase.h> 
-#include <McAxis.h> 
+#include <McBase.h>
+#include <McAxis.h>
 #include <McAxGroup.h>
 #endif
- 
+
 #ifdef _SG3
-#include <McBase.h> 
-#include <McAxis.h> 
+#include <McBase.h>
+#include <McAxis.h>
 #include <McAxGroup.h>
 #endif
- 
+
 #ifdef _SGC
-#include <McBase.h> 
-#include <McAxis.h> 
+#include <McBase.h>
+#include <McAxis.h>
 #include <McAxGroup.h>
 #endif
 
@@ -75,6 +75,45 @@ typedef enum McPathGenMonElemFeedReductEnum
 	mcPATHGEN_FR_ACTIVE
 } McPathGenMonElemFeedReductEnum;
 
+typedef enum McPathGenWorkspaceStatusEnum
+{	mcPATHGEN_WS_OK,
+	mcPATHGEN_WS_AXES_VIOLATION,
+	mcPATHGEN_WS_JOINTAXES_VIOLATION,
+	mcPATHGEN_WS_SLAVEAXES_VIOLATION,
+	mcPATHGEN_WS_WORKSPACE_VIOLATION,
+	mcPATHGEN_WS_SAFESPACE_VIOLATION,
+	mcPATHGEN_WS_SELF_COLLISION,
+	mcPATHGEN_WS_WORKRANGE_VIOLATION
+} McPathGenWorkspaceStatusEnum;
+
+typedef enum McPathGenMonElemActLimTypeEnum
+{	mcPATHGEN_AL_UNDEFINED_TYPE = 0,
+	mcPATHGEN_AL_VELOCITY = 10,
+	mcPATHGEN_AL_ACCELERATION = 20,
+	mcPATHGEN_AL_JERK = 30,
+	mcPATHGEN_AL_TORQUE = 40,
+	mcPATHGEN_AL_PROCESS = 50,
+	mcPATHGEN_AL_INTERNAL = 60
+} McPathGenMonElemActLimTypeEnum;
+
+typedef enum McPathGenMonElemActLimSourceEnum
+{	mcPATHGEN_AL_UNDEFINED_SOURCE = 0,
+	mcPATHGEN_AL_JOINT_AXIS = 10,
+	mcPATHGEN_AL_SLAVE_AXIS = 20,
+	mcPATHGEN_AL_TCP = 30,
+	mcPATHGEN_AL_PATH = 40,
+	mcPATHGEN_AL_SPINDLE = 50,
+	mcPATHGEN_AL_JOINT_GEARBOX = 60,
+	mcPATHGEN_AL_CS = 70,
+	mcPATHGEN_AL_CCS = 71,
+	mcPATHGEN_AL_PROC_OUT_OF_WS = 80,
+	mcPATHGEN_AL_PROC_ONLINE_MOD = 81,
+	mcPATHGEN_AL_VIRTUAL_JOINT_AXIS = 90,
+	mcPATHGEN_AL_MON_POINTS = 100,
+	mcPATHGEN_AL_JOGGING_VELOCITY = 110,
+	mcPATHGEN_AL_INT = 120
+} McPathGenMonElemActLimSourceEnum;
+
 typedef enum McPathGenTrackingStateEnum
 {	mcPATHGEN_TS_NO_TRACKING = 0,
 	mcPATHGEN_TS_SYNCHRONIZING = 1,
@@ -114,10 +153,20 @@ typedef enum McAGPGGeoPlanRndSymRndEnum
 	mcAGPGGPRSR_NO = 0
 } McAGPGGeoPlanRndSymRndEnum;
 
+typedef enum McAGPGGPRSymRndPathEnum
+{	mcAGPGGPRSymRndPath_STD = 0,
+	mcAGPGGPRSymRndPath_CUS_PATH = 1
+} McAGPGGPRSymRndPathEnum;
+
 typedef enum McAGPGGeoPlanRndLatSegEnum
 {	mcAGPGGPRLS_WHOLE = 1,
 	mcAGPGGPRLS_HALF = 0
 } McAGPGGeoPlanRndLatSegEnum;
+
+typedef enum McAGPGGeoPlanRndFirstSegEnum
+{	mcAGPGGPRFS_WHOLE = 1,
+	mcAGPGGPRFS_HALF = 0
+} McAGPGGeoPlanRndFirstSegEnum;
 
 typedef enum McAGPGGeoPlanRndAvoidZeroCrvEnum
 {	mcAGPGGPRAZC_YES = 1,
@@ -179,6 +228,12 @@ typedef enum McAGPGMTSOJerkSupEnum
 	mcAGPGMTSOJS_BASIC = 1,
 	mcAGPGMTSOJS_AUT = 2
 } McAGPGMTSOJerkSupEnum;
+
+typedef enum McAGPGMAJFEnum
+{	mcAGPGMAJF_USE_AX_FLTR = 0,
+	mcAGPGMAJF_DEACT_FLTR = 1,
+	mcAGPGMAJF_OVR_FLTR = 2
+} McAGPGMAJFEnum;
 
 typedef enum McAGSRAEAREnum
 {	mcAGSRAEAR_STD = 0,
@@ -397,7 +452,6 @@ typedef enum McAGFMESngElmEnum
 	mcAGFMESE_PRG_RUNT = 3,
 	mcAGFMESE_SET_POS = 4,
 	mcAGFMESE_ONL_PATH_INFL = 5,
-	mcAGFMESE_PATH_IDENT = 6,
 	mcAGFMESE_TOOL = 7,
 	mcAGFMESE_IP = 8,
 	mcAGFMESE_LIM = 9,
@@ -408,7 +462,9 @@ typedef enum McAGFMESngElmEnum
 	mcAGFMESE_CROSS_SEC_LOADS = 14,
 	mcAGFMESE_DYN_DEC = 15,
 	mcAGFMESE_ORIENT_COMP = 16,
-	mcAGFMESE_SKIP_BLK = 17
+	mcAGFMESE_SKIP_BLK = 17,
+	mcAGFMESE_WS_MON = 18,
+	mcAGFMESE_ACT_LIM = 19
 } McAGFMESngElmEnum;
 
 typedef enum McAGFMLLocEnum
@@ -425,7 +481,8 @@ typedef enum McAGFPDPathTypEnum
 {	mcAGFPDPT_CART_PATH = 0,
 	mcAGFPDPT_ORIENT_PATH = 1,
 	mcAGFPDPT_PHS_AX_PATH = 2,
-	mcAGFPDPT_CUS_PHS_AX_PATH = 3
+	mcAGFPDPT_CUS_PHS_AX_PATH = 3,
+	mcAGFPDPT_CUS_TCP_COOR_PATH = 4
 } McAGFPDPathTypEnum;
 
 typedef enum McAGFPDCalcInEnum
@@ -682,15 +739,88 @@ typedef enum McAGFTrkOoWEnum
 	mcAGFTRKOOW_ADJ_VEL = 2
 } McAGFTrkOoWEnum;
 
+typedef enum McAGFTrkOoWSEnum
+{	mcAGFTRKOOWS_PRG_VEL = 0,
+	mcAGFTRKOOWS_PRG_VEL_W_CK = 1,
+	mcAGFTRKOOWS_ADJ_VEL = 2
+} McAGFTrkOoWSEnum;
+
 typedef enum McAGFPCXCoorEnum
 {	mcAGFPCXC_NOT_USE = 0,
 	mcAGFPCXC_USE = 1
 } McAGFPCXCoorEnum;
 
+typedef enum McAGFPCXCoorUseDirEnum
+{	mcAGFPCXCUD_STD = 0,
+	mcAGFPCXCUD_INV = 1
+} McAGFPCXCoorUseDirEnum;
+
 typedef enum McAGFPCYCoorEnum
 {	mcAGFPCYC_NOT_USE = 0,
 	mcAGFPCYC_USE = 1
 } McAGFPCYCoorEnum;
+
+typedef enum McAGFPCYCoorUseDirEnum
+{	mcAGFPCYCUD_STD = 0,
+	mcAGFPCYCUD_INV = 1
+} McAGFPCYCoorUseDirEnum;
+
+typedef enum McAGFTFSSelSelEnum
+{	mcAGFTFSSS_SNG_FRM = 0,
+	mcAGFTFSSS_MUL_FRM = 1,
+	mcAGFTFSSS_FRM_PAIRS = 2
+} McAGFTFSSelSelEnum;
+
+typedef enum McAGFTFSSFStratEnum
+{	mcAGFTFSSFS_FIFO = 0,
+	mcAGFTFSSFS_LIFO = 1,
+	mcAGFTFSSFS_MIN_X_VAL_ON_TRKPATH = 2,
+	mcAGFTFSSFS_MAX_X_VAL_ON_TRKPATH = 3,
+	mcAGFTFSSFS_MIN_DIST_TO_PT = 4,
+	mcAGFTFSSFS_MAX_DIST_TO_PT = 5,
+	mcAGFTFSSFS_MUL_CRIT = 6
+} McAGFTFSSFStratEnum;
+
+typedef enum McAGFTFSSFSMinDstPtOgnEnum
+{	mcAGFTFSSFSMinDstPtO_BCS = 0,
+	mcAGFTFSSFSMinDstPtO_MCS = 1,
+	mcAGFTFSSFSMinDstPtO_FRM = 2
+} McAGFTFSSFSMinDstPtOgnEnum;
+
+typedef enum McAGFTFSSFSMaxDstPtOgnEnum
+{	mcAGFTFSSFSMaxDstPtO_BCS = 0,
+	mcAGFTFSSFSMaxDstPtO_MCS = 1,
+	mcAGFTFSSFSMaxDstPtO_FRM = 2
+} McAGFTFSSFSMaxDstPtOgnEnum;
+
+typedef enum McAGFTFSSFFltrFltrEnum
+{	mcAGFTFSSFFF_TRKPATHS = 0,
+	mcAGFTFSSFFF_SEL_AREA = 1,
+	mcAGFTFSSFFF_ATTR_MASK = 2
+} McAGFTFSSFFltrFltrEnum;
+
+typedef enum McAGFTFSSFSFSAAreaEnum
+{	mcAGFTFSSFSFSAA_CUBE = 0,
+	mcAGFTFSSFSFSAA_CYLINDER = 1
+} McAGFTFSSFSFSAAreaEnum;
+
+typedef enum McAGFTFSSFSFSAACubOgnEnum
+{	mcAGFTFSSFSFSAACubO_BCS = 0,
+	mcAGFTFSSFSFSAACubO_MCS = 1,
+	mcAGFTFSSFSFSAACubO_FRM = 2
+} McAGFTFSSFSFSAACubOgnEnum;
+
+typedef enum McAGFTFSSFSFSAACylOgnEnum
+{	mcAGFTFSSFSFSAACylO_BCS = 0,
+	mcAGFTFSSFSFSAACylO_MCS = 1,
+	mcAGFTFSSFSFSAACylO_FRM = 2
+} McAGFTFSSFSFSAACylOgnEnum;
+
+typedef enum McAGFTFSSFLckASelEnum
+{	mcAGFTFSSFLAS_CUR_SEL_ONLY = 0,
+	mcAGFTFSSFLAS_ALL_SEL = 1,
+	mcAGFTFSSFLAS_NO_LCK = 2
+} McAGFTFSSFLckASelEnum;
 
 typedef enum McMSCSDescEnum
 {	mcMSCSD_STD = 0
@@ -742,6 +872,31 @@ typedef enum McMSCplg2LinCplgTgtJntAxEnum
 	mcMSC2LCTJA_JNT_AX_2 = 1
 } McMSCplg2LinCplgTgtJntAxEnum;
 
+typedef enum McMSJnt2AxRelLimEnum
+{	mcMSJ2ARL_NOT_USE = 0,
+	mcMSJ2ARL_STD = 1
+} McMSJnt2AxRelLimEnum;
+
+typedef enum McMSJ2ARLSJALLEnum
+{	mcMSJ2ARLSJALL_NOT_USE = 0,
+	mcMSJ2ARLSJALL_STD = 1
+} McMSJ2ARLSJALLEnum;
+
+typedef enum McMSJ2ARLSJALLStdSrcJntAxEnum
+{	mcMSJ2ARLSJALLSSJA_AX_1 = 0,
+	mcMSJ2ARLSJALLSSJA_AX_2 = 1
+} McMSJ2ARLSJALLStdSrcJntAxEnum;
+
+typedef enum McMSJ2ARLSJAULEnum
+{	mcMSJ2ARLSJAUL_NOT_USE = 0,
+	mcMSJ2ARLSJAUL_STD = 1
+} McMSJ2ARLSJAULEnum;
+
+typedef enum McMSJ2ARLSJAULStdSrcJntAxEnum
+{	mcMSJ2ARLSJAULSSJA_AX_1 = 0,
+	mcMSJ2ARLSJAULSSJA_AX_2 = 1
+} McMSJ2ARLSJAULStdSrcJntAxEnum;
+
 typedef enum McMS2ACXZWFrmMdlEnum
 {	mcMS2ACXZWFM_STD = 0
 } McMS2ACXZWFrmMdlEnum;
@@ -765,6 +920,33 @@ typedef enum McMSCplg3LinCplgTgtJntAxEnum
 	mcMSC3LCTJA_JNT_AX_2 = 1,
 	mcMSC3LCTJA_JNT_AX_3 = 2
 } McMSCplg3LinCplgTgtJntAxEnum;
+
+typedef enum McMSJnt3AxRelLimEnum
+{	mcMSJ3ARL_NOT_USE = 0,
+	mcMSJ3ARL_STD = 1
+} McMSJnt3AxRelLimEnum;
+
+typedef enum McMSJ3ARLSJALLEnum
+{	mcMSJ3ARLSJALL_NOT_USE = 0,
+	mcMSJ3ARLSJALL_STD = 1
+} McMSJ3ARLSJALLEnum;
+
+typedef enum McMSJ3ARLSJALLStdSrcJntAxEnum
+{	mcMSJ3ARLSJALLSSJA_AX_1 = 0,
+	mcMSJ3ARLSJALLSSJA_AX_2 = 1,
+	mcMSJ3ARLSJALLSSJA_AX_3 = 2
+} McMSJ3ARLSJALLStdSrcJntAxEnum;
+
+typedef enum McMSJ3ARLSJAULEnum
+{	mcMSJ3ARLSJAUL_NOT_USE = 0,
+	mcMSJ3ARLSJAUL_STD = 1
+} McMSJ3ARLSJAULEnum;
+
+typedef enum McMSJ3ARLSJAULStdSrcJntAxEnum
+{	mcMSJ3ARLSJAULSSJA_AX_1 = 0,
+	mcMSJ3ARLSJAULSSJA_AX_2 = 1,
+	mcMSJ3ARLSJAULSSJA_AX_3 = 2
+} McMSJ3ARLSJAULStdSrcJntAxEnum;
 
 typedef enum McMS3ACXZCDescEnum
 {	mcMS3ACXZCD_STD = 0
@@ -792,18 +974,18 @@ typedef enum McMS3ACXZBWFrmMdlEnum
 {	mcMS3ACXZBWFM_STD = 0
 } McMS3ACXZBWFrmMdlEnum;
 
-typedef enum McMS4ACXYZBDescEnum
-{	mcMS4ACXYZBD_STD = 0
-} McMS4ACXYZBDescEnum;
+typedef enum McMS4ACXYZADescEnum
+{	mcMS4ACXYZAD_STD = 0
+} McMS4ACXYZADescEnum;
 
 typedef enum McMSMdl4CntDirJntAxEnum
 {	mcMSM4CDJA_STD = 0,
 	mcMSM4CDJA_INV = 1
 } McMSMdl4CntDirJntAxEnum;
 
-typedef enum McMS4ACXYZBWFrmMdlEnum
-{	mcMS4ACXYZBWFM_STD = 0
-} McMS4ACXYZBWFrmMdlEnum;
+typedef enum McMS4ACXYZAWFrmMdlEnum
+{	mcMS4ACXYZAWFM_STD = 0
+} McMS4ACXYZAWFrmMdlEnum;
 
 typedef enum McMSCplg4LinCplgSrcAxEnum
 {	mcMSC4LCSA_AX_1 = 0,
@@ -818,6 +1000,43 @@ typedef enum McMSCplg4LinCplgTgtJntAxEnum
 	mcMSC4LCTJA_JNT_AX_3 = 2,
 	mcMSC4LCTJA_JNT_AX_4 = 3
 } McMSCplg4LinCplgTgtJntAxEnum;
+
+typedef enum McMSJnt4AxRelLimEnum
+{	mcMSJ4ARL_NOT_USE = 0,
+	mcMSJ4ARL_STD = 1
+} McMSJnt4AxRelLimEnum;
+
+typedef enum McMSJ4ARLSJALLEnum
+{	mcMSJ4ARLSJALL_NOT_USE = 0,
+	mcMSJ4ARLSJALL_STD = 1
+} McMSJ4ARLSJALLEnum;
+
+typedef enum McMSJ4ARLSJALLStdSrcJntAxEnum
+{	mcMSJ4ARLSJALLSSJA_AX_1 = 0,
+	mcMSJ4ARLSJALLSSJA_AX_2 = 1,
+	mcMSJ4ARLSJALLSSJA_AX_3 = 2,
+	mcMSJ4ARLSJALLSSJA_AX_4 = 3
+} McMSJ4ARLSJALLStdSrcJntAxEnum;
+
+typedef enum McMSJ4ARLSJAULEnum
+{	mcMSJ4ARLSJAUL_NOT_USE = 0,
+	mcMSJ4ARLSJAUL_STD = 1
+} McMSJ4ARLSJAULEnum;
+
+typedef enum McMSJ4ARLSJAULStdSrcJntAxEnum
+{	mcMSJ4ARLSJAULSSJA_AX_1 = 0,
+	mcMSJ4ARLSJAULSSJA_AX_2 = 1,
+	mcMSJ4ARLSJAULSSJA_AX_3 = 2,
+	mcMSJ4ARLSJAULSSJA_AX_4 = 3
+} McMSJ4ARLSJAULStdSrcJntAxEnum;
+
+typedef enum McMS4ACXYZBDescEnum
+{	mcMS4ACXYZBD_STD = 0
+} McMS4ACXYZBDescEnum;
+
+typedef enum McMS4ACXYZBWFrmMdlEnum
+{	mcMS4ACXYZBWFM_STD = 0
+} McMS4ACXYZBWFrmMdlEnum;
 
 typedef enum McMS4ACXYZCDescEnum
 {	mcMS4ACXYZCD_STD = 0
@@ -856,6 +1075,45 @@ typedef enum McMSCplg5LinCplgTgtJntAxEnum
 	mcMSC5LCTJA_JNT_AX_5 = 4
 } McMSCplg5LinCplgTgtJntAxEnum;
 
+typedef enum McMSJnt5AxRelLimEnum
+{	mcMSJ5ARL_NOT_USE = 0,
+	mcMSJ5ARL_STD = 1
+} McMSJnt5AxRelLimEnum;
+
+typedef enum McMSJ5ARLSJALLEnum
+{	mcMSJ5ARLSJALL_NOT_USE = 0,
+	mcMSJ5ARLSJALL_STD = 1
+} McMSJ5ARLSJALLEnum;
+
+typedef enum McMSJ5ARLSJALLStdSrcJntAxEnum
+{	mcMSJ5ARLSJALLSSJA_AX_1 = 0,
+	mcMSJ5ARLSJALLSSJA_AX_2 = 1,
+	mcMSJ5ARLSJALLSSJA_AX_3 = 2,
+	mcMSJ5ARLSJALLSSJA_AX_4 = 3,
+	mcMSJ5ARLSJALLSSJA_AX_5 = 4
+} McMSJ5ARLSJALLStdSrcJntAxEnum;
+
+typedef enum McMSJ5ARLSJAULEnum
+{	mcMSJ5ARLSJAUL_NOT_USE = 0,
+	mcMSJ5ARLSJAUL_STD = 1
+} McMSJ5ARLSJAULEnum;
+
+typedef enum McMSJ5ARLSJAULStdSrcJntAxEnum
+{	mcMSJ5ARLSJAULSSJA_AX_1 = 0,
+	mcMSJ5ARLSJAULSSJA_AX_2 = 1,
+	mcMSJ5ARLSJAULSSJA_AX_3 = 2,
+	mcMSJ5ARLSJAULSSJA_AX_4 = 3,
+	mcMSJ5ARLSJAULSSJA_AX_5 = 4
+} McMSJ5ARLSJAULStdSrcJntAxEnum;
+
+typedef enum McMS5ACXYZBCDescEnum
+{	mcMS5ACXYZBCD_STD = 0
+} McMS5ACXYZBCDescEnum;
+
+typedef enum McMS5ACXYZBCWFrmMdlEnum
+{	mcMS5ACXYZBCWFM_STD = 0
+} McMS5ACXYZBCWFrmMdlEnum;
+
 typedef enum McMS5ACXYZCADescEnum
 {	mcMS5ACXYZCAD_STD = 0
 } McMS5ACXYZCADescEnum;
@@ -863,6 +1121,14 @@ typedef enum McMS5ACXYZCADescEnum
 typedef enum McMS5ACXYZCAWFrmMdlEnum
 {	mcMS5ACXYZCAWFM_STD = 0
 } McMS5ACXYZCAWFrmMdlEnum;
+
+typedef enum McMS5ACXYZCBDescEnum
+{	mcMS5ACXYZCBD_STD = 0
+} McMS5ACXYZCBDescEnum;
+
+typedef enum McMS5ACXYZCBWFrmMdlEnum
+{	mcMS5ACXYZCBWFM_STD = 0
+} McMS5ACXYZCBWFrmMdlEnum;
 
 typedef enum McMS6ACZXYBCADescEnum
 {	mcMS6ACZXYBCAD_STD = 0
@@ -895,10 +1161,103 @@ typedef enum McMSCplg6LinCplgTgtJntAxEnum
 	mcMSC6LCTJA_JNT_AX_6 = 5
 } McMSCplg6LinCplgTgtJntAxEnum;
 
-typedef enum McMS4ASASceneViewerObjEnum
-{	mcMS4ASASVO_NOT_USE = 0,
-	mcMS4ASASVO_COMAU_REBEL_S6_060 = 2
-} McMS4ASASceneViewerObjEnum;
+typedef enum McMSJnt6AxRelLimEnum
+{	mcMSJ6ARL_NOT_USE = 0,
+	mcMSJ6ARL_STD = 1
+} McMSJnt6AxRelLimEnum;
+
+typedef enum McMSJ6ARLSJALLEnum
+{	mcMSJ6ARLSJALL_NOT_USE = 0,
+	mcMSJ6ARLSJALL_STD = 1
+} McMSJ6ARLSJALLEnum;
+
+typedef enum McMSJ6ARLSJALLStdSrcJntAxEnum
+{	mcMSJ6ARLSJALLSSJA_AX_1 = 0,
+	mcMSJ6ARLSJALLSSJA_AX_2 = 1,
+	mcMSJ6ARLSJALLSSJA_AX_3 = 2,
+	mcMSJ6ARLSJALLSSJA_AX_4 = 3,
+	mcMSJ6ARLSJALLSSJA_AX_5 = 4,
+	mcMSJ6ARLSJALLSSJA_AX_6 = 5
+} McMSJ6ARLSJALLStdSrcJntAxEnum;
+
+typedef enum McMSJ6ARLSJAULEnum
+{	mcMSJ6ARLSJAUL_NOT_USE = 0,
+	mcMSJ6ARLSJAUL_STD = 1
+} McMSJ6ARLSJAULEnum;
+
+typedef enum McMSJ6ARLSJAULStdSrcJntAxEnum
+{	mcMSJ6ARLSJAULSSJA_AX_1 = 0,
+	mcMSJ6ARLSJAULSSJA_AX_2 = 1,
+	mcMSJ6ARLSJAULSSJA_AX_3 = 2,
+	mcMSJ6ARLSJAULSSJA_AX_4 = 3,
+	mcMSJ6ARLSJAULSSJA_AX_5 = 4,
+	mcMSJ6ARLSJAULSSJA_AX_6 = 5
+} McMSJ6ARLSJAULStdSrcJntAxEnum;
+
+typedef enum McMSSVOEnum
+{	mcMSSVO_NOT_USE = 0,
+	mcMSSVO_GEN = 1,
+	mcMSSVO_OBJ_ID = 2
+} McMSSVOEnum;
+
+typedef enum McMS3ASADescEnum
+{	mcMS3ASAD_STD = 0
+} McMS3ASADescEnum;
+
+typedef enum McMS3ASAWFrmMdlEnum
+{	mcMS3ASAWFM_STD = 0
+} McMS3ASAWFrmMdlEnum;
+
+typedef enum McMSDynMdlEnum
+{	mcMSDM_DYNPARTABLE = 0
+} McMSDynMdlEnum;
+
+typedef enum McMSIDMEnum
+{	mcMSIDM_DYNPARTABLE = 0,
+	mcMSIDM_INT = 1
+} McMSIDMEnum;
+
+typedef enum McMSDynLimEnum
+{	mcMSDL_DYNPARTABLES = 0
+} McMSDynLimEnum;
+
+typedef enum McMSIDLEnum
+{	mcMSIDL_DYNPARTABLES = 0,
+	mcMSIDL_INT = 1
+} McMSIDLEnum;
+
+typedef enum McMS3AxConLimRedEnum
+{	mcMS3CLR_NOT_USE = 0,
+	mcMS3CLR_USE = 1
+} McMS3AxConLimRedEnum;
+
+typedef enum McMS3CLRULEnum
+{	mcMS3CLRUL_NOT_USE = 0,
+	mcMS3CLRUL_USE = 1
+} McMS3CLRULEnum;
+
+typedef enum McMSCLRULSEnum
+{	mcMSCLRULS_MASS = 0,
+	mcMSCLRULS_MOM_OF_INERTIA_ARD_Z = 1
+} McMSCLRULSEnum;
+
+typedef enum McMSCLRULTEnum
+{	mcMSCLRULT_JERK = 0
+} McMSCLRULTEnum;
+
+typedef enum McMS3CLRULIEnum
+{	mcMS3CLRULI_AX = 0
+} McMS3CLRULIEnum;
+
+typedef enum McMS3CLRULIAxAxEnum
+{	mcMS3CLRULIAA_NO = 0,
+	mcMS3CLRULIAA_YES = 1
+} McMS3CLRULIAxAxEnum;
+
+typedef enum McMS3ASAMonPtEnum
+{	mcMS3ASAMP_NOT_USE = 0,
+	mcMS3ASAMP_STD = 1
+} McMS3ASAMonPtEnum;
 
 typedef enum McMS4ASADescEnum
 {	mcMS4ASAD_STD = 0
@@ -908,27 +1267,29 @@ typedef enum McMS4ASAWFrmMdlEnum
 {	mcMS4ASAWFM_STD = 0
 } McMS4ASAWFrmMdlEnum;
 
-typedef enum McMSDynMdlEnum
-{	mcMSDM_DYNPARTABLE = 0
-} McMSDynMdlEnum;
+typedef enum McMS4AxConLimRedEnum
+{	mcMS4CLR_NOT_USE = 0,
+	mcMS4CLR_USE = 1
+} McMS4AxConLimRedEnum;
 
-typedef enum McMSDynLimEnum
-{	mcMSDL_DYNPARTABLES = 0
-} McMSDynLimEnum;
+typedef enum McMS4CLRULEnum
+{	mcMS4CLRUL_NOT_USE = 0,
+	mcMS4CLRUL_USE = 1
+} McMS4CLRULEnum;
+
+typedef enum McMS4CLRULIEnum
+{	mcMS4CLRULI_AX = 0
+} McMS4CLRULIEnum;
+
+typedef enum McMS4CLRULIAxAxEnum
+{	mcMS4CLRULIAA_NO = 0,
+	mcMS4CLRULIAA_YES = 1
+} McMS4CLRULIAxAxEnum;
 
 typedef enum McMS4ASAMonPtEnum
 {	mcMS4ASAMP_NOT_USE = 0,
 	mcMS4ASAMP_STD = 1
 } McMS4ASAMonPtEnum;
-
-typedef enum McMS2ADASceneViewerObjEnum
-{	mcMS2ADASVO_NOT_USE = 0,
-	mcMS2ADASVO_GEN = 1,
-	mcMS2ADASVO_CODIAN_D2500S020 = 2,
-	mcMS2ADASVO_CODIAN_D2800S020 = 3,
-	mcMS2ADASVO_CODIAN_D21000S030 = 4,
-	mcMS2ADASVO_CODIAN_D21500S030 = 5
-} McMS2ADASceneViewerObjEnum;
 
 typedef enum McMS2ADADescEnum
 {	mcMS2ADAD_STD = 0
@@ -942,16 +1303,6 @@ typedef enum McMSMdl2CntDirJntAxEnum
 typedef enum McMS2ADAWFrmMdlEnum
 {	mcMS2ADAWFM_STD = 0
 } McMS2ADAWFrmMdlEnum;
-
-typedef enum McMS2ADBSceneViewerObjEnum
-{	mcMS2ADBSVO_NOT_USE = 0,
-	mcMS2ADBSVO_GEN = 1,
-	mcMS2ADBSVO_CODIAN_D2500S020 = 2,
-	mcMS2ADBSVO_CODIAN_D2800S020 = 3,
-	mcMS2ADBSVO_CODIAN_D21000S030 = 4,
-	mcMS2ADBSVO_CODIAN_D21500S030 = 5,
-	mcMS2ADBSVO_D21500TW06X = 6
-} McMS2ADBSceneViewerObjEnum;
 
 typedef enum McMS2ADBDescEnum
 {	mcMS2ADBD_STD = 0
@@ -969,6 +1320,7 @@ typedef enum McMSLoadDepJerkLimEnum
 typedef enum McMSDelta2DWrkRngEnum
 {	mcMSD2DWR_NOT_USE = 0,
 	mcMSD2DWR_STD = 1,
+	mcMSD2DWR_EXT = 3,
 	mcMSD2DWR_MAIN_AREA_W_EX_ZONES = 2
 } McMSDelta2DWrkRngEnum;
 
@@ -992,44 +1344,6 @@ typedef enum McMS2ADBMonPtEnum
 	mcMS2ADBMP_STD = 1
 } McMS2ADBMonPtEnum;
 
-typedef enum McMS3ADASceneViewerObjEnum
-{	mcMS3ADASVO_NOT_USE = 0,
-	mcMS3ADASVO_GEN = 1,
-	mcMS3ADASVO_D40500S01X = 2,
-	mcMS3ADASVO_D40650S02X = 3,
-	mcMS3ADASVO_D40800S02X = 4,
-	mcMS3ADASVO_D41100S02X = 5,
-	mcMS3ADASVO_D41300S02X = 6,
-	mcMS3ADASVO_D41600S02X = 7,
-	mcMS3ADASVO_D41600S05X = 8,
-	mcMS3ADASVO_TD40500S01X = 9,
-	mcMS3ADASVO_TD40650S02X = 10,
-	mcMS3ADASVO_D40650HD02X = 11,
-	mcMS3ADASVO_D40800HD02X = 12,
-	mcMS3ADASVO_D41100HD02X = 13,
-	mcMS3ADASVO_D41100HD04X = 14,
-	mcMS3ADASVO_D41300HD02X = 15,
-	mcMS3ADASVO_D41300HD04X = 16,
-	mcMS3ADASVO_D41600HD02X = 17,
-	mcMS3ADASVO_D41600HD04X = 18,
-	mcMS3ADASVO_D4ST210700 = 19,
-	mcMS3ADASVO_D4ST210900 = 20,
-	mcMS3ADASVO_D4ST211100 = 21,
-	mcMS3ADASVO_D4ST211300 = 22,
-	mcMS3ADASVO_D4ST211600 = 23,
-	mcMS3ADASVO_D41100S04X = 24,
-	mcMS3ADASVO_D41300S04X = 25,
-	mcMS3ADASVO_D41300S05X = 26,
-	mcMS3ADASVO_D41600S04X = 27,
-	mcMS3ADASVO_D42100S05X = 29,
-	mcMS3ADASVO_TD40800S02X = 30,
-	mcMS3ADASVO_TD41100S02X = 31,
-	mcMS3ADASVO_TD41300S02X = 32,
-	mcMS3ADASVO_TD41300S04X = 33,
-	mcMS3ADASVO_TD41600S04X = 34,
-	mcMS3ADASVO_D4500S01XDEMO = 35
-} McMS3ADASceneViewerObjEnum;
-
 typedef enum McMS3ADADescEnum
 {	mcMS3ADAD_STD = 0
 } McMS3ADADescEnum;
@@ -1038,10 +1352,21 @@ typedef enum McMS3ADAWFrmMdlEnum
 {	mcMS3ADAWFM_STD = 0
 } McMS3ADAWFrmMdlEnum;
 
-typedef enum McMS3ADXZBSceneViewerObjEnum
-{	mcMS3ADXZBSVO_NOT_USE = 0,
-	mcMS3ADXZBSVO_GEN = 1
-} McMS3ADXZBSceneViewerObjEnum;
+typedef enum McMSDeltaWrkRngEnum
+{	mcMSDWR_NOT_USE = 0,
+	mcMSDWR_STD = 1,
+	mcMSDWR_EXT = 2
+} McMSDeltaWrkRngEnum;
+
+typedef enum McWRScnObjEnum
+{	mcWRSO_NOT_USE = 0,
+	mcWRSO_USE = 1
+} McWRScnObjEnum;
+
+typedef enum McWRScnObjExtEnum
+{	mcWRSOE_NOT_USE = 0,
+	mcWRSOE_USE = 1
+} McWRScnObjExtEnum;
 
 typedef enum McMS3ADXZBDescEnum
 {	mcMS3ADXZBD_STD = 0
@@ -1061,10 +1386,10 @@ typedef enum McMS3ADXZBWFrmMdlEnum
 {	mcMS3ADXZBWFM_STD = 0
 } McMS3ADXZBWFrmMdlEnum;
 
-typedef enum McMS3ADBSceneViewerObjEnum
-{	mcMS3ADBSVO_NOT_USE = 0,
-	mcMS3ADBSVO_GEN = 1
-} McMS3ADBSceneViewerObjEnum;
+typedef enum McMS3ADXZBMonPtEnum
+{	mcMS3ADXZBMP_NOT_USE = 0,
+	mcMS3ADXZBMP_STD = 1
+} McMS3ADXZBMonPtEnum;
 
 typedef enum McMS3ADBDescEnum
 {	mcMS3ADBD_STD = 0
@@ -1073,14 +1398,6 @@ typedef enum McMS3ADBDescEnum
 typedef enum McMS3ADBWFrmMdlEnum
 {	mcMS3ADBWFM_STD = 0
 } McMS3ADBWFrmMdlEnum;
-
-typedef enum McMS3ADXZCSceneViewerObjEnum
-{	mcMS3ADXZCSVO_NOT_USE = 0,
-	mcMS3ADXZCSVO_GEN = 1,
-	mcMS3ADXZCSVO_D2500S02XR100 = 3,
-	mcMS3ADXZCSVO_D2800S02XR100 = 2,
-	mcMS3ADXZCSVO_D21000S03XDR8X = 4
-} McMS3ADXZCSceneViewerObjEnum;
 
 typedef enum McMS3ADXZCDescEnum
 {	mcMS3ADXZCD_STD = 0
@@ -1095,56 +1412,6 @@ typedef enum McMS3ADXZCMonPtEnum
 	mcMS3ADXZCMP_STD = 1
 } McMS3ADXZCMonPtEnum;
 
-typedef enum McMS4ADASceneViewerObjEnum
-{	mcMS4ADASVO_NOT_USE = 0,
-	mcMS4ADASVO_GEN = 1,
-	mcMS4ADASVO_D40650S02XR10X = 2,
-	mcMS4ADASVO_D40800S02XR10X = 3,
-	mcMS4ADASVO_D41100S02XR20X = 4,
-	mcMS4ADASVO_D41300S02XR20X = 5,
-	mcMS4ADASVO_D41600S02XR10X = 6,
-	mcMS4ADASVO_D41600S04XR20X = 7,
-	mcMS4ADASVO_D41600S05XR30X = 8,
-	mcMS4ADASVO_D42100S05XR75X = 9,
-	mcMS4ADASVO_TD40800S02XR10X = 10,
-	mcMS4ADASVO_D41100HD02XRH09X = 11,
-	mcMS4ADASVO_D41100HD02XRH10X = 12,
-	mcMS4ADASVO_D41100HD04XRH21X = 13,
-	mcMS4ADASVO_D40650HD02XRH10X = 14,
-	mcMS4ADASVO_D40800HD02XRH10X = 15,
-	mcMS4ADASVO_D41100HD02XRH21X = 16,
-	mcMS4ADASVO_D41300HD02XRH10X = 17,
-	mcMS4ADASVO_D41300HD02XRH21X = 18,
-	mcMS4ADASVO_D41300HD04XRH21X = 19,
-	mcMS4ADASVO_D41600HD02XRH10X = 20,
-	mcMS4ADASVO_D41600HD02XRH21X = 21,
-	mcMS4ADASVO_D41600HD04XRH21X = 22,
-	mcMS4ADASVO_D4500S010R109 = 23,
-	mcMS4ADASVO_D4ST210700R11 = 24,
-	mcMS4ADASVO_D4ST210700R20 = 25,
-	mcMS4ADASVO_D4ST210900R11 = 26,
-	mcMS4ADASVO_D4ST210900R20 = 27,
-	mcMS4ADASVO_D4ST211100R11 = 28,
-	mcMS4ADASVO_D4ST211100R20 = 29,
-	mcMS4ADASVO_D4ST211300R11 = 30,
-	mcMS4ADASVO_D4ST211300R20 = 31,
-	mcMS4ADASVO_D4ST211600R11 = 32,
-	mcMS4ADASVO_D4ST211600R20 = 33,
-	mcMS4ADASVO_D41100S02XR10X = 34,
-	mcMS4ADASVO_D41100S04XR20X = 35,
-	mcMS4ADASVO_D41300S02XR10X = 36,
-	mcMS4ADASVO_D41300S04XR20X = 37,
-	mcMS4ADASVO_D41300S05XR75X = 38,
-	mcMS4ADASVO_D41600S02XR20X = 39,
-	mcMS4ADASVO_D41600S05XR75X = 40,
-	mcMS4ADASVO_TD40500S01XR10X = 41,
-	mcMS4ADASVO_TD40650S02XR10X = 42,
-	mcMS4ADASVO_TD41100S02XR10X = 43,
-	mcMS4ADASVO_TD41300S02XR10X = 44,
-	mcMS4ADASVO_TD41300S04XR20X = 45,
-	mcMS4ADASVO_TD41600S04XR20X = 46
-} McMS4ADASceneViewerObjEnum;
-
 typedef enum McMS4ADADescEnum
 {	mcMS4ADAD_STD = 0
 } McMS4ADADescEnum;
@@ -1152,16 +1419,6 @@ typedef enum McMS4ADADescEnum
 typedef enum McMS4ADAWFrmMdlEnum
 {	mcMS4ADAWFM_STD = 0
 } McMS4ADAWFrmMdlEnum;
-
-typedef enum McMSDeltaWrkRngEnum
-{	mcMSDWR_NOT_USE = 0,
-	mcMSDWR_STD = 1
-} McMSDeltaWrkRngEnum;
-
-typedef enum McMS4ADBSceneViewerObjEnum
-{	mcMS4ADBSVO_NOT_USE = 0,
-	mcMS4ADBSVO_GEN = 1
-} McMS4ADBSceneViewerObjEnum;
 
 typedef enum McMS4ADBDescEnum
 {	mcMS4ADBD_STD = 0
@@ -1171,11 +1428,6 @@ typedef enum McMS4ADBWFrmMdlEnum
 {	mcMS4ADBWFM_STD = 0
 } McMS4ADBWFrmMdlEnum;
 
-typedef enum McMS4ADCSceneViewerObjEnum
-{	mcMS4ADCSVO_NOT_USE = 0,
-	mcMS4ADCSVO_GEN = 1
-} McMS4ADCSceneViewerObjEnum;
-
 typedef enum McMS4ADCDescEnum
 {	mcMS4ADCD_STD = 0
 } McMS4ADCDescEnum;
@@ -1183,16 +1435,6 @@ typedef enum McMS4ADCDescEnum
 typedef enum McMS4ADCWFrmMdlEnum
 {	mcMS4ADCWFM_STD = 0
 } McMS4ADCWFrmMdlEnum;
-
-typedef enum McMS5ADASceneViewerObjEnum
-{	mcMS5ADASVO_NOT_USE = 0,
-	mcMS5ADASVO_GEN = 1,
-	mcMS5ADASVO_D51100S02XR10X = 2,
-	mcMS5ADASVO_TD50650S02XR10X = 3,
-	mcMS5ADASVO_TD50800S02XR10X = 4,
-	mcMS5ADASVO_TD51100S02XR10X = 5,
-	mcMS5ADASVO_TD51300S02XR10X = 6
-} McMS5ADASceneViewerObjEnum;
 
 typedef enum McMS5ADADescEnum
 {	mcMS5ADAD_STD = 0
@@ -1210,12 +1452,6 @@ typedef enum McMS3ARAWFrmMdlEnum
 {	mcMS3ARAWFM_STD = 0
 } McMS3ARAWFrmMdlEnum;
 
-typedef enum McMS4ARASceneViewerObjEnum
-{	mcMS4ARASVO_NOT_USE = 0,
-	mcMS4ARASVO_GEN = 1,
-	mcMS4ARASVO_COMAU_PAL_180_31 = 2
-} McMS4ARASceneViewerObjEnum;
-
 typedef enum McMS4ARADescEnum
 {	mcMS4ARAD_STD = 0
 } McMS4ARADescEnum;
@@ -1223,6 +1459,22 @@ typedef enum McMS4ARADescEnum
 typedef enum McMS4ARAWFrmMdlEnum
 {	mcMS4ARAWFM_STD = 0
 } McMS4ARAWFrmMdlEnum;
+
+typedef enum McMS4ARAWFrmMdlStdCusEdgTypEnum
+{	mcMS4ARAWFMSCET_CXN_LIN = 0,
+	mcMS4ARAWFMSCET_PT = 1,
+	mcMS4ARAWFMSCET_NOT_USE = 2
+} McMS4ARAWFrmMdlStdCusEdgTypEnum;
+
+typedef enum McMS4ARAFMSCETParentPtEnum
+{	mcMS4ARAFMSCETPP_Q1 = 0,
+	mcMS4ARAFMSCETPP_Q2 = 1,
+	mcMS4ARAFMSCETPP_Q3 = 2,
+	mcMS4ARAFMSCETPP_PQ1 = 3,
+	mcMS4ARAFMSCETPP_Q4 = 4,
+	mcMS4ARAFMSCETPP_FLG = 5,
+	mcMS4ARAFMSCETPP_TCP = 6
+} McMS4ARAFMSCETParentPtEnum;
 
 typedef enum McMS4ARAMonPtEnum
 {	mcMS4ARAMP_NOT_USE = 0,
@@ -1253,10 +1505,10 @@ typedef enum McMS5ARBWFrmMdlEnum
 {	mcMS5ARBWFM_STD = 0
 } McMS5ARBWFrmMdlEnum;
 
-typedef enum McMS6ARASceneViewerObjEnum
-{	mcMS6ARASVO_NOT_USE = 0,
-	mcMS6ARASVO_GEN = 1
-} McMS6ARASceneViewerObjEnum;
+typedef enum McMS5ARBMonPtEnum
+{	mcMS5ARBMP_NOT_USE = 0,
+	mcMS5ARBMP_STD = 1
+} McMS5ARBMonPtEnum;
 
 typedef enum McMS6ARADescEnum
 {	mcMS6ARAD_STD = 0
@@ -1266,16 +1518,10 @@ typedef enum McMS6ARAWFrmMdlEnum
 {	mcMS6ARAWFM_STD = 0
 } McMS6ARAWFrmMdlEnum;
 
-typedef enum McMS6ARBSceneViewerObjEnum
-{	mcMS6ARBSVO_NOT_USE = 0,
-	mcMS6ARBSVO_GEN = 1,
-	mcMS6ARBSVO_COMAU_RACER_3 = 20,
-	mcMS6ARBSVO_COMAU_RACER_5063 = 30,
-	mcMS6ARBSVO_COMAU_RACER_5080 = 31,
-	mcMS6ARBSVO_COMAU_RACER_714 = 40,
-	mcMS6ARBSVO_COMAU_NS12185 = 50,
-	mcMS6ARBSVO_COMAU_NS16165 = 60
-} McMS6ARBSceneViewerObjEnum;
+typedef enum McMS6ARAMonPtEnum
+{	mcMS6ARAMP_NOT_USE = 0,
+	mcMS6ARAMP_STD = 1
+} McMS6ARAMonPtEnum;
 
 typedef enum McMS6ARBDescEnum
 {	mcMS6ARBD_STD = 0
@@ -1284,11 +1530,6 @@ typedef enum McMS6ARBDescEnum
 typedef enum McMS6ARBWFrmMdlEnum
 {	mcMS6ARBWFM_STD = 0
 } McMS6ARBWFrmMdlEnum;
-
-typedef enum McMS6ARCSceneViewerObjEnum
-{	mcMS6ARCSVO_NOT_USE = 0,
-	mcMS6ARCSVO_GEN = 1
-} McMS6ARCSceneViewerObjEnum;
 
 typedef enum McMS6ARCDescEnum
 {	mcMS6ARCD_STD = 0
@@ -1375,12 +1616,6 @@ typedef struct McPathGenMonElemPrgSequenceType
 typedef struct McPathGenMonElemAxPositionsType
 {	double SetPosition[15];
 } McPathGenMonElemAxPositionsType;
-
-typedef struct McPathGenMonElemPathSpeedType
-{	float UnitPerMinute;
-	float UnitPerRevolution;
-	float Inverse;
-} McPathGenMonElemPathSpeedType;
 
 typedef struct McPathGenMonElemFeedSettingsType
 {	plcstring FeedPath[81];
@@ -1471,6 +1706,17 @@ typedef struct McPathGenMonElemSkipLevelType
 {	plcbit Level[10];
 } McPathGenMonElemSkipLevelType;
 
+typedef struct McPathGenMonElemWorkspaceType
+{	plcbit InWorkspace;
+	enum McPathGenWorkspaceStatusEnum WorkspaceStatus;
+} McPathGenMonElemWorkspaceType;
+
+typedef struct McPathGenMonElemActLimType
+{	enum McPathGenMonElemActLimTypeEnum Type;
+	enum McPathGenMonElemActLimSourceEnum Source;
+	unsigned long Index;
+} McPathGenMonElemActLimType;
+
 typedef struct McPathGenMonElemBasicMonType
 {	struct McPathGenMonElemCurrentPrgType CurrentProgram;
 	unsigned long LineNumber;
@@ -1504,6 +1750,7 @@ typedef struct McPathGenCusMechDirParType
 	struct McToolGeometryType Tool;
 	unsigned long JointCount;
 	unsigned long TcpCount;
+	unsigned long CustomDataAddr;
 } McPathGenCusMechDirParType;
 
 typedef struct McPathGenCusMechDirType
@@ -1518,6 +1765,10 @@ typedef struct McPathGenCusMechInvInType
 	double JointRefPos[15];
 } McPathGenCusMechInvInType;
 
+typedef struct McPathGenCusMechInvAddInType
+{	double TcpDer[15];
+} McPathGenCusMechInvAddInType;
+
 typedef struct McPathGenCusMechInvOutType
 {	double JointPos[15];
 } McPathGenCusMechInvOutType;
@@ -1527,10 +1778,12 @@ typedef struct McPathGenCusMechInvParType
 	struct McToolGeometryType Tool;
 	unsigned long JointCount;
 	unsigned long TcpCount;
+	unsigned long CustomDataAddr;
 } McPathGenCusMechInvParType;
 
 typedef struct McPathGenCusMechInvType
 {	struct McPathGenCusMechInvInType Input;
+	struct McPathGenCusMechInvAddInType AddInput;
 	struct McPathGenCusMechInvOutType Output;
 	struct McPathGenCusMechInvParType Parameter;
 	struct McPathGenCusMechInfoType Info;
@@ -1551,6 +1804,7 @@ typedef struct McPathGenCusMechDirDerParType
 	struct McToolGeometryType Tool;
 	unsigned long JointCount;
 	unsigned long TcpCount;
+	unsigned long CustomDataAddr;
 } McPathGenCusMechDirDerParType;
 
 typedef struct McPathGenCusMechDirDerType
@@ -1566,6 +1820,10 @@ typedef struct McPathGenCusMechInvDerInType
 	double JointRefPos[15];
 } McPathGenCusMechInvDerInType;
 
+typedef struct McPathGenCusMechInvDerAddInType
+{	double JointPos[15];
+} McPathGenCusMechInvDerAddInType;
+
 typedef struct McPathGenCusMechInvDerOutType
 {	double JointDer[15];
 } McPathGenCusMechInvDerOutType;
@@ -1575,10 +1833,12 @@ typedef struct McPathGenCusMechInvDerParType
 	struct McToolGeometryType Tool;
 	unsigned long JointCount;
 	unsigned long TcpCount;
+	unsigned long CustomDataAddr;
 } McPathGenCusMechInvDerParType;
 
 typedef struct McPathGenCusMechInvDerType
 {	struct McPathGenCusMechInvDerInType Input;
+	struct McPathGenCusMechInvDerAddInType AddInput;
 	struct McPathGenCusMechInvDerOutType Output;
 	struct McPathGenCusMechInvDerParType Parameter;
 	struct McPathGenCusMechInfoType Info;
@@ -1612,6 +1872,7 @@ typedef struct McPathGenCusMechWMParType
 	struct McToolGeometryType Tool;
 	unsigned long JointCount;
 	plcbit CheckSelfCollision;
+	unsigned long CustomDataAddr;
 } McPathGenCusMechWMParType;
 
 typedef struct McPathGenCusMechWMSelColType
@@ -1649,10 +1910,16 @@ typedef struct McPathGenErrorStructType
 {	double ActualError;
 } McPathGenErrorStructType;
 
+typedef struct McPathGenMotionBehaviourType
+{	plcbit AdjustedVelocity;
+	plcbit AdjustedVelocityToZero;
+} McPathGenMotionBehaviourType;
+
 typedef struct McPathGenTrackingInfoType
 {	struct McPathGenTrackedObjectType TrackedObject;
 	struct McPathGenTrackedFrameType TrackedFrame;
 	struct McPathGenErrorStructType ErrorStruct;
+	struct McPathGenMotionBehaviourType MotionBehaviour;
 } McPathGenTrackingInfoType;
 
 typedef struct McAGPGPAJntAxJntAxType
@@ -1705,16 +1972,32 @@ typedef struct McAGPGGeoPlanTCPResType
 	double AngleResolution;
 } McAGPGGeoPlanTCPResType;
 
+typedef struct McAGPGGeoPlanBlendingType
+{	double MaxRadius;
+} McAGPGGeoPlanBlendingType;
+
+typedef struct McAGPGGPRSymRndPathCusPathType
+{	McCfgString250Type PathName;
+} McAGPGGPRSymRndPathCusPathType;
+
+typedef struct McAGPGGPRSymRndPathType
+{	enum McAGPGGPRSymRndPathEnum Type;
+	struct McAGPGGPRSymRndPathCusPathType CustomPath;
+} McAGPGGPRSymRndPathType;
+
 typedef struct McAGPGGeoPlanRndType
 {	double PathDistance;
 	enum McAGPGGeoPlanRndSymRndEnum SymmetricRounding;
+	struct McAGPGGPRSymRndPathType SymmetricRoundingPath;
 	enum McAGPGGeoPlanRndLatSegEnum LastSegment;
+	enum McAGPGGeoPlanRndFirstSegEnum FirstSegment;
 	enum McAGPGGeoPlanRndAvoidZeroCrvEnum AvoidZeroCurvature;
 	enum McAGPGGeoPlanRndNonCartRndEnum NonCartesianRounding;
 } McAGPGGeoPlanRndType;
 
 typedef struct McAGPGGeoPlanType
 {	struct McAGPGGeoPlanTCPResType TCPResolution;
+	struct McAGPGGeoPlanBlendingType Blending;
 	struct McAGPGGeoPlanRndType Rounding;
 	enum McAGPGGeoPlanRndModEnum RoundingMode;
 	double MaxCornerDeviation;
@@ -1793,9 +2076,14 @@ typedef struct McAGPGMTSOType
 {	struct McAGPGMTSOJerkSupType JerkSuppression;
 } McAGPGMTSOType;
 
+typedef struct McAGPGMAJFType
+{	enum McAGPGMAJFEnum Type;
+} McAGPGMAJFType;
+
 typedef struct McAGPGMiscType
 {	struct McAGPGMiscNonMoveLimType NonMovementsLimit;
 	struct McAGPGMTSOType TimeStretchOverride;
+	struct McAGPGMAJFType AxisJerkFilter;
 } McAGPGMiscType;
 
 typedef struct McAGPGBSType
@@ -2399,14 +2687,6 @@ typedef struct McAGFMESngElmOPIType
 	struct McAGFMESngElmOPIInflSetPosType InfluencedSetPositions;
 } McAGFMESngElmOPIType;
 
-typedef struct McAGFMESngElmPathIdentType
-{	plcstring CurrentPathSpeed[251];
-	plcstring ProgrammedSpeedOfPath[251];
-	plcstring PathPosition[251];
-	plcstring CurrentLength[251];
-	plcstring RemainingDistance[251];
-} McAGFMESngElmPathIdentType;
-
 typedef struct McAGFMESngElmToolType
 {	plcstring ToolIndex[251];
 	plcstring ToolIdentifier[251];
@@ -2462,6 +2742,14 @@ typedef struct McAGFMESngElmSkipBlkType
 {	plcstring SkipLevels[251];
 } McAGFMESngElmSkipBlkType;
 
+typedef struct McAGFMESngElmWsMonType
+{	plcstring Workspace[251];
+} McAGFMESngElmWsMonType;
+
+typedef struct McAGFMESngElmActLimType
+{	plcstring Limit[251];
+} McAGFMESngElmActLimType;
+
 typedef struct McAGFMESngElmType
 {	enum McAGFMESngElmEnum Type;
 	struct McAGFMESngElmCusType Custom;
@@ -2470,7 +2758,6 @@ typedef struct McAGFMESngElmType
 	struct McAGFMESngElmPrgRunTType ProgramRuntime;
 	struct McAGFMESngElmSetPosType SetPositions;
 	struct McAGFMESngElmOPIType OnlinePathInfluence;
-	struct McAGFMESngElmPathIdentType PathIdentification;
 	struct McAGFMESngElmToolType Tool;
 	struct McAGFMESngElmIpType Interpreter;
 	struct McAGFMESngElmLimType Limits;
@@ -2482,6 +2769,8 @@ typedef struct McAGFMESngElmType
 	struct McAGFMESngElmDynDecType DynamicDecelerations;
 	struct McAGFMESngElmOrientCompType OrientationCompliance;
 	struct McAGFMESngElmSkipBlkType SkipBlock;
+	struct McAGFMESngElmWsMonType WorkspaceMonitoring;
+	struct McAGFMESngElmActLimType ActiveLimit;
 } McAGFMESngElmType;
 
 typedef struct McAGFMESngElmsType
@@ -2543,11 +2832,17 @@ typedef struct McAGFPDPathTypCusPhsAxPathType
 {	struct McCfgUnboundedArrayType AxisName;
 } McAGFPDPathTypCusPhsAxPathType;
 
+typedef struct McAGFPDPathTypCusTCPCoorPathType
+{	struct McAGFPDCalcInType CalculatedIn;
+	struct McCfgUnboundedArrayType CoordinateName;
+} McAGFPDPathTypCusTCPCoorPathType;
+
 typedef struct McAGFPDPathTypType
 {	enum McAGFPDPathTypEnum Type;
 	struct McAGFPDPathTypCartPathType CartesianPath;
 	struct McAGFPDPathTypOrientPathType OrientationPath;
 	struct McAGFPDPathTypCusPhsAxPathType CustomPhysicalAxesPath;
+	struct McAGFPDPathTypCusTCPCoorPathType CustomTCPCoordinatesPath;
 } McAGFPDPathTypType;
 
 typedef struct McAGFPDPathLimIntVelType
@@ -3172,8 +3467,18 @@ typedef struct McAGFTrkOoWType
 	struct McAGFTrkOoWAdjVelType AdjustedVelocity;
 } McAGFTrkOoWType;
 
+typedef struct McAGFTrkOoWSAdjVelType
+{	double Clearance;
+} McAGFTrkOoWSAdjVelType;
+
+typedef struct McAGFTrkOoWSType
+{	enum McAGFTrkOoWSEnum Type;
+	struct McAGFTrkOoWSAdjVelType AdjustedVelocity;
+} McAGFTrkOoWSType;
+
 typedef struct McAGFTRMotBxType
 {	struct McAGFTrkOoWType OutOfWorkspaceSynchronisation;
+	struct McAGFTrkOoWSType OutOfWorkspaceSynchronized;
 } McAGFTRMotBxType;
 
 typedef struct McCfgAxGrpFeatTrkType
@@ -3182,8 +3487,13 @@ typedef struct McCfgAxGrpFeatTrkType
 	struct McAGFTRMotBxType MotionBehaviour;
 } McCfgAxGrpFeatTrkType;
 
+typedef struct McAGFPCXCoorUseDirType
+{	enum McAGFPCXCoorUseDirEnum Type;
+} McAGFPCXCoorUseDirType;
+
 typedef struct McAGFPCXCoorUseType
 {	struct McCfgReferenceType AxisReference;
+	struct McAGFPCXCoorUseDirType Direction;
 } McAGFPCXCoorUseType;
 
 typedef struct McAGFPCXCoorType
@@ -3191,8 +3501,13 @@ typedef struct McAGFPCXCoorType
 	struct McAGFPCXCoorUseType Used;
 } McAGFPCXCoorType;
 
+typedef struct McAGFPCYCoorUseDirType
+{	enum McAGFPCYCoorUseDirEnum Type;
+} McAGFPCYCoorUseDirType;
+
 typedef struct McAGFPCYCoorUseType
 {	struct McCfgReferenceType AxisReference;
+	struct McAGFPCYCoorUseDirType Direction;
 } McAGFPCYCoorUseType;
 
 typedef struct McAGFPCYCoorType
@@ -3205,6 +3520,164 @@ typedef struct McCfgAxGrpPipeCutType
 	struct McAGFPCXCoorType XCoordinate;
 	struct McAGFPCYCoorType YCoordinate;
 } McCfgAxGrpPipeCutType;
+
+typedef struct McAGFTFSSFSMinDstPtOgnBCSType
+{	struct McCfgTransXYZType Translation;
+} McAGFTFSSFSMinDstPtOgnBCSType;
+
+typedef struct McAGFTFSSFSMinDstPtOgnMCSType
+{	struct McCfgTransXYZType Translation;
+} McAGFTFSSFSMinDstPtOgnMCSType;
+
+typedef struct McAGFTFSSFSMinDstPtOgnFrmType
+{	plcstring FrameName[251];
+	struct McCfgTransXYZType Translation;
+} McAGFTFSSFSMinDstPtOgnFrmType;
+
+typedef struct McAGFTFSSFSMinDstPtOgnType
+{	enum McAGFTFSSFSMinDstPtOgnEnum Type;
+	struct McAGFTFSSFSMinDstPtOgnBCSType BCS;
+	struct McAGFTFSSFSMinDstPtOgnMCSType MCS;
+	struct McAGFTFSSFSMinDstPtOgnFrmType Frame;
+} McAGFTFSSFSMinDstPtOgnType;
+
+typedef struct McAGFTFSSFSMinDstPtType
+{	struct McAGFTFSSFSMinDstPtOgnType Origin;
+} McAGFTFSSFSMinDstPtType;
+
+typedef struct McAGFTFSSFSMaxDstPtOgnBCSType
+{	struct McCfgTransXYZType Translation;
+} McAGFTFSSFSMaxDstPtOgnBCSType;
+
+typedef struct McAGFTFSSFSMaxDstPtOgnMCSType
+{	struct McCfgTransXYZType Translation;
+} McAGFTFSSFSMaxDstPtOgnMCSType;
+
+typedef struct McAGFTFSSFSMaxDstPtOgnFrmType
+{	plcstring FrameName[251];
+	struct McCfgTransXYZType Translation;
+} McAGFTFSSFSMaxDstPtOgnFrmType;
+
+typedef struct McAGFTFSSFSMaxDstPtOgnType
+{	enum McAGFTFSSFSMaxDstPtOgnEnum Type;
+	struct McAGFTFSSFSMaxDstPtOgnBCSType BCS;
+	struct McAGFTFSSFSMaxDstPtOgnMCSType MCS;
+	struct McAGFTFSSFSMaxDstPtOgnFrmType Frame;
+} McAGFTFSSFSMaxDstPtOgnType;
+
+typedef struct McAGFTFSSFSMaxDstPtType
+{	struct McAGFTFSSFSMaxDstPtOgnType Origin;
+} McAGFTFSSFSMaxDstPtType;
+
+typedef struct McAGFTFSSFStratType
+{	enum McAGFTFSSFStratEnum Type;
+	struct McAGFTFSSFSMinDstPtType MinimumDistanceToPoint;
+	struct McAGFTFSSFSMaxDstPtType MaximumDistanceToPoint;
+} McAGFTFSSFStratType;
+
+typedef struct McAGFTFSSFSFTPType
+{	struct McCfgUnboundedArrayType TrackingPathReference;
+} McAGFTFSSFSFTPType;
+
+typedef struct McAGFTFSSFSFSAACubOgnFrmType
+{	plcstring StandardFrameName[251];
+} McAGFTFSSFSFSAACubOgnFrmType;
+
+typedef struct McAGFTFSSFSFSAACubOgnType
+{	enum McAGFTFSSFSFSAACubOgnEnum Type;
+	struct McAGFTFSSFSFSAACubOgnFrmType Frame;
+} McAGFTFSSFSFSAACubOgnType;
+
+typedef struct McAGFTFSSFSFSAACubDimType
+{	double Length;
+	double Width;
+	double Height;
+} McAGFTFSSFSFSAACubDimType;
+
+typedef struct McAGFTFSSFSFSAACubType
+{	struct McAGFTFSSFSFSAACubOgnType Origin;
+	struct McCfgTransXYZType Translation;
+	struct McCfgOrientType Orientation;
+	struct McAGFTFSSFSFSAACubDimType Dimensions;
+} McAGFTFSSFSFSAACubType;
+
+typedef struct McAGFTFSSFSFSAACylOgnFrmType
+{	plcstring StandardFrameName[251];
+} McAGFTFSSFSFSAACylOgnFrmType;
+
+typedef struct McAGFTFSSFSFSAACylOgnType
+{	enum McAGFTFSSFSFSAACylOgnEnum Type;
+	struct McAGFTFSSFSFSAACylOgnFrmType Frame;
+} McAGFTFSSFSFSAACylOgnType;
+
+typedef struct McAGFTFSSFSFSAACylDimType
+{	double Radius;
+	double Height;
+} McAGFTFSSFSFSAACylDimType;
+
+typedef struct McAGFTFSSFSFSAACylType
+{	struct McAGFTFSSFSFSAACylOgnType Origin;
+	struct McCfgTransXYZType Translation;
+	struct McCfgOrientType Orientation;
+	struct McAGFTFSSFSFSAACylDimType Dimensions;
+} McAGFTFSSFSFSAACylType;
+
+typedef struct McAGFTFSSFSFSAAreaType
+{	enum McAGFTFSSFSFSAAreaEnum Type;
+	struct McAGFTFSSFSFSAACubType Cuboid;
+	struct McAGFTFSSFSFSAACylType Cylinder;
+} McAGFTFSSFSFSAAreaType;
+
+typedef struct McAGFTFSSFSFSAType
+{	struct McCfgUnboundedArrayType Area;
+} McAGFTFSSFSFSAType;
+
+typedef struct McAGFTFSSFSFAMType
+{	unsigned long Mask;
+} McAGFTFSSFSFAMType;
+
+typedef struct McAGFTFSSFFltrFltrType
+{	enum McAGFTFSSFFltrFltrEnum Type;
+	struct McAGFTFSSFSFTPType TrackingPaths;
+	struct McAGFTFSSFSFSAType SelectionArea;
+	struct McAGFTFSSFSFAMType AttributeMask;
+} McAGFTFSSFFltrFltrType;
+
+typedef struct McAGFTFSSFFltrType
+{	struct McCfgUnboundedArrayType Filter;
+} McAGFTFSSFFltrType;
+
+typedef struct McAGFTFSSFLckASelType
+{	enum McAGFTFSSFLckASelEnum Type;
+} McAGFTFSSFLckASelType;
+
+typedef struct McAGFTFSSFType
+{	plcstring Name[251];
+	struct McAGFTFSSFStratType Strategy;
+	struct McAGFTFSSFFltrType Filters;
+	struct McAGFTFSSFLckASelType LockingAfterSelection;
+} McAGFTFSSFType;
+
+typedef struct McAGFTFSSelSelType
+{	enum McAGFTFSSelSelEnum Type;
+	struct McAGFTFSSFType SingleFrames;
+} McAGFTFSSelSelType;
+
+typedef struct McAGFTFSSelType
+{	struct McCfgUnboundedArrayType Selector;
+} McAGFTFSSelType;
+
+typedef struct McCfgAxGrpFeatTrkFrmSelType
+{	struct McAGFTFSSelType Selectors;
+} McCfgAxGrpFeatTrkFrmSelType;
+
+typedef struct McAGFTFSAAreaFltrType
+{	struct McCfgUnboundedArrayType Area;
+} McAGFTFSAAreaFltrType;
+
+typedef struct McCfgAxGrpFeatTrkFrmSelAreaType
+{	struct McCfgUnboundedArrayType AreaFilter;
+} McCfgAxGrpFeatTrkFrmSelAreaType;
 
 typedef struct McMSCSDSType
 {	plcstring Dimensions[251];
@@ -3374,8 +3847,43 @@ typedef struct McMS2ACXYCplgType
 {	struct McCfgUnboundedArrayType LinearCoupling;
 } McMS2ACXYCplgType;
 
+typedef struct McMSJ2ARLSJALLStdType
+{	enum McMSJ2ARLSJALLStdSrcJntAxEnum SourceJointAxis;
+	double Coefficient;
+} McMSJ2ARLSJALLStdType;
+
+typedef struct McMSJ2ARLSJALLType
+{	enum McMSJ2ARLSJALLEnum Type;
+	struct McMSJ2ARLSJALLStdType Standard;
+} McMSJ2ARLSJALLType;
+
+typedef struct McMSJ2ARLSJAULStdType
+{	enum McMSJ2ARLSJAULStdSrcJntAxEnum SourceJointAxis;
+	double Coefficient;
+} McMSJ2ARLSJAULStdType;
+
+typedef struct McMSJ2ARLSJAULType
+{	enum McMSJ2ARLSJAULEnum Type;
+	struct McMSJ2ARLSJAULStdType Standard;
+} McMSJ2ARLSJAULType;
+
+typedef struct McMSJnt2AxRelLimStdJntAxType
+{	struct McMSJ2ARLSJALLType LowerLimit;
+	struct McMSJ2ARLSJAULType UpperLimit;
+} McMSJnt2AxRelLimStdJntAxType;
+
+typedef struct McMSJnt2AxRelLimStdType
+{	struct McMSJnt2AxRelLimStdJntAxType JointAxis[2];
+} McMSJnt2AxRelLimStdType;
+
+typedef struct McMSJnt2AxRelLimType
+{	enum McMSJnt2AxRelLimEnum Type;
+	struct McMSJnt2AxRelLimStdType Standard;
+} McMSJnt2AxRelLimType;
+
 typedef struct McMSJnt2AxPosLimType
 {	struct McMSJntAxPosLimType JointAxis[2];
+	struct McMSJnt2AxRelLimType RelativeLimits;
 } McMSJnt2AxPosLimType;
 
 typedef struct McCfgMS2AxCncXYType
@@ -3476,8 +3984,43 @@ typedef struct McMS3ACXYZCplgType
 {	struct McCfgUnboundedArrayType LinearCoupling;
 } McMS3ACXYZCplgType;
 
+typedef struct McMSJ3ARLSJALLStdType
+{	enum McMSJ3ARLSJALLStdSrcJntAxEnum SourceJointAxis;
+	double Coefficient;
+} McMSJ3ARLSJALLStdType;
+
+typedef struct McMSJ3ARLSJALLType
+{	enum McMSJ3ARLSJALLEnum Type;
+	struct McMSJ3ARLSJALLStdType Standard;
+} McMSJ3ARLSJALLType;
+
+typedef struct McMSJ3ARLSJAULStdType
+{	enum McMSJ3ARLSJAULStdSrcJntAxEnum SourceJointAxis;
+	double Coefficient;
+} McMSJ3ARLSJAULStdType;
+
+typedef struct McMSJ3ARLSJAULType
+{	enum McMSJ3ARLSJAULEnum Type;
+	struct McMSJ3ARLSJAULStdType Standard;
+} McMSJ3ARLSJAULType;
+
+typedef struct McMSJnt3AxRelLimStdJntAxType
+{	struct McMSJ3ARLSJALLType LowerLimit;
+	struct McMSJ3ARLSJAULType UpperLimit;
+} McMSJnt3AxRelLimStdJntAxType;
+
+typedef struct McMSJnt3AxRelLimStdType
+{	struct McMSJnt3AxRelLimStdJntAxType JointAxis[3];
+} McMSJnt3AxRelLimStdType;
+
+typedef struct McMSJnt3AxRelLimType
+{	enum McMSJnt3AxRelLimEnum Type;
+	struct McMSJnt3AxRelLimStdType Standard;
+} McMSJnt3AxRelLimType;
+
 typedef struct McMSJnt3AxPosLimType
 {	struct McMSJntAxPosLimType JointAxis[3];
+	struct McMSJnt3AxRelLimType RelativeLimits;
 } McMSJnt3AxPosLimType;
 
 typedef struct McCfgMS3AxCncXYZType
@@ -3608,13 +4151,13 @@ typedef struct McCfgMS3AxCncXZBType
 	struct McMSJnt3AxPosLimType JointAxesPositionLimits;
 } McCfgMS3AxCncXZBType;
 
-typedef struct McMS4ACXYZBDSDimType
+typedef struct McMS4ACXYZADSDimType
 {	struct McCfgTransXType TranslationFromBaseToQX;
 	struct McCfgTransYType TranslationFromQXToQY;
 	struct McCfgTransZType TranslationFromQYToQZ;
-	struct McCfgTransXYZType TranslationFromQZToQB;
-	struct McCfgTransXYZType TranslationFromQBToFlange;
-} McMS4ACXYZBDSDimType;
+	struct McCfgTransXYZType TranslationFromQZToQA;
+	struct McCfgTransXYZType TranslationFromQAToFlange;
+} McMS4ACXYZADSDimType;
 
 typedef struct McMSMdl4ZeroPosOffType
 {	double JointAxis[4];
@@ -3623,6 +4166,107 @@ typedef struct McMSMdl4ZeroPosOffType
 typedef struct McMSMdl4CntDirType
 {	enum McMSMdl4CntDirJntAxEnum JointAxis[4];
 } McMSMdl4CntDirType;
+
+typedef struct McMS4ACXYZADSType
+{	struct McMS4ACXYZADSDimType Dimensions;
+	struct McMSMdl4ZeroPosOffType ModelZeroPositionOffsets;
+	struct McMSMdl4CntDirType ModelCountDirections;
+} McMS4ACXYZADSType;
+
+typedef struct McMS4ACXYZADescType
+{	enum McMS4ACXYZADescEnum Type;
+	struct McMS4ACXYZADSType Standard;
+} McMS4ACXYZADescType;
+
+typedef struct McMS4ACXYZACoorNameCmnType
+{	plcstring XCoordinateName[251];
+	plcstring YCoordinateName[251];
+	plcstring ZCoordinateName[251];
+	plcstring ACoordinateName[251];
+} McMS4ACXYZACoorNameCmnType;
+
+typedef struct McMS4ACXYZACoorNameType
+{	enum McMSCNEnum Type;
+	struct McMS4ACXYZACoorNameCmnType Common;
+} McMS4ACXYZACoorNameType;
+
+typedef struct McMS4ACXYZAWFrmMdlStdType
+{	struct McMSFrmMdlStdEdgeType QZToQA;
+	struct McMSFrmMdlStdEdgeType QAToFlange;
+	struct McMSFrmMdlStdEdgeType FlangeToTCP;
+} McMS4ACXYZAWFrmMdlStdType;
+
+typedef struct McMS4ACXYZAWFrmMdlType
+{	enum McMS4ACXYZAWFrmMdlEnum Type;
+	struct McMS4ACXYZAWFrmMdlStdType Standard;
+} McMS4ACXYZAWFrmMdlType;
+
+typedef struct McMSCplg4LinCplgType
+{	enum McMSCplg4LinCplgSrcAxEnum SourceAxis;
+	double SourceAxisUnits;
+	enum McMSCplg4LinCplgTgtJntAxEnum TargetJointAxis;
+	double TargetJointAxisUnits;
+} McMSCplg4LinCplgType;
+
+typedef struct McMS4ACXYZACplgType
+{	struct McCfgUnboundedArrayType LinearCoupling;
+} McMS4ACXYZACplgType;
+
+typedef struct McMSJ4ARLSJALLStdType
+{	enum McMSJ4ARLSJALLStdSrcJntAxEnum SourceJointAxis;
+	double Coefficient;
+} McMSJ4ARLSJALLStdType;
+
+typedef struct McMSJ4ARLSJALLType
+{	enum McMSJ4ARLSJALLEnum Type;
+	struct McMSJ4ARLSJALLStdType Standard;
+} McMSJ4ARLSJALLType;
+
+typedef struct McMSJ4ARLSJAULStdType
+{	enum McMSJ4ARLSJAULStdSrcJntAxEnum SourceJointAxis;
+	double Coefficient;
+} McMSJ4ARLSJAULStdType;
+
+typedef struct McMSJ4ARLSJAULType
+{	enum McMSJ4ARLSJAULEnum Type;
+	struct McMSJ4ARLSJAULStdType Standard;
+} McMSJ4ARLSJAULType;
+
+typedef struct McMSJnt4AxRelLimStdJntAxType
+{	struct McMSJ4ARLSJALLType LowerLimit;
+	struct McMSJ4ARLSJAULType UpperLimit;
+} McMSJnt4AxRelLimStdJntAxType;
+
+typedef struct McMSJnt4AxRelLimStdType
+{	struct McMSJnt4AxRelLimStdJntAxType JointAxis[4];
+} McMSJnt4AxRelLimStdType;
+
+typedef struct McMSJnt4AxRelLimType
+{	enum McMSJnt4AxRelLimEnum Type;
+	struct McMSJnt4AxRelLimStdType Standard;
+} McMSJnt4AxRelLimType;
+
+typedef struct McMSJnt4AxPosLimType
+{	struct McMSJntAxPosLimType JointAxis[4];
+	struct McMSJnt4AxRelLimType RelativeLimits;
+} McMSJnt4AxPosLimType;
+
+typedef struct McCfgMS4AxCncXYZAType
+{	struct McMS4ACXYZADescType Description;
+	struct McMS4ACXYZACoorNameType CoordinatesNames;
+	struct McMSTCPOType TCPOrientation;
+	struct McMS4ACXYZAWFrmMdlType WireFrameModel;
+	struct McMS4ACXYZACplgType Couplings;
+	struct McMSJnt4AxPosLimType JointAxesPositionLimits;
+} McCfgMS4AxCncXYZAType;
+
+typedef struct McMS4ACXYZBDSDimType
+{	struct McCfgTransXType TranslationFromBaseToQX;
+	struct McCfgTransYType TranslationFromQXToQY;
+	struct McCfgTransZType TranslationFromQYToQZ;
+	struct McCfgTransXYZType TranslationFromQZToQB;
+	struct McCfgTransXYZType TranslationFromQBToFlange;
+} McMS4ACXYZBDSDimType;
 
 typedef struct McMS4ACXYZBDSType
 {	struct McMS4ACXYZBDSDimType Dimensions;
@@ -3658,20 +4302,9 @@ typedef struct McMS4ACXYZBWFrmMdlType
 	struct McMS4ACXYZBWFrmMdlStdType Standard;
 } McMS4ACXYZBWFrmMdlType;
 
-typedef struct McMSCplg4LinCplgType
-{	enum McMSCplg4LinCplgSrcAxEnum SourceAxis;
-	double SourceAxisUnits;
-	enum McMSCplg4LinCplgTgtJntAxEnum TargetJointAxis;
-	double TargetJointAxisUnits;
-} McMSCplg4LinCplgType;
-
 typedef struct McMS4ACXYZBCplgType
 {	struct McCfgUnboundedArrayType LinearCoupling;
 } McMS4ACXYZBCplgType;
-
-typedef struct McMSJnt4AxPosLimType
-{	struct McMSJntAxPosLimType JointAxis[4];
-} McMSJnt4AxPosLimType;
 
 typedef struct McCfgMS4AxCncXYZBType
 {	struct McMS4ACXYZBDescType Description;
@@ -3801,8 +4434,43 @@ typedef struct McMS5ACXYZBACplgType
 {	struct McCfgUnboundedArrayType LinearCoupling;
 } McMS5ACXYZBACplgType;
 
+typedef struct McMSJ5ARLSJALLStdType
+{	enum McMSJ5ARLSJALLStdSrcJntAxEnum SourceJointAxis;
+	double Coefficient;
+} McMSJ5ARLSJALLStdType;
+
+typedef struct McMSJ5ARLSJALLType
+{	enum McMSJ5ARLSJALLEnum Type;
+	struct McMSJ5ARLSJALLStdType Standard;
+} McMSJ5ARLSJALLType;
+
+typedef struct McMSJ5ARLSJAULStdType
+{	enum McMSJ5ARLSJAULStdSrcJntAxEnum SourceJointAxis;
+	double Coefficient;
+} McMSJ5ARLSJAULStdType;
+
+typedef struct McMSJ5ARLSJAULType
+{	enum McMSJ5ARLSJAULEnum Type;
+	struct McMSJ5ARLSJAULStdType Standard;
+} McMSJ5ARLSJAULType;
+
+typedef struct McMSJnt5AxRelLimStdJntAxType
+{	struct McMSJ5ARLSJALLType LowerLimit;
+	struct McMSJ5ARLSJAULType UpperLimit;
+} McMSJnt5AxRelLimStdJntAxType;
+
+typedef struct McMSJnt5AxRelLimStdType
+{	struct McMSJnt5AxRelLimStdJntAxType JointAxis[5];
+} McMSJnt5AxRelLimStdType;
+
+typedef struct McMSJnt5AxRelLimType
+{	enum McMSJnt5AxRelLimEnum Type;
+	struct McMSJnt5AxRelLimStdType Standard;
+} McMSJnt5AxRelLimType;
+
 typedef struct McMSJnt5AxPosLimType
 {	struct McMSJntAxPosLimType JointAxis[5];
+	struct McMSJnt5AxRelLimType RelativeLimits;
 } McMSJnt5AxPosLimType;
 
 typedef struct McCfgMS5AxCncXYZBAType
@@ -3813,6 +4481,63 @@ typedef struct McCfgMS5AxCncXYZBAType
 	struct McMS5ACXYZBACplgType Couplings;
 	struct McMSJnt5AxPosLimType JointAxesPositionLimits;
 } McCfgMS5AxCncXYZBAType;
+
+typedef struct McMS5ACXYZBCDSDimType
+{	struct McCfgTransXType TranslationFromBaseToQX;
+	struct McCfgTransYType TranslationFromQXToQY;
+	struct McCfgTransZType TranslationFromQYToQZ;
+	struct McCfgTransXYZType TranslationFromQZToQB;
+	struct McCfgTransXYZType TranslationFromQBToQC;
+	struct McCfgTransXYZType TranslationFromQCToFlange;
+} McMS5ACXYZBCDSDimType;
+
+typedef struct McMS5ACXYZBCDSType
+{	struct McMS5ACXYZBCDSDimType Dimensions;
+	struct McMSMdl5ZeroPosOffType ModelZeroPositionOffsets;
+	struct McMSMdl5CntDirType ModelCountDirections;
+} McMS5ACXYZBCDSType;
+
+typedef struct McMS5ACXYZBCDescType
+{	enum McMS5ACXYZBCDescEnum Type;
+	struct McMS5ACXYZBCDSType Standard;
+} McMS5ACXYZBCDescType;
+
+typedef struct McMS5ACXYZBCCoorNameCmnType
+{	plcstring XCoordinateName[251];
+	plcstring YCoordinateName[251];
+	plcstring ZCoordinateName[251];
+	plcstring BCoordinateName[251];
+	plcstring CCoordinateName[251];
+} McMS5ACXYZBCCoorNameCmnType;
+
+typedef struct McMS5ACXYZBCCoorNameType
+{	enum McMSCNEnum Type;
+	struct McMS5ACXYZBCCoorNameCmnType Common;
+} McMS5ACXYZBCCoorNameType;
+
+typedef struct McMS5ACXYZBCWFrmMdlStdType
+{	struct McMSFrmMdlStdEdgeType QZToQB;
+	struct McMSFrmMdlStdEdgeType QBToQC;
+	struct McMSFrmMdlStdEdgeType QCToFlange;
+	struct McMSFrmMdlStdEdgeType FlangeToTCP;
+} McMS5ACXYZBCWFrmMdlStdType;
+
+typedef struct McMS5ACXYZBCWFrmMdlType
+{	enum McMS5ACXYZBCWFrmMdlEnum Type;
+	struct McMS5ACXYZBCWFrmMdlStdType Standard;
+} McMS5ACXYZBCWFrmMdlType;
+
+typedef struct McMS5ACXYZBCCplgType
+{	struct McCfgUnboundedArrayType LinearCoupling;
+} McMS5ACXYZBCCplgType;
+
+typedef struct McCfgMS5AxCncXYZBCType
+{	struct McMS5ACXYZBCDescType Description;
+	struct McMS5ACXYZBCCoorNameType CoordinatesNames;
+	struct McMS5ACXYZBCWFrmMdlType WireFrameModel;
+	struct McMS5ACXYZBCCplgType Couplings;
+	struct McMSJnt5AxPosLimType JointAxesPositionLimits;
+} McCfgMS5AxCncXYZBCType;
 
 typedef struct McMS5ACXYZCADSDimType
 {	struct McCfgTransXType TranslationFromBaseToQX;
@@ -3870,6 +4595,63 @@ typedef struct McCfgMS5AxCncXYZCAType
 	struct McMS5ACXYZCACplgType Couplings;
 	struct McMSJnt5AxPosLimType JointAxesPositionLimits;
 } McCfgMS5AxCncXYZCAType;
+
+typedef struct McMS5ACXYZCBDSDimType
+{	struct McCfgTransXType TranslationFromBaseToQX;
+	struct McCfgTransYType TranslationFromQXToQY;
+	struct McCfgTransZType TranslationFromQYToQZ;
+	struct McCfgTransXYZType TranslationFromQZToQC;
+	struct McCfgTransXYZType TranslationFromQCToQB;
+	struct McCfgTransXYZType TranslationFromQBToFlange;
+} McMS5ACXYZCBDSDimType;
+
+typedef struct McMS5ACXYZCBDSType
+{	struct McMS5ACXYZCBDSDimType Dimensions;
+	struct McMSMdl5ZeroPosOffType ModelZeroPositionOffsets;
+	struct McMSMdl5CntDirType ModelCountDirections;
+} McMS5ACXYZCBDSType;
+
+typedef struct McMS5ACXYZCBDescType
+{	enum McMS5ACXYZCBDescEnum Type;
+	struct McMS5ACXYZCBDSType Standard;
+} McMS5ACXYZCBDescType;
+
+typedef struct McMS5ACXYZCBCoorNameCmnType
+{	plcstring XCoordinateName[251];
+	plcstring YCoordinateName[251];
+	plcstring ZCoordinateName[251];
+	plcstring CCoordinateName[251];
+	plcstring BCoordinateName[251];
+} McMS5ACXYZCBCoorNameCmnType;
+
+typedef struct McMS5ACXYZCBCoorNameType
+{	enum McMSCNEnum Type;
+	struct McMS5ACXYZCBCoorNameCmnType Common;
+} McMS5ACXYZCBCoorNameType;
+
+typedef struct McMS5ACXYZCBWFrmMdlStdType
+{	struct McMSFrmMdlStdEdgeType QZToQC;
+	struct McMSFrmMdlStdEdgeType QCToQB;
+	struct McMSFrmMdlStdEdgeType QBToFlange;
+	struct McMSFrmMdlStdEdgeType FlangeToTCP;
+} McMS5ACXYZCBWFrmMdlStdType;
+
+typedef struct McMS5ACXYZCBWFrmMdlType
+{	enum McMS5ACXYZCBWFrmMdlEnum Type;
+	struct McMS5ACXYZCBWFrmMdlStdType Standard;
+} McMS5ACXYZCBWFrmMdlType;
+
+typedef struct McMS5ACXYZCBCplgType
+{	struct McCfgUnboundedArrayType LinearCoupling;
+} McMS5ACXYZCBCplgType;
+
+typedef struct McCfgMS5AxCncXYZCBType
+{	struct McMS5ACXYZCBDescType Description;
+	struct McMS5ACXYZCBCoorNameType CoordinatesNames;
+	struct McMS5ACXYZCBWFrmMdlType WireFrameModel;
+	struct McMS5ACXYZCBCplgType Couplings;
+	struct McMSJnt5AxPosLimType JointAxesPositionLimits;
+} McCfgMS5AxCncXYZCBType;
 
 typedef struct McMS6ACZXYBCADSDimType
 {	struct McCfgTransZType TranslationFromBaseToQZ;
@@ -3938,8 +4720,43 @@ typedef struct McMS6ACZXYBCACplgType
 {	struct McCfgUnboundedArrayType LinearCoupling;
 } McMS6ACZXYBCACplgType;
 
+typedef struct McMSJ6ARLSJALLStdType
+{	enum McMSJ6ARLSJALLStdSrcJntAxEnum SourceJointAxis;
+	double Coefficient;
+} McMSJ6ARLSJALLStdType;
+
+typedef struct McMSJ6ARLSJALLType
+{	enum McMSJ6ARLSJALLEnum Type;
+	struct McMSJ6ARLSJALLStdType Standard;
+} McMSJ6ARLSJALLType;
+
+typedef struct McMSJ6ARLSJAULStdType
+{	enum McMSJ6ARLSJAULStdSrcJntAxEnum SourceJointAxis;
+	double Coefficient;
+} McMSJ6ARLSJAULStdType;
+
+typedef struct McMSJ6ARLSJAULType
+{	enum McMSJ6ARLSJAULEnum Type;
+	struct McMSJ6ARLSJAULStdType Standard;
+} McMSJ6ARLSJAULType;
+
+typedef struct McMSJnt6AxRelLimStdJntAxType
+{	struct McMSJ6ARLSJALLType LowerLimit;
+	struct McMSJ6ARLSJAULType UpperLimit;
+} McMSJnt6AxRelLimStdJntAxType;
+
+typedef struct McMSJnt6AxRelLimStdType
+{	struct McMSJnt6AxRelLimStdJntAxType JointAxis[6];
+} McMSJnt6AxRelLimStdType;
+
+typedef struct McMSJnt6AxRelLimType
+{	enum McMSJnt6AxRelLimEnum Type;
+	struct McMSJnt6AxRelLimStdType Standard;
+} McMSJnt6AxRelLimType;
+
 typedef struct McMSJnt6AxPosLimType
 {	struct McMSJntAxPosLimType JointAxis[6];
+	struct McMSJnt6AxRelLimType RelativeLimits;
 } McMSJnt6AxPosLimType;
 
 typedef struct McCfgMS6AxCncZXYBCAType
@@ -3949,6 +4766,201 @@ typedef struct McCfgMS6AxCncZXYBCAType
 	struct McMS6ACZXYBCACplgType Couplings;
 	struct McMSJnt6AxPosLimType JointAxesPositionLimits;
 } McCfgMS6AxCncZXYBCAType;
+
+typedef struct McMSSVOObjIdType
+{	unsigned long ID;
+} McMSSVOObjIdType;
+
+typedef struct McMSSVOType
+{	enum McMSSVOEnum Type;
+	struct McMSSVOObjIdType ObjectId;
+} McMSSVOType;
+
+typedef struct McMS3ASADSDimTransFromQ1ToQ2Type
+{	double XY;
+	double Z;
+} McMS3ASADSDimTransFromQ1ToQ2Type;
+
+typedef struct McMS3ASADSDimTransFromQ2ToQ3Type
+{	double XY;
+	double Z;
+} McMS3ASADSDimTransFromQ2ToQ3Type;
+
+typedef struct McMS3ASADSDimType
+{	struct McCfgTransXYZType TranslationFromBaseToQ1;
+	struct McMS3ASADSDimTransFromQ1ToQ2Type TranslationFromQ1ToQ2;
+	struct McMS3ASADSDimTransFromQ2ToQ3Type TranslationFromQ2ToQ3;
+	struct McCfgTransXYZType TranslationFromQ3ToFlange;
+} McMS3ASADSDimType;
+
+typedef struct McMS3ASADSType
+{	struct McMS3ASADSDimType Dimensions;
+	struct McMSMdl3ZeroPosOffType ModelZeroPositionOffsets;
+	struct McMSMdl3CntDirType ModelCountDirections;
+} McMS3ASADSType;
+
+typedef struct McMS3ASADescType
+{	enum McMS3ASADescEnum Type;
+	struct McMS3ASADSType Standard;
+} McMS3ASADescType;
+
+typedef struct McMS3ASACoorNameCmnType
+{	plcstring XCoordinateName[251];
+	plcstring YCoordinateName[251];
+	plcstring ZCoordinateName[251];
+} McMS3ASACoorNameCmnType;
+
+typedef struct McMS3ASACoorNameType
+{	enum McMSCNEnum Type;
+	struct McMS3ASACoorNameCmnType Common;
+} McMS3ASACoorNameType;
+
+typedef struct McMS3ASAWFrmMdlStdType
+{	struct McMSFrmMdlStdEdgeType Q1ToQ2;
+	struct McMSFrmMdlStdEdgeType Q2ToQ3;
+	struct McMSFrmMdlStdEdgeType Q3ToFlange;
+	struct McMSFrmMdlStdEdgeType FlangeToTCP;
+} McMS3ASAWFrmMdlStdType;
+
+typedef struct McMS3ASAWFrmMdlType
+{	enum McMS3ASAWFrmMdlEnum Type;
+	struct McMS3ASAWFrmMdlStdType Standard;
+} McMS3ASAWFrmMdlType;
+
+typedef struct McMSDynMdlDynParTableType
+{	struct McCfgReferenceType TableReference;
+} McMSDynMdlDynParTableType;
+
+typedef struct McMSDynMdlType
+{	enum McMSDynMdlEnum Type;
+	struct McMSDynMdlDynParTableType DynParTable;
+} McMSDynMdlType;
+
+typedef struct McMSIDMIntRowType
+{	unsigned short Index;
+	double Value;
+	plcstring Unit[251];
+	plcstring Description[251];
+} McMSIDMIntRowType;
+
+typedef struct McMSIDMIntType
+{	plcstring Type[251];
+	struct McCfgUnboundedArrayType Row;
+} McMSIDMIntType;
+
+typedef struct McMSIDMType
+{	enum McMSIDMEnum Type;
+	struct McMSIDMIntType Internal;
+} McMSIDMType;
+
+typedef struct McMSDynLimDynParTablesType
+{	struct McCfgReferenceType GearboxLimitsTableReference;
+	struct McCfgReferenceType CrossSecLimTableReference;
+} McMSDynLimDynParTablesType;
+
+typedef struct McMSDynLimType
+{	enum McMSDynLimEnum Type;
+	struct McMSDynLimDynParTablesType DynParTables;
+} McMSDynLimType;
+
+typedef struct McMSIDLIntGBLimRowType
+{	unsigned short Index;
+	double Value;
+	plcstring Unit[251];
+	plcstring Description[251];
+} McMSIDLIntGBLimRowType;
+
+typedef struct McMSIDLIntGBLimType
+{	struct McCfgUnboundedArrayType Row;
+} McMSIDLIntGBLimType;
+
+typedef struct McMSIDLIntCrossSecLimRowType
+{	unsigned short Index;
+	double Value;
+	plcstring Unit[251];
+	plcstring Description[251];
+} McMSIDLIntCrossSecLimRowType;
+
+typedef struct McMSIDLIntCrossSecLimType
+{	struct McCfgUnboundedArrayType Row;
+} McMSIDLIntCrossSecLimType;
+
+typedef struct McMSIDLIntType
+{	plcstring Type[251];
+	struct McMSIDLIntGBLimType GearboxLimits;
+	struct McMSIDLIntCrossSecLimType CrossSectionLimits;
+} McMSIDLIntType;
+
+typedef struct McMSIDLType
+{	enum McMSIDLEnum Type;
+	struct McMSIDLIntType Internal;
+} McMSIDLType;
+
+typedef struct McMSCLRULSType
+{	enum McMSCLRULSEnum Type;
+} McMSCLRULSType;
+
+typedef struct McMSCLRULTType
+{	enum McMSCLRULTEnum Type;
+} McMSCLRULTType;
+
+typedef struct McMS3CLRULIAxType
+{	enum McMS3CLRULIAxAxEnum Axis[3];
+} McMS3CLRULIAxType;
+
+typedef struct McMS3CLRULIType
+{	enum McMS3CLRULIEnum Type;
+	struct McMS3CLRULIAxType Axes;
+} McMS3CLRULIType;
+
+typedef struct McMSCLRULPType
+{	double Value;
+	double Reduction;
+} McMSCLRULPType;
+
+typedef struct McMS3CLRULUseType
+{	struct McMSCLRULSType Source;
+	struct McMSCLRULTType Target;
+	struct McMS3CLRULIType InfluenceOn;
+	struct McMSCLRULPType LimitReductionPoint[10];
+} McMS3CLRULUseType;
+
+typedef struct McMS3CLRULType
+{	enum McMS3CLRULEnum Type;
+	struct McMS3CLRULUseType Used;
+} McMS3CLRULType;
+
+typedef struct McMS3CLRUType
+{	struct McMS3CLRULType Condition[5];
+} McMS3CLRUType;
+
+typedef struct McMS3AxConLimRedType
+{	enum McMS3AxConLimRedEnum Type;
+	struct McMS3CLRUType Used;
+} McMS3AxConLimRedType;
+
+typedef struct McMS3ASACplgType
+{	struct McCfgUnboundedArrayType LinearCoupling;
+} McMS3ASACplgType;
+
+typedef struct McMS3ASAMonPtType
+{	enum McMS3ASAMonPtEnum Type;
+} McMS3ASAMonPtType;
+
+typedef struct McCfgMS3AxScaraAType
+{	struct McMSSVOType SceneViewerObject;
+	struct McMS3ASADescType Description;
+	struct McMS3ASACoorNameType CoordinatesNames;
+	struct McMS3ASAWFrmMdlType WireFrameModel;
+	struct McMSDynMdlType DynamicModel;
+	struct McMSIDMType InternalDynamicModel;
+	struct McMSDynLimType DynamicLimits;
+	struct McMSIDLType InternalDynamicLimits;
+	struct McMS3AxConLimRedType ConditionalLimitReduction;
+	struct McMS3ASACplgType Couplings;
+	struct McMSJnt3AxPosLimType JointAxesPositionLimits;
+	struct McMS3ASAMonPtType MonitoringPoints;
+} McCfgMS3AxScaraAType;
 
 typedef struct McMS4ASADSDimTransFromQ1ToQ2Type
 {	double XY;
@@ -4004,24 +5016,35 @@ typedef struct McMS4ASAWFrmMdlType
 	struct McMS4ASAWFrmMdlStdType Standard;
 } McMS4ASAWFrmMdlType;
 
-typedef struct McMSDynMdlDynParTableType
-{	struct McCfgReferenceType TableReference;
-} McMSDynMdlDynParTableType;
+typedef struct McMS4CLRULIAxType
+{	enum McMS4CLRULIAxAxEnum Axis[4];
+} McMS4CLRULIAxType;
 
-typedef struct McMSDynMdlType
-{	enum McMSDynMdlEnum Type;
-	struct McMSDynMdlDynParTableType DynParTable;
-} McMSDynMdlType;
+typedef struct McMS4CLRULIType
+{	enum McMS4CLRULIEnum Type;
+	struct McMS4CLRULIAxType Axes;
+} McMS4CLRULIType;
 
-typedef struct McMSDynLimDynParTablesType
-{	struct McCfgReferenceType GearboxLimitsTableReference;
-	struct McCfgReferenceType CrossSecLimTableReference;
-} McMSDynLimDynParTablesType;
+typedef struct McMS4CLRULUseType
+{	struct McMSCLRULSType Source;
+	struct McMSCLRULTType Target;
+	struct McMS4CLRULIType InfluenceOn;
+	struct McMSCLRULPType LimitReductionPoint[10];
+} McMS4CLRULUseType;
 
-typedef struct McMSDynLimType
-{	enum McMSDynLimEnum Type;
-	struct McMSDynLimDynParTablesType DynParTables;
-} McMSDynLimType;
+typedef struct McMS4CLRULType
+{	enum McMS4CLRULEnum Type;
+	struct McMS4CLRULUseType Used;
+} McMS4CLRULType;
+
+typedef struct McMS4CLRUType
+{	struct McMS4CLRULType Condition[5];
+} McMS4CLRUType;
+
+typedef struct McMS4AxConLimRedType
+{	enum McMS4AxConLimRedEnum Type;
+	struct McMS4CLRUType Used;
+} McMS4AxConLimRedType;
 
 typedef struct McMS4ASACplgType
 {	struct McCfgUnboundedArrayType LinearCoupling;
@@ -4032,13 +5055,16 @@ typedef struct McMS4ASAMonPtType
 } McMS4ASAMonPtType;
 
 typedef struct McCfgMS4AxScaraAType
-{	enum McMS4ASASceneViewerObjEnum SceneViewerObject;
+{	struct McMSSVOType SceneViewerObject;
 	struct McMS4ASADescType Description;
 	struct McMS4ASACoorNameType CoordinatesNames;
 	struct McMSTCPOType TCPOrientation;
 	struct McMS4ASAWFrmMdlType WireFrameModel;
 	struct McMSDynMdlType DynamicModel;
+	struct McMSIDMType InternalDynamicModel;
 	struct McMSDynLimType DynamicLimits;
+	struct McMSIDLType InternalDynamicLimits;
+	struct McMS4AxConLimRedType ConditionalLimitReduction;
 	struct McMS4ASACplgType Couplings;
 	struct McMSJnt4AxPosLimType JointAxesPositionLimits;
 	struct McMS4ASAMonPtType MonitoringPoints;
@@ -4127,11 +5153,12 @@ typedef struct McMS2ADACplgType
 } McMS2ADACplgType;
 
 typedef struct McCfgMS2AxDeltaAType
-{	enum McMS2ADASceneViewerObjEnum SceneViewerObject;
+{	struct McMSSVOType SceneViewerObject;
 	struct McMS2ADADescType Description;
 	struct McMS2ADACoorNameType CoordinatesNames;
 	struct McMS2ADAWFrmMdlType WireFrameModel;
 	struct McMSDynMdlType DynamicModel;
+	struct McMSIDMType InternalDynamicModel;
 	struct McMS2ADACplgType Couplings;
 	struct McMSJnt2AxPosLimType JointAxesPositionLimits;
 } McCfgMS2AxDeltaAType;
@@ -4214,6 +5241,18 @@ typedef struct McMSDelta2DWrkRngStdType
 	double BottomRadius;
 } McMSDelta2DWrkRngStdType;
 
+typedef struct McMSDelta2DWrkRngExtType
+{	double MainCylinderDiameter;
+	double BaseToTopCone;
+	double MainCylinderOffset;
+	double MainConeOffset;
+	double BottomConeOffset;
+	double MainConeDiameter;
+	double BottomConeDiameter;
+	double TopConeOffset;
+	double TopConeDiameter;
+} McMSDelta2DWrkRngExtType;
+
 typedef struct McMSD2DWRMAWEZZone1UseType
 {	double Z1;
 } McMSD2DWRMAWEZZone1UseType;
@@ -4253,6 +5292,7 @@ typedef struct McMSD2DWRMainAreaWExZonesType
 typedef struct McMSDelta2DWrkRngType
 {	enum McMSDelta2DWrkRngEnum Type;
 	struct McMSDelta2DWrkRngStdType Standard;
+	struct McMSDelta2DWrkRngExtType Extended;
 	struct McMSD2DWRMainAreaWExZonesType MainAreaWithExclusionZones;
 } McMSDelta2DWrkRngType;
 
@@ -4261,12 +5301,14 @@ typedef struct McMS2ADBMonPtType
 } McMS2ADBMonPtType;
 
 typedef struct McCfgMS2AxDeltaBType
-{	enum McMS2ADBSceneViewerObjEnum SceneViewerObject;
+{	struct McMSSVOType SceneViewerObject;
 	struct McMS2ADBDescType Description;
 	struct McMS2ADBCoorNameType CoordinatesNames;
 	struct McMS2ADBWFrmMdlType WireFrameModel;
 	struct McMSDynMdlType DynamicModel;
+	struct McMSIDMType InternalDynamicModel;
 	struct McMSDynLimType DynamicLimits;
+	struct McMSIDLType InternalDynamicLimits;
 	struct McMSLoadDepJerkLimType LoadDependentJerkLimits;
 	struct McMS2ADBCplgType Couplings;
 	struct McMSJnt2AxPosLimType JointAxesPositionLimits;
@@ -4348,16 +5390,57 @@ typedef struct McMS3ADACplgType
 {	struct McCfgUnboundedArrayType LinearCoupling;
 } McMS3ADACplgType;
 
+typedef struct McWRScnObjType
+{	enum McWRScnObjEnum Type;
+} McWRScnObjType;
+
+typedef struct McMSDeltaWrkRngStdType
+{	struct McWRScnObjType SceneViewerObject;
+	double BaseToTop;
+	double TopHeight;
+	double MiddleHeight;
+	double BottomHeight;
+	double TopRadius;
+	double MiddleRadius;
+	double BottomRadius;
+} McMSDeltaWrkRngStdType;
+
+typedef struct McWRScnObjExtType
+{	enum McWRScnObjExtEnum Type;
+} McWRScnObjExtType;
+
+typedef struct McMSDeltaWrkRngExtType
+{	struct McWRScnObjExtType SceneViewerObject;
+	double MainCylinderDiameter;
+	double BaseToTopCone;
+	double MainCylinderOffset;
+	double MainConeOffset;
+	double BottomConeOffset;
+	double MainConeDiameter;
+	double BottomConeDiameter;
+	double TopConeOffset;
+	double TopConeDiameter;
+} McMSDeltaWrkRngExtType;
+
+typedef struct McMSDeltaWrkRngType
+{	enum McMSDeltaWrkRngEnum Type;
+	struct McMSDeltaWrkRngStdType Standard;
+	struct McMSDeltaWrkRngExtType Extended;
+} McMSDeltaWrkRngType;
+
 typedef struct McCfgMS3AxDeltaAType
-{	enum McMS3ADASceneViewerObjEnum SceneViewerObject;
+{	struct McMSSVOType SceneViewerObject;
 	struct McMS3ADADescType Description;
 	struct McMS3ADACoorNameType CoordinatesNames;
 	struct McMS3ADAWFrmMdlType WireFrameModel;
 	struct McMSDynMdlType DynamicModel;
+	struct McMSIDMType InternalDynamicModel;
 	struct McMSDynLimType DynamicLimits;
+	struct McMSIDLType InternalDynamicLimits;
 	struct McMSLoadDepJerkLimType LoadDependentJerkLimits;
 	struct McMS3ADACplgType Couplings;
 	struct McMSJnt3AxPosLimType JointAxesPositionLimits;
+	struct McMSDeltaWrkRngType WorkingRange;
 } McCfgMS3AxDeltaAType;
 
 typedef struct McMS3ADXZBDSDBPltArmLinkPtType
@@ -4435,15 +5518,23 @@ typedef struct McMS3ADXZBCplgType
 {	struct McCfgUnboundedArrayType LinearCoupling;
 } McMS3ADXZBCplgType;
 
+typedef struct McMS3ADXZBMonPtType
+{	enum McMS3ADXZBMonPtEnum Type;
+} McMS3ADXZBMonPtType;
+
 typedef struct McCfgMS3AxDeltaXZBType
-{	enum McMS3ADXZBSceneViewerObjEnum SceneViewerObject;
+{	struct McMSSVOType SceneViewerObject;
 	struct McMS3ADXZBDescType Description;
 	struct McMS3ADXZBCoorNameType CoordinatesNames;
 	struct McMSTCPOType TCPOrientation;
 	struct McMS3ADXZBWFrmMdlType WireFrameModel;
 	struct McMSDynMdlType DynamicModel;
+	struct McMSIDMType InternalDynamicModel;
+	struct McMSDynLimType DynamicLimits;
+	struct McMSIDLType InternalDynamicLimits;
 	struct McMS3ADXZBCplgType Couplings;
 	struct McMSJnt3AxPosLimType JointAxesPositionLimits;
+	struct McMS3ADXZBMonPtType MonitoringPoints;
 } McCfgMS3AxDeltaXZBType;
 
 typedef struct McMS3ADBDSDBPltType
@@ -4515,11 +5606,12 @@ typedef struct McMS3ADBCplgType
 } McMS3ADBCplgType;
 
 typedef struct McCfgMS3AxDeltaBType
-{	enum McMS3ADBSceneViewerObjEnum SceneViewerObject;
+{	struct McMSSVOType SceneViewerObject;
 	struct McMS3ADBDescType Description;
 	struct McMS3ADBCoorNameType CoordinatesNames;
 	struct McMS3ADBWFrmMdlType WireFrameModel;
 	struct McMSDynMdlType DynamicModel;
+	struct McMSIDMType InternalDynamicModel;
 	struct McMS3ADBCplgType Couplings;
 	struct McMSJnt3AxPosLimType JointAxesPositionLimits;
 } McCfgMS3AxDeltaBType;
@@ -4584,12 +5676,14 @@ typedef struct McMS3ADXZCMonPtType
 } McMS3ADXZCMonPtType;
 
 typedef struct McCfgMS3AxDeltaXZCType
-{	enum McMS3ADXZCSceneViewerObjEnum SceneViewerObject;
+{	struct McMSSVOType SceneViewerObject;
 	struct McMS3ADXZCDescType Description;
 	struct McMS3ADXZCCoorNameType CoordinatesNames;
 	struct McMS3ADXZCWFrmMdlType WireFrameModel;
 	struct McMSDynMdlType DynamicModel;
+	struct McMSIDMType InternalDynamicModel;
 	struct McMSDynLimType DynamicLimits;
+	struct McMSIDLType InternalDynamicLimits;
 	struct McMSLoadDepJerkLimType LoadDependentJerkLimits;
 	struct McMS3ADXZCCplgType Couplings;
 	struct McMSJnt3AxPosLimType JointAxesPositionLimits;
@@ -4661,29 +5755,16 @@ typedef struct McMS4ADACplgType
 {	struct McCfgUnboundedArrayType LinearCoupling;
 } McMS4ADACplgType;
 
-typedef struct McMSDeltaWrkRngStdType
-{	double BaseToTop;
-	double TopHeight;
-	double MiddleHeight;
-	double BottomHeight;
-	double TopRadius;
-	double MiddleRadius;
-	double BottomRadius;
-} McMSDeltaWrkRngStdType;
-
-typedef struct McMSDeltaWrkRngType
-{	enum McMSDeltaWrkRngEnum Type;
-	struct McMSDeltaWrkRngStdType Standard;
-} McMSDeltaWrkRngType;
-
 typedef struct McCfgMS4AxDeltaAType
-{	enum McMS4ADASceneViewerObjEnum SceneViewerObject;
+{	struct McMSSVOType SceneViewerObject;
 	struct McMS4ADADescType Description;
 	struct McMS4ADACoorNameType CoordinatesNames;
 	struct McMSTCPOType TCPOrientation;
 	struct McMS4ADAWFrmMdlType WireFrameModel;
 	struct McMSDynMdlType DynamicModel;
+	struct McMSIDMType InternalDynamicModel;
 	struct McMSDynLimType DynamicLimits;
+	struct McMSIDLType InternalDynamicLimits;
 	struct McMSLoadDepJerkLimType LoadDependentJerkLimits;
 	struct McMS4ADACplgType Couplings;
 	struct McMSJnt4AxPosLimType JointAxesPositionLimits;
@@ -4759,12 +5840,13 @@ typedef struct McMS4ADBCplgType
 } McMS4ADBCplgType;
 
 typedef struct McCfgMS4AxDeltaBType
-{	enum McMS4ADBSceneViewerObjEnum SceneViewerObject;
+{	struct McMSSVOType SceneViewerObject;
 	struct McMS4ADBDescType Description;
 	struct McMS4ADBCoorNameType CoordinatesNames;
 	struct McMSTCPOType TCPOrientation;
 	struct McMS4ADBWFrmMdlType WireFrameModel;
 	struct McMSDynMdlType DynamicModel;
+	struct McMSIDMType InternalDynamicModel;
 	struct McMS4ADBCplgType Couplings;
 	struct McMSJnt4AxPosLimType JointAxesPositionLimits;
 	struct McMSDeltaWrkRngType WorkingRange;
@@ -4846,12 +5928,13 @@ typedef struct McMS4ADCCplgType
 } McMS4ADCCplgType;
 
 typedef struct McCfgMS4AxDeltaCType
-{	enum McMS4ADCSceneViewerObjEnum SceneViewerObject;
+{	struct McMSSVOType SceneViewerObject;
 	struct McMS4ADCDescType Description;
 	struct McMS4ADCCoorNameType CoordinatesNames;
 	struct McMSTCPOType TCPOrientation;
 	struct McMS4ADCWFrmMdlType WireFrameModel;
 	struct McMSDynMdlType DynamicModel;
+	struct McMSIDMType InternalDynamicModel;
 	struct McMS4ADCCplgType Couplings;
 	struct McMSJnt4AxPosLimType JointAxesPositionLimits;
 	struct McMSDeltaWrkRngType WorkingRange;
@@ -4927,13 +6010,15 @@ typedef struct McMS5ADACplgType
 } McMS5ADACplgType;
 
 typedef struct McCfgMS5AxDeltaAType
-{	enum McMS5ADASceneViewerObjEnum SceneViewerObject;
+{	struct McMSSVOType SceneViewerObject;
 	struct McMS5ADADescType Description;
 	struct McMS5ADACoorNameType CoordinatesNames;
 	struct McMSTCPOType TCPOrientation;
 	struct McMS5ADAWFrmMdlType WireFrameModel;
 	struct McMSDynMdlType DynamicModel;
+	struct McMSIDMType InternalDynamicModel;
 	struct McMSDynLimType DynamicLimits;
+	struct McMSIDLType InternalDynamicLimits;
 	struct McMSLoadDepJerkLimType LoadDependentJerkLimits;
 	struct McMS5ADACplgType Couplings;
 	struct McMSJnt5AxPosLimType JointAxesPositionLimits;
@@ -4990,6 +6075,7 @@ typedef struct McCfgMS3AxRobAType
 	struct McMS3ARACoorNameType CoordinatesNames;
 	struct McMS3ARAWFrmMdlType WireFrameModel;
 	struct McMSDynMdlType DynamicModel;
+	struct McMSIDMType InternalDynamicModel;
 	struct McMS3ARACplgType Couplings;
 	struct McMSJnt3AxPosLimType JointAxesPositionLimits;
 } McCfgMS3AxRobAType;
@@ -5026,6 +6112,48 @@ typedef struct McMS4ARACoorNameType
 	struct McMS4ARACoorNameCmnType Common;
 } McMS4ARACoorNameType;
 
+typedef struct McMS4ARAFMSCETParentPtType
+{	enum McMS4ARAFMSCETParentPtEnum Type;
+} McMS4ARAFMSCETParentPtType;
+
+typedef struct McMS4ARAFMSCETCxnLinOffType
+{	double X;
+	double Y;
+	double Z;
+} McMS4ARAFMSCETCxnLinOffType;
+
+typedef struct McMS4ARAFMSCETCxnLinType
+{	struct McMS4ARAFMSCETParentPtType ParentPoint;
+	struct McMS4ARAFMSCETCxnLinOffType Offset;
+	double Distance;
+} McMS4ARAFMSCETCxnLinType;
+
+typedef struct McMS4ARAFMSCETPtOffType
+{	double X;
+	double Y;
+	double Z;
+} McMS4ARAFMSCETPtOffType;
+
+typedef struct McMS4ARAFMSCETPtType
+{	struct McMS4ARAFMSCETParentPtType ParentPoint;
+	struct McMS4ARAFMSCETPtOffType Offset;
+	double Distance;
+} McMS4ARAFMSCETPtType;
+
+typedef struct McMS4ARAWFrmMdlStdCusEdgTypType
+{	enum McMS4ARAWFrmMdlStdCusEdgTypEnum Type;
+	struct McMS4ARAFMSCETCxnLinType ConnectionLine;
+	struct McMS4ARAFMSCETPtType Point;
+} McMS4ARAWFrmMdlStdCusEdgTypType;
+
+typedef struct McMS4ARAWFrmMdlStdCusEdgType
+{	struct McMS4ARAWFrmMdlStdCusEdgTypType Type;
+} McMS4ARAWFrmMdlStdCusEdgType;
+
+typedef struct McMS4ARAWFrmMdlStdCusType
+{	struct McCfgUnboundedArrayType Edge;
+} McMS4ARAWFrmMdlStdCusType;
+
 typedef struct McMS4ARAWFrmMdlStdType
 {	struct McMSFrmMdlStdEdgeType Q1ToQ2;
 	struct McMSFrmMdlStdEdgeType Q2ToQ3;
@@ -5033,6 +6161,7 @@ typedef struct McMS4ARAWFrmMdlStdType
 	struct McMSFrmMdlStdEdgeType PQ1ToQ4;
 	struct McMSFrmMdlStdEdgeType Q4ToFlange;
 	struct McMSFrmMdlStdEdgeType FlangeToTCP;
+	struct McMS4ARAWFrmMdlStdCusType Custom;
 } McMS4ARAWFrmMdlStdType;
 
 typedef struct McMS4ARAWFrmMdlType
@@ -5049,13 +6178,15 @@ typedef struct McMS4ARAMonPtType
 } McMS4ARAMonPtType;
 
 typedef struct McCfgMS4AxRobAType
-{	enum McMS4ARASceneViewerObjEnum SceneViewerObject;
+{	struct McMSSVOType SceneViewerObject;
 	struct McMS4ARADescType Description;
 	struct McMS4ARACoorNameType CoordinatesNames;
 	struct McMSTCPOType TCPOrientation;
 	struct McMS4ARAWFrmMdlType WireFrameModel;
 	struct McMSDynMdlType DynamicModel;
+	struct McMSIDMType InternalDynamicModel;
 	struct McMSDynLimType DynamicLimits;
+	struct McMSIDLType InternalDynamicLimits;
 	struct McMS4ARACplgType Couplings;
 	struct McMSJnt4AxPosLimType JointAxesPositionLimits;
 	struct McMS4ARAMonPtType MonitoringPoints;
@@ -5125,6 +6256,7 @@ typedef struct McCfgMS4AxRobBType
 	struct McMSTCPOType TCPOrientation;
 	struct McMS4ARBWFrmMdlType WireFrameModel;
 	struct McMSDynMdlType DynamicModel;
+	struct McMSIDMType InternalDynamicModel;
 	struct McMSJnt4AxPosLimType JointAxesPositionLimits;
 } McCfgMS4AxRobBType;
 
@@ -5184,6 +6316,7 @@ typedef struct McCfgMS5AxRobAType
 	struct McMS5ARACoorNameType CoordinatesNames;
 	struct McMS5ARAWFrmMdlType WireFrameModel;
 	struct McMSDynMdlType DynamicModel;
+	struct McMSIDMType InternalDynamicModel;
 	struct McMS5ARACplgType Couplings;
 	struct McMSJnt5AxPosLimType JointAxesPositionLimits;
 } McCfgMS5AxRobAType;
@@ -5239,13 +6372,20 @@ typedef struct McMS5ARBCplgType
 {	struct McCfgUnboundedArrayType LinearCoupling;
 } McMS5ARBCplgType;
 
+typedef struct McMS5ARBMonPtType
+{	enum McMS5ARBMonPtEnum Type;
+} McMS5ARBMonPtType;
+
 typedef struct McCfgMS5AxRobBType
-{	struct McMS5ARBDescType Description;
+{	struct McMSSVOType SceneViewerObject;
+	struct McMS5ARBDescType Description;
 	struct McMS5ARBCoorNameType CoordinatesNames;
 	struct McMS5ARBWFrmMdlType WireFrameModel;
 	struct McMSDynMdlType DynamicModel;
+	struct McMSIDMType InternalDynamicModel;
 	struct McMS5ARBCplgType Couplings;
 	struct McMSJnt5AxPosLimType JointAxesPositionLimits;
+	struct McMS5ARBMonPtType MonitoringPoints;
 } McCfgMS5AxRobBType;
 
 typedef struct McMS6ARADSDimType
@@ -5302,15 +6442,22 @@ typedef struct McMS6ARACplgType
 {	struct McCfgUnboundedArrayType LinearCoupling;
 } McMS6ARACplgType;
 
+typedef struct McMS6ARAMonPtType
+{	enum McMS6ARAMonPtEnum Type;
+} McMS6ARAMonPtType;
+
 typedef struct McCfgMS6AxRobAType
-{	enum McMS6ARASceneViewerObjEnum SceneViewerObject;
+{	struct McMSSVOType SceneViewerObject;
 	struct McMS6ARADescType Description;
 	struct McMS6ARACoorNameType CoordinatesNames;
 	struct McMS6ARAWFrmMdlType WireFrameModel;
 	struct McMSDynMdlType DynamicModel;
+	struct McMSIDMType InternalDynamicModel;
 	struct McMSDynLimType DynamicLimits;
+	struct McMSIDLType InternalDynamicLimits;
 	struct McMS6ARACplgType Couplings;
 	struct McMSJnt6AxPosLimType JointAxesPositionLimits;
+	struct McMS6ARAMonPtType MonitoringPoints;
 } McCfgMS6AxRobAType;
 
 typedef struct McMS6ARBDSDimType
@@ -5368,11 +6515,12 @@ typedef struct McMS6ARBCplgType
 } McMS6ARBCplgType;
 
 typedef struct McCfgMS6AxRobBType
-{	enum McMS6ARBSceneViewerObjEnum SceneViewerObject;
+{	struct McMSSVOType SceneViewerObject;
 	struct McMS6ARBDescType Description;
 	struct McMS6ARBCoorNameType CoordinatesNames;
 	struct McMS6ARBWFrmMdlType WireFrameModel;
 	struct McMSDynMdlType DynamicModel;
+	struct McMSIDMType InternalDynamicModel;
 	struct McMS6ARBCplgType Couplings;
 	struct McMSJnt6AxPosLimType JointAxesPositionLimits;
 } McCfgMS6AxRobBType;
@@ -5473,12 +6621,13 @@ typedef struct McMS6ARCPrgToolOffType
 } McMS6ARCPrgToolOffType;
 
 typedef struct McCfgMS6AxRobCType
-{	enum McMS6ARCSceneViewerObjEnum SceneViewerObject;
+{	struct McMSSVOType SceneViewerObject;
 	struct McMS6ARCDescType Description;
 	struct McMS6ARCCoorNameType CoordinatesNames;
 	struct McMS6ARCSingHndlgType SingularityHandling;
 	struct McMS6ARCWFrmMdlType WireFrameModel;
 	struct McMSDynMdlType DynamicModel;
+	struct McMSIDMType InternalDynamicModel;
 	struct McMS6ARCCplgType Couplings;
 	struct McMSJnt6AxPosLimType JointAxesPositionLimits;
 	struct McMS6ARCMonPtType MonitoringPoints;

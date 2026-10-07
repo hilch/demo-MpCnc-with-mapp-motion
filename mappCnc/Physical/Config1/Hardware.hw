@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<?AutomationStudio Version=4.12.11.2 FileVersion="4.9"?>
+<?AutomationStudio WorkingVersion="6.7" FileVersion="4.9"?>
 <Hardware xmlns="http://br-automation.co.at/AS/Hardware">
-  <Module Name="8EI8X8HWT10.0500-1" Type="8EI8X8HWT10.0500-1" Version="2.4.0.0">
-    <Connection Connector="PLK1" TargetModule="X20CP3684" TargetConnector="IF3" NodeNumber="1">
+  <Module Name="8EI8X8HCT10.xxxx-1" Type="8EI8X8HCT10.xxxx-1" Version="2.4.0.0" NodeNumber="1">
+    <Connection Connector="PLK1" TargetModule="X20CP3684" TargetConnector="IF3">
       <Cable Type="PowerlinkCable" Length="10" Version="1.0.0.3" />
     </Connection>
-    <Connection Connector="MT2" TargetModule="8LSA35.D0030D000-0a" TargetConnector="MT" />
-    <Connection Connector="MT3" TargetModule="8LSA35.D0030D000-0b" TargetConnector="MT" />
+    <Connection Connector="MT2" TargetModule="8LSA35.D0030D000-3" TargetConnector="MT" />
+    <Connection Connector="MT3" TargetModule="8LSA35.D0030D000-3_a" TargetConnector="MT" />
     <Parameter ID="McAcoposTypeID" Location="DriveConfiguration/Module" Value="AcoposP3TConfig" />
     <Parameter ID="ActivateACOPOSSimulationOnPLC" Location="DriveConfiguration/Module" Value="0" />
     <Parameter ID="AxisReference" Location="DriveConfiguration/Channel[1]/RealAxis" Value="gAxisQX" />
@@ -43,6 +43,7 @@
     <Parameter ID="Quickstop" Location="DriveConfiguration/Channel[1]/RealAxis/StopReaction" Value="DecelerationLimit" />
     <Parameter ID="DriveErrorIsReadOnly" Location="DriveConfiguration/Channel[1]/RealAxis/StopReaction" Value="0" />
     <Parameter ID="DriveError" Location="DriveConfiguration/Channel[1]/RealAxis/StopReaction" Value="DecelerationLimit" />
+    <Parameter ID="FilterTime" Location="DriveConfiguration/Channel[1]/RealAxis/StopReaction" Value="0.0" />
     <Parameter ID="PositionError" Location="DriveConfiguration/Channel[1]/RealAxis/MovementErrorLimits" Value="1.0" />
     <Parameter ID="VelocityErrorMonitoring" Location="DriveConfiguration/Channel[1]/RealAxis/MovementErrorLimits" Value="Automatic1" />
     <Parameter ID="JerkFilterIsReadOnly" Location="DriveConfiguration/Channel[1]/RealAxis" Value="0" />
@@ -99,6 +100,7 @@
     <Parameter ID="Quickstop" Location="DriveConfiguration/Channel[2]/RealAxis/StopReaction" Value="DecelerationLimit" />
     <Parameter ID="DriveErrorIsReadOnly" Location="DriveConfiguration/Channel[2]/RealAxis/StopReaction" Value="0" />
     <Parameter ID="DriveError" Location="DriveConfiguration/Channel[2]/RealAxis/StopReaction" Value="DecelerationLimit" />
+    <Parameter ID="FilterTime" Location="DriveConfiguration/Channel[2]/RealAxis/StopReaction" Value="0.0" />
     <Parameter ID="PositionError" Location="DriveConfiguration/Channel[2]/RealAxis/MovementErrorLimits" Value="1.0" />
     <Parameter ID="VelocityErrorMonitoring" Location="DriveConfiguration/Channel[2]/RealAxis/MovementErrorLimits" Value="Automatic1" />
     <Parameter ID="JerkFilterIsReadOnly" Location="DriveConfiguration/Channel[2]/RealAxis" Value="0" />
@@ -155,6 +157,7 @@
     <Parameter ID="Quickstop" Location="DriveConfiguration/Channel[3]/RealAxis/StopReaction" Value="DecelerationLimit" />
     <Parameter ID="DriveErrorIsReadOnly" Location="DriveConfiguration/Channel[3]/RealAxis/StopReaction" Value="0" />
     <Parameter ID="DriveError" Location="DriveConfiguration/Channel[3]/RealAxis/StopReaction" Value="DecelerationLimit" />
+    <Parameter ID="FilterTime" Location="DriveConfiguration/Channel[3]/RealAxis/StopReaction" Value="0.0" />
     <Parameter ID="PositionError" Location="DriveConfiguration/Channel[3]/RealAxis/MovementErrorLimits" Value="1.0" />
     <Parameter ID="VelocityErrorMonitoring" Location="DriveConfiguration/Channel[3]/RealAxis/MovementErrorLimits" Value="Automatic1" />
     <Parameter ID="JerkFilterIsReadOnly" Location="DriveConfiguration/Channel[3]/RealAxis" Value="0" />
@@ -178,16 +181,16 @@
     <Parameter ID="SimulationModeOnACOPOS" Location="DriveConfiguration/Channel[3]/RealAxis/Simulation" Value="NotUsed" />
     <Parameter ID="ExternalEncoderAxis" Location="DriveConfiguration/Channel[3]" Value="NotUsed" />
   </Module>
-  <Module Name="8LSA35.D0030D000-0" Type="8LSA35.D0030D000-0" Version="1.0.5.40">
-    <Connection Connector="MT" TargetModule="8EI8X8HWT10.0500-1" TargetConnector="MT1" />
+  <Module Name="8LSA35.D0030D000-3" Type="8LSA35.D0030D000-3" Version="2.2.0.1">
+    <Connection Connector="MT" TargetModule="8EI8X8HCT10.xxxx-1" TargetConnector="MT2" />
   </Module>
-  <Module Name="8LSA35.D0030D000-0a" Type="8LSA35.D0030D000-0" Version="1.0.5.40">
-    <Connection Connector="MT" TargetModule="8EI8X8HWT10.0500-1" TargetConnector="MT2" />
+  <Module Name="8LSA35.D0030D000-3_a" Type="8LSA35.D0030D000-3" Version="2.2.0.1">
+    <Connection Connector="MT" TargetModule="8EI8X8HCT10.xxxx-1" TargetConnector="MT3" />
   </Module>
-  <Module Name="8LSA35.D0030D000-0b" Type="8LSA35.D0030D000-0" Version="1.0.5.40">
-    <Connection Connector="MT" TargetModule="8EI8X8HWT10.0500-1" TargetConnector="MT3" />
+  <Module Name="8LSA35.D0030D000-3_b" Type="8LSA35.D0030D000-3" Version="2.2.0.1">
+    <Connection Connector="MT" TargetModule="8EI8X8HCT10.xxxx-1" TargetConnector="MT1" />
   </Module>
-  <Module Name="X20CP3684" Type="X20CP3684" Version="1.5.0.0">
+  <Module Name="X20CP3684" Type="X20CP3684" Version="1.9.0.0">
     <Connector Name="IF2">
       <Parameter ID="ActivateDevice" Value="1" />
       <Parameter ID="ActivateIna" Value="0" />
@@ -201,7 +204,9 @@
     <Group ID="FileDevice1" />
     <Parameter ID="FileDeviceName1" Value="USER" />
     <Parameter ID="FileDevicePath1" Value="USER_PATH" />
-    <Parameter ID="ActivateOpcUa" Value="1" />
-    <Parameter ID="OpcUaInformationModels_PV_Version" Value="1" />
+    <Parameter ID="ActivateFtpServer" Value="1" />
+    <Parameter ID="ActivateWebServer" Value="1" />
+    <Parameter ID="WebServerProtocol" Value="1" />
+    <Parameter ID="ActivateSdm" Value="1" />
   </Module>
 </Hardware>

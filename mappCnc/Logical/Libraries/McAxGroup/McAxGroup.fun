@@ -182,7 +182,7 @@ FUNCTION_BLOCK MC_BR_GroupPower
 		Enable : BOOL; (*Turns drive power stages on/off*)
 	END_VAR
 	VAR_OUTPUT
-		Status : BOOL; (*Indicates whether all axes in the group are on*)
+		Status : BOOL; (*Indicates whether all axes in the group have been powered by this function block instance. The current status of the axis group can be read using MC_BR_GroupReadInfo.*)
 		Busy : BOOL; (*Function block is active and must continue to be called.*)
 		Error : BOOL; (*Error occurred during execution.*)
 		ErrorID : DINT; (*Error number*)
@@ -879,6 +879,25 @@ FUNCTION_BLOCK MC_BR_GroupInterrupt
 		Error : BOOL; (*Error occurred during execution.*)
 		ErrorID : DINT; (*Error number*)
 		Phase : McInterruptPhaseEnum; (*Indicates the current phase of the interrupt.*)
+	END_VAR
+	VAR
+		Internal : McInternalType; (*Internal data*)
+	END_VAR
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK MC_BR_PauseWorkspaceMonitoring
+	VAR_INPUT
+		AxesGroup : REFERENCE TO McAxesGroupType; (*The axis group reference establishes the connection between the function block and the axis group.*)
+		Enable : BOOL; (*Execution of the function block begins on a rising edge of this input.*)
+		ReductionFactor: REAL;(*Velocity/acceleration reduction factor*)
+	END_VAR
+	VAR_OUTPUT
+		Enabled : BOOL; (*Function block has been enabled and is active.*)
+		Busy : BOOL; (*Function block is active and must continue to be called.*)
+		CommandAborted : BOOL; (*Command aborted by another command*)
+		Error : BOOL; (*Error occurred during execution.*)
+		ErrorID : DINT; (*Error number*)
+		MonitoringPaused : BOOL; (*Indicates if the the monitoring is paused.*)
 	END_VAR
 	VAR
 		Internal : McInternalType; (*Internal data*)

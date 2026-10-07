@@ -1,12 +1,3 @@
-(********************************************************************
- * COPYRIGHT -- Bernecker + Rainer
- ********************************************************************
- * Library: AsArSdm
- * File: AsArSdm.fun
- * Author: B+R
- ********************************************************************
- * Functions and function blocks of library AsArSdm
- ********************************************************************)
                                                                       
 {REDUND_CONTEXT} {REDUND_UNREPLICABLE} FUNCTION_BLOCK SdmSystemDump			(*SDM - create a system dump; asynchronous execution*)
 	VAR_INPUT

@@ -1,12 +1,3 @@
-(********************************************************************
- * COPYRIGHT -- Bernecker + Rainer
- ********************************************************************
- * Library: AsZip
- * File: AsZip.fun
- * Author: B+R
- ********************************************************************
- * Functions and function blocks of library AsZip
- ********************************************************************)
                                                                       
 {REDUND_ERROR} FUNCTION_BLOCK zipArchive (*Creates an archive (.tar, .gz or .tar.gz)*)
 	VAR_INPUT

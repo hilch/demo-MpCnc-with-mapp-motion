@@ -20,10 +20,10 @@
     <Object Type="Package">VC</Object>
   </Objects>
   <Configuration ModuleId="X20CP3684">
-    <AutomationRuntime Version="U4.93" />
-    <Build GccVersion="4.1.2" />
+    <AutomationRuntime Version="6.7.6" />
+    <Build GccVersion="11.3.0" />
     <DefaultTargetMemory Tasks="UserROM" />
-    <Transfer SavedOfflineInstallationFolder="" SavedPipDestinationFolder="" SavedRuntimeUtilityCenterPackagePath="" />
-    <Vc FirmwareVersion="V4.73.5" />
+    <Transfer />
+    <Vc FirmwareVersion="6.7.0" />
   </Configuration>
 </Cpu>

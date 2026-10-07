@@ -10,39 +10,39 @@ TYPE
 		);
 	McABTLinBdType : STRUCT (*Type mcABT_LIN_BD settings*)
 		MeasurementUnit : McCfgLocLenUnitEnum; (*Measurement unit for the axis*)
-		MeasurementResolution : LREAL; (*Possible resolution of measurement unit that can be achieved [Measurement units]*)
+		MeasurementResolution : LREAL; (*Possible resolution of measurement unit that can be achieved [measurement units]*)
 		CountDirection : McCfgCntDirEnum; (*Direction of the axis in which the position value is increasing*)
 	END_STRUCT;
 	McABTLinType : STRUCT (*Type mcABT_LIN settings*)
 		MeasurementUnit : McCfgLocLenUnitEnum; (*Measurement unit for the axis*)
-		MeasurementResolution : LREAL; (*Possible resolution of measurement unit that can be achieved [Measurement units]*)
+		MeasurementResolution : LREAL; (*Possible resolution of measurement unit that can be achieved [measurement units]*)
 		CountDirection : McCfgCntDirEnum; (*Direction of the axis in which the position value is increasing*)
 	END_STRUCT;
 	McABTLinPerPerSetType : STRUCT (*Possible position value range of a periodic axis*)
-		Period : LREAL; (*The value range for axis positions is [0 , Period[ [Measurement units]*)
+		Period : LREAL; (*The value range for axis positions is [0 , Period[ [measurement units]*)
 	END_STRUCT;
 	McABTLinPerType : STRUCT (*Type mcABT_LIN_PER settings*)
 		MeasurementUnit : McCfgLocLenUnitEnum; (*Measurement unit for the axis*)
-		MeasurementResolution : LREAL; (*Possible resolution of measurement unit that can be achieved [Measurement units]*)
+		MeasurementResolution : LREAL; (*Possible resolution of measurement unit that can be achieved [measurement units]*)
 		CountDirection : McCfgCntDirEnum; (*Direction of the axis in which the position value is increasing*)
 		PeriodSettings : McABTLinPerPerSetType; (*Possible position value range of a periodic axis*)
 	END_STRUCT;
 	McABTRotBdType : STRUCT (*Type mcABT_ROT_BD settings*)
 		MeasurementUnit : McCfgLocRotUnitEnum; (*Measurement unit for the axis*)
-		MeasurementResolution : LREAL; (*Possible resolution of measurement unit that can be achieved [Measurement units]*)
+		MeasurementResolution : LREAL; (*Possible resolution of measurement unit that can be achieved [measurement units]*)
 		CountDirection : McCfgCntDirEnum; (*Direction of the axis in which the position value is increasing*)
 	END_STRUCT;
 	McABTRotType : STRUCT (*Type mcABT_ROT settings*)
 		MeasurementUnit : McCfgLocRotUnitEnum; (*Measurement unit for the axis*)
-		MeasurementResolution : LREAL; (*Possible resolution of measurement unit that can be achieved [Measurement units]*)
+		MeasurementResolution : LREAL; (*Possible resolution of measurement unit that can be achieved [measurement units]*)
 		CountDirection : McCfgCntDirEnum; (*Direction of the axis in which the position value is increasing*)
 	END_STRUCT;
 	McABTRotPerPerSetType : STRUCT (*Possible position value range of a periodic axis*)
-		Period : LREAL; (*The value range for axis positions is [0 , Period[ [Measurement units]*)
+		Period : LREAL; (*The value range for axis positions is [0 , Period[ [measurement units]*)
 	END_STRUCT;
 	McABTRotPerType : STRUCT (*Type mcABT_ROT_PER settings*)
 		MeasurementUnit : McCfgLocRotUnitEnum; (*Measurement unit for the axis*)
-		MeasurementResolution : LREAL; (*Possible resolution of measurement unit that can be achieved [Measurement units]*)
+		MeasurementResolution : LREAL; (*Possible resolution of measurement unit that can be achieved [measurement units]*)
 		CountDirection : McCfgCntDirEnum; (*Direction of the axis in which the position value is increasing*)
 		PeriodSettings : McABTRotPerPerSetType; (*Possible position value range of a periodic axis*)
 	END_STRUCT;
@@ -133,7 +133,7 @@ TYPE
 		JerkTime : REAL; (*Used jerk filter time ('Jerk time' <= 'Maximum jerk time') [s]*)
 	END_STRUCT;
 	McAFPGJFJerkLimType : STRUCT (*Type mcAFPGJF_JERK_LIM settings*)
-		JerkLimit : REAL; (*Jerk limit in any movement direction [Measurement units/s³]*)
+		JerkLimit : REAL; (*Jerk limit in any movement direction [measurement units/s³]*)
 	END_STRUCT;
 	McAFPGJFType : STRUCT (*Jerk filter*)
 		Type : McAFPGJFEnum; (*Jerk filter selector setting*)
@@ -263,10 +263,10 @@ TYPE
 	END_STRUCT;
 	McAFDCSACOPOSmultiDigOutEnum :
 		( (*Digital output selector setting*)
-		mcAFDCSACOPOSMULTIDO_SS1X111 := 0, (*SS1.X11.1 -*)
-		mcAFDCSACOPOSMULTIDO_SS1X113 := 1, (*SS1.X11.3 -*)
-		mcAFDCSACOPOSMULTIDO_SS1X115 := 2, (*SS1.X11.5 -*)
-		mcAFDCSACOPOSMULTIDO_SS1X116 := 3 (*SS1.X11.6 -*)
+		mcAFDCSACOPOSMULTIDO_SS2X111 := 0, (*SS2.X11.1 -*)
+		mcAFDCSACOPOSMULTIDO_SS2X113 := 1, (*SS2.X11.3 -*)
+		mcAFDCSACOPOSMULTIDO_SS2X115 := 2, (*SS2.X11.5 -*)
+		mcAFDCSACOPOSMULTIDO_SS2X116 := 3 (*SS2.X11.6 -*)
 		);
 	McAFDCSACOPOSmultiDigOutType : STRUCT
 		Type : McAFDCSACOPOSmultiDigOutEnum; (*Digital output selector setting*)
@@ -377,10 +377,10 @@ TYPE
 	END_STRUCT;
 	McAFDOACOPOSmultiDigOutEnum :
 		( (*Digital output selector setting*)
-		mcAFDOACOPOSMULTIDO_SS1X111 := 0, (*SS1.X11.1 -*)
-		mcAFDOACOPOSMULTIDO_SS1X113 := 1, (*SS1.X11.3 -*)
-		mcAFDOACOPOSMULTIDO_SS1X115 := 2, (*SS1.X11.5 -*)
-		mcAFDOACOPOSMULTIDO_SS1X116 := 3 (*SS1.X11.6 -*)
+		mcAFDOACOPOSMULTIDO_SS2X111 := 0, (*SS2.X11.1 -*)
+		mcAFDOACOPOSMULTIDO_SS2X113 := 1, (*SS2.X11.3 -*)
+		mcAFDOACOPOSMULTIDO_SS2X115 := 2, (*SS2.X11.5 -*)
+		mcAFDOACOPOSMULTIDO_SS2X116 := 3 (*SS2.X11.6 -*)
 		);
 	McAFDOACOPOSmultiDigOutType : STRUCT
 		Type : McAFDOACOPOSmultiDigOutEnum; (*Digital output selector setting*)
@@ -467,15 +467,21 @@ TYPE
 		( (*Value source 1-8 selector setting*)
 		mcAFAVSVS_ACP_PARID := 0 (*ACOPOS ParID - ParID of an ACOPOS drive*)
 		);
+	McAFAVSValSrcAcpParIDPosConvEnum :
+		( (*Related values are treated as axis positions*)
+		mcAFAVSVSAPP_USE := 0, (*Used - FB IOs in Measurement units and periodic*)
+		mcAFAVSVSAPP_NOT_USE := 1 (*Not used - FB IOs in units of the ParID and non-periodic*)
+		);
 	McAFAVSValSrcAcpParIDType : STRUCT (*Type mcAFAVSVS_ACP_PARID settings*)
 		ParID : UINT; (*ParID which is used as value source*)
+		PosConv : McAFAVSValSrcAcpParIDPosConvEnum; (*Related values are treated as axis positions*)
 	END_STRUCT;
 	McAFAVSValSrcType : STRUCT (*Selection of the value source*)
 		Type : McAFAVSValSrcEnum; (*Value source 1-8 selector setting*)
 		ACOPOSParID : McAFAVSValSrcAcpParIDType; (*Type mcAFAVSVS_ACP_PARID settings*)
 	END_STRUCT;
 	McCfgAxFeatAltValSrcType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_AX_FEAT_ALT_VAL_SRC*)
-		ValueSource : McCfgUnboundedArrayType; (*Selection of the value source*)
+		ValueSource : McCfgUnboundedArrayType; (*Selection of the value source (Connect array of type McAFAVSValSrcType)*)
 	END_STRUCT;
 	McAFBBrkCtrlTypEnum :
 		( (*Brake control type selector setting*)
@@ -550,7 +556,7 @@ TYPE
 		Automatic : McAFBACPBrkTstAutType; (*Type mcAFBACPBT_AUT settings*)
 	END_STRUCT;
 	McAFBACPMoveMonUseType : STRUCT (*Type mcAFBACPMM_USE settings*)
-		PositionErrorLimit : REAL; (*Maximum allowed movement of the motor at closed brake [Motor revolutions]*)
+		PositionErrorLimit : REAL; (*Maximum allowed movement of the motor at closed brake [motor revolutions]*)
 		BrakeTest : McAFBACPBrkTstType; (*Apply torque for testing the brake*)
 	END_STRUCT;
 	McAFBACPMoveMonType : STRUCT (*Mechanical monitoring of motor brake*)
@@ -604,10 +610,10 @@ TYPE
 		mcMDCSE_NEG := 1 (*Negative - Negative*)
 		);
 	McMDCDirDepConstBcklType : STRUCT (*Type mcMDCM_DIR_DEP_CONST_BCKL settings*)
-		Backlash : LREAL; (*Backlash [Measurement units]*)
+		Backlash : LREAL; (*Backlash [measurement units]*)
 		PositionSource : McMDCPosSrcEnum; (*Position source*)
 		StartEdge : McMDCStEdgEnum; (*Edge at which compensation is started*)
-		Velocity : REAL; (*Velocity for edge change [Measurement units/s]*)
+		Velocity : REAL; (*Velocity for edge change [measurement units/s]*)
 		TimeConstant : REAL; (*Time constant of the exponential function for edge change [s]*)
 		NoiseLimit : REAL; (*Noise limit [%]*)
 	END_STRUCT;
@@ -645,7 +651,7 @@ TYPE
 		PositionSource : McMDCPosSrcEnum; (*Position source*)
 		DataInterpretation : McMDCDatIntEnum; (*Compensation data is interpreted as periodic*)
 		StartEdge : McMDCStEdgEnum; (*Edge at which compensation is started*)
-		Velocity : REAL; (*Velocity for edge change [Measurement units/s]*)
+		Velocity : REAL; (*Velocity for edge change [measurement units/s]*)
 		TimeConstant : REAL; (*Time constant of the exponential function for edge change [s]*)
 		NoiseLimit : REAL; (*Noise limit [%]*)
 	END_STRUCT;
@@ -662,11 +668,11 @@ TYPE
 	END_STRUCT;
 	McMDCDirIndBcklType : STRUCT (*Type mcMDCM_DIR_IND_W_BCKL settings*)
 		CompensationDataPositive : McMDCCompDatType; (*Compensation data for movement in positive direction*)
-		Backlash : LREAL; (*Backlash [Measurement units]*)
+		Backlash : LREAL; (*Backlash [measurement units]*)
 		PositionSource : McMDCPosSrcEnum; (*Position source*)
 		DataInterpretation : McMDCDatIntEnum; (*Compensation data is interpreted as periodic*)
 		StartEdge : McMDCStEdgEnum; (*Edge at which compensation is started*)
-		Velocity : REAL; (*Velocity for edge change [Measurement units/s]*)
+		Velocity : REAL; (*Velocity for edge change [measurement units/s]*)
 		TimeConstant : REAL; (*Time constant of the exponential function for edge change [s]*)
 		NoiseLimit : REAL; (*Noise limit [%]*)
 	END_STRUCT;
@@ -695,10 +701,10 @@ TYPE
 		mcMDCPSS_SET_POS := 0 (*Set position - Set position*)
 		);
 	McMDCDirDepConstBcklStpType : STRUCT (*Type mcMDCMS_DIR_DEP_CONST_BCKL settings*)
-		Backlash : LREAL; (*Backlash [Measurement units]*)
+		Backlash : LREAL; (*Backlash [measurement units]*)
 		PositionSource : McMDCPosSrcStpEnum; (*Position source*)
 		StartEdge : McMDCStEdgEnum; (*Edge at which compensation is started*)
-		Velocity : REAL; (*Velocity for edge change [Measurement units/s]*)
+		Velocity : REAL; (*Velocity for edge change [measurement units/s]*)
 		TimeConstant : REAL; (*Time constant of the exponential function for edge change [s]*)
 		NoiseLimit : REAL; (*Noise limit [%]*)
 	END_STRUCT;
@@ -708,7 +714,7 @@ TYPE
 		PositionSource : McMDCPosSrcStpEnum; (*Position source*)
 		DataInterpretation : McMDCDatIntEnum; (*Compensation data is interpreted as periodic*)
 		StartEdge : McMDCStEdgEnum; (*Edge at which compensation is started*)
-		Velocity : REAL; (*Velocity for edge change [Measurement units/s]*)
+		Velocity : REAL; (*Velocity for edge change [measurement units/s]*)
 		TimeConstant : REAL; (*Time constant of the exponential function for edge change [s]*)
 		NoiseLimit : REAL; (*Noise limit [%]*)
 	END_STRUCT;
@@ -719,11 +725,11 @@ TYPE
 	END_STRUCT;
 	McMDCDirIndBcklStpType : STRUCT (*Type mcMDCMS_DIR_IND_W_BCKL settings*)
 		CompensationDataPositive : McMDCCompDatType; (*Compensation data for movement in positive direction*)
-		Backlash : LREAL; (*Backlash [Measurement units]*)
+		Backlash : LREAL; (*Backlash [measurement units]*)
 		PositionSource : McMDCPosSrcStpEnum; (*Position source*)
 		DataInterpretation : McMDCDatIntEnum; (*Compensation data is interpreted as periodic*)
 		StartEdge : McMDCStEdgEnum; (*Edge at which compensation is started*)
-		Velocity : REAL; (*Velocity for edge change [Measurement units/s]*)
+		Velocity : REAL; (*Velocity for edge change [measurement units/s]*)
 		TimeConstant : REAL; (*Time constant of the exponential function for edge change [s]*)
 		NoiseLimit : REAL; (*Noise limit [%]*)
 	END_STRUCT;
@@ -764,5 +770,35 @@ TYPE
 	END_STRUCT;
 	McCfgAxFeatAcpCycDatProcType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_AX_FEAT_ACP_CYC_DAT_PROC*)
 		ProcessingTaskClass : McPTCEnum; (*Task class for cyclic data processing*)
+	END_STRUCT;
+	McAFSDOPTTranOrdEnum :
+		( (*Transfer order in reference to other configuration parameters*)
+		mcAFSDOPTTO_END_OF_INIT := 0, (*End of initialization - Transfer after other configuration parameters*)
+		mcAFSDOPTTO_ST_OF_INIT := 1 (*Start of initialization - Transfer before other configuration parameters*)
+		);
+	McCfgAxFeatSdoParTabType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_AX_FEAT_SDO_PAR_TAB*)
+		SDOParameterTableReference : McCfgReferenceType; (*Name of the SDO parameter table*)
+		TransferOrder : McAFSDOPTTranOrdEnum; (*Transfer order in reference to other configuration parameters*)
+	END_STRUCT;
+	McSDOPTRowDatTypEnum :
+		( (*Description text*)
+		mcSDOPTRDT_BOOL := 1, (*BOOL - Data type: Digital information, 1 bit (1 byte)*)
+		mcSDOPTRDT_SINT := 2, (*SINT - Data type: Integer, 1 byte*)
+		mcSDOPTRDT_INT := 3, (*INT - Data type: Integer, 2 bytes*)
+		mcSDOPTRDT_DINT := 4, (*DINT - Data type: Integer, 4 bytes*)
+		mcSDOPTRDT_USINT := 5, (*USINT - Data type: Integer, 1 byte, positive numbers only*)
+		mcSDOPTRDT_UINT := 6, (*UINT - Data type: Integer, 2 bytes, positive numbers only*)
+		mcSDOPTRDT_UDINT := 7, (*UDINT - Data type: Integer, 4 bytes, positive numbers only*)
+		mcSDOPTRDT_REAL := 8 (*REAL - Data type: Floating-point number, 4 bytes*)
+		);
+	McSDOPTRowType : STRUCT
+		Index : STRING[250]; (*Parameter index*)
+		Subindex : USINT; (*Parameter subindex*)
+		Value : REAL; (*Parameter value*)
+		DataType : McSDOPTRowDatTypEnum; (*Description text*)
+		Description : STRING[250];
+	END_STRUCT;
+	McCfgSdoParTabType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_SDO_PAR_TAB*)
+		Row : McCfgUnboundedArrayType; (*Connect array of type McSDOPTRowType*)
 	END_STRUCT;
 END_TYPE

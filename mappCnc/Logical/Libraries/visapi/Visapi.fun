@@ -1,12 +1,4 @@
-(********************************************************************
- * COPYRIGHT (C) BERNECKER + RAINER, AUSTRIA, A-5142 EGGELSBERG
- ********************************************************************
- * Library: Visapi
- * File: Visapi.fun
- * Created: 11.11.2003
- ********************************************************************
- * Functions and function blocks of library Visapi
- ********************************************************************)
+
 FUNCTION VA_Attach : UINT (*attach to a VC SG4 drawbox control*)
 	VAR_INPUT
 		enable : BOOL;	(*enables execution*)

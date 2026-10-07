@@ -13,13 +13,6 @@ TYPE
 		mcDIR_BOTH						 (*Movement in both directions*)
 	);
 
-	 McCamAutCouplingSourceEnum :
-	(
-		mcCAMAUT_COUPLING_SRC_NOT_USED, 	(*No source*)
-		mcCAMAUT_COUPLING_SRC_AXIS,		(*Axis as source*)
-		mcCAMAUT_COUPLING_SRC_VARIABLE,		(*Process variable as source*)
-		mcCAMAUT_COUPLING_SRC_SYSTIME		(*System time as source*)
-	);
 
 	McPlcopenParEnum :
 	(
@@ -174,6 +167,7 @@ TYPE
 		InMotion : BOOL; (*Controlled movement on the axis*)
 		MechDeviationCompState : McMechDevCompStateEnum; (*State of mechanical deviation compensation*)
 		AutoTuneState : McAutoTuneStateEnum; (* Status of the auto tune activity on the drive*)
+		BrakeStatus : McBrakeStatusEnum; (* Status of brake *)
 	END_STRUCT;
 
 	McAdvVelCtrlParType : STRUCT
@@ -186,8 +180,10 @@ TYPE
 	(
 		mcSHIFT_ABSOLUTE,  (*The value on input "XxxShift" is interpreted as an absolute value*)
 		mcSHIFT_RELATIVE,  (*The value on input "XxxShift" is interpreted as a relative value*)
-		mcSHIFT_ABSOLUTE_NO_RESET,  (*The functionality here is effectively the same as for mcSHIFT_ABSOLUTE. With this setting, however, the shift value on the drive is not set to 0 if the slave axis leaves state Synchronized Motion and input "Enable" is still set*)
-		mcSHIFT_RELATIVE_NO_RESET  (*The functionality here is effectively the same as for mcSHIFT_RELATIVE. With this setting, however, the shift value on the drive is not set to 0 if the slave axis leaves state Synchronized Motion and input "Enable" is still set*)
+		mcSHIFT_ABSOLUTE_NO_RESET,  (*The functionality here is effectively the same as for mcSHIFT_ABSOLUTE. With this setting, however, the shift value on the drive is not set to 0 if the slave axis leaves state Synchronized Motion regardless of "Enable"*)
+		mcSHIFT_RELATIVE_NO_RESET,  (*The functionality here is effectively the same as for mcSHIFT_RELATIVE. With this setting, however, the shift value on the drive is not set to 0 if the slave axis leaves state Synchronized Motion regardless of "Enable*)
+		mcSHIFT_ABSOLUTE_RESET_ENABLE,  (*The functionality here is effectively the same as for mcSHIFT_ABSOLUTE. With this setting, however, the shift value on the drive is not set to 0 if the slave axis leaves state Synchronized Motion and input "Enable" is still set*)
+		mcSHIFT_RELATIVE_RESET_ENABLE  (*The functionality here is effectively the same as for mcSHIFT_RELATIVE. With this setting, however, the shift value on the drive is not set to 0 if the slave axis leaves state Synchronized Motion and input "Enable" is still set*)
 	);
 
 	McProfileBaseEnum:
@@ -310,18 +306,18 @@ TYPE
 
 	McCamAutCompModeEnum:
 	(
-		mcCOMP_OFF := 0, 					 (*No compensation*)
-		mcCOMP_BETWEEN_CAMS := 30, 		 (*Spacing between cams*)
-		mcCOMP_BETWEEN_CAMS_DIRECT := 35,  (*Spacing between the end of one cam and the start of another*)
-		mcCOMP_CAM_CENTER_POINTS := 31, 	 (*Spacing from the center of one cam to another*)
-		mcCOMP_MA_LATCHPOS := 32, 		 (*Master spacing between latch position and cam center*)
-		mcCOMP_SL_LATCHPOS := 34, 		 (*Slave spacing between latch position and cam center*)
-		mcCOMP_SL_ABSOLUTE := 33, 		 (*Slave compensation for absolute slave position*)
-		mcCOMP_VELOCITY_S_MA := 37, 		 (*Minimum jerk velocity mode with master target distance*)
-		mcCOMP_VELOCITY_S_SL := 38, 		 (*Minimum jerk velocity mode with slave target distance*)
-		mcCOMP_VELOCITY_A_SL := 36, 		(*time optimal jolt limited velocity mode*)
-		mcCOMP_VELOCITY_A_CYC := 39, 		 (*Time-optimized jerk-limited velocity mode, cyclical master velocity determination*)
-		mcCOMP_MA_SL_ABSOLUTE := 40, 		 	     (*Absolute master and slave position when compensation is finished*)
+		mcCOMP_OFF := 0, 				 	(*No compensation*)
+		mcCOMP_BETWEEN_CAMS := 30, 		 	(*Spacing between cams*)
+		mcCOMP_BETWEEN_CAMS_DIRECT := 35, 	(*Spacing between the end of one cam and the start of another*)
+		mcCOMP_CAM_CENTER_POINTS := 31, 	(*Spacing from the center of one cam to another*)
+		mcCOMP_MA_LATCHPOS := 32, 		 	(*Master spacing between latch position and cam center*)
+		mcCOMP_SL_LATCHPOS := 34, 		 	(*ACOPOS: Slave spacing between latch position and cam center*)
+		mcCOMP_SL_ABSOLUTE := 33, 		 	(*Slave compensation for absolute slave position*)
+		mcCOMP_VELOCITY_S_MA := 37, 		(*Minimum jerk velocity mode with master target distance*)
+		mcCOMP_VELOCITY_S_SL := 38, 		(*Minimum jerk velocity mode with slave target distance*)
+		mcCOMP_VELOCITY_A_SL := 36, 		(*Time optimal jolt limited velocity mode*)
+		mcCOMP_VELOCITY_A_CYC := 39, 		(*Time-optimized jerk-limited velocity mode, cyclical master velocity determination*)
+		mcCOMP_MA_SL_ABSOLUTE := 40, 		(*Absolute master and slave position when compensation is finished*)
 		mcCOMP_MA_IV_SL_ABSOLUTE := 41		(*Periodic master and absolute slave position when compensation is finished*)
 	);
 
@@ -336,15 +332,15 @@ TYPE
 		mcEVENT_SIGNAL2 := 92,  (*Event is triggered by Signal2*)
 		mcEVENT_SIGNAL3 := 93,  (*Event is triggered by Signal3*)
 		mcEVENT_SIGNAL4 := 94,  (*Event is triggered by Signal4*)
-		mcEVENT_TRIGGER1_P_EDGE := 20,  (*Event is triggered by rising edge of Trigger1*)
-		mcEVENT_TRIGGER1_N_EDGE := 21,  (*Event is triggered by falling edge of Trigger1*)
-		mcEVENT_TRIGGER2_P_EDGE := 22,  (*Event is triggered by rising edge of Trigger2*)
-		mcEVENT_TRIGGER2_N_EDGE := 23,  (*Event is triggered by falling edge of Trigger2*)
+		mcEVENT_TRIGGER1_P_EDGE := 20,  (*ACOPOS: Event is triggered by rising edge of Trigger1*)
+		mcEVENT_TRIGGER1_N_EDGE := 21,  (*ACOPOS: Event is triggered by falling edge of Trigger1*)
+		mcEVENT_TRIGGER2_P_EDGE := 22,  (*ACOPOS: Event is triggered by rising edge of Trigger2*)
+		mcEVENT_TRIGGER2_N_EDGE := 23,  (*ACOPOS: Event is triggered by falling edge of Trigger2*)
 		mcEVENT_AND_NEXT_TWO := 15,  (*Event is triggered by the next two defined events triggered*)
-		mcEVENT_PARID1 := 16,  (*Event is triggered when EventParID1 changes from 0 to not 0*)
-		mcEVENT_PARID2 := 17,  (*Event is triggered when EventParID2 changes from 0 to not 0*)
-		mcEVENT_PARID3 := 18,  (*Event is triggered when EventParID3 changes from 0 to not 0*)
-		mcEVENT_PARID4 := 19,  (*Event is triggered when EventParID4 changes from 0 to not 0*)
+		mcEVENT_PARID1 := 16,  (*ACOPOS: Event is triggered when EventParID1 changes from 0 to not 0*)
+		mcEVENT_PARID2 := 17,  (*ACOPOS: Event is triggered when EventParID2 changes from 0 to not 0*)
+		mcEVENT_PARID3 := 18,  (*ACOPOS: Event is triggered when EventParID3 changes from 0 to not 0*)
+		mcEVENT_PARID4 := 19,  (*ACOPOS: Event is triggered when EventParID4 changes from 0 to not 0*)
 		mcEVENT_START_IV_POS1 := 41,  (*Event is triggered when starting interval Position1 is reached*)
 		mcEVENT_START_IV_POS2 := 42,  (*Event is triggered when starting interval Position2 is reached*)
 		mcEVENT_START_IV_POS3 := 43,  (*Event is triggered when starting interval Position3 is reached*)
@@ -361,6 +357,12 @@ TYPE
 	(
 		mcEVENT_IMMEDIATELY := 0,  (*State changes immediately*)
 		mcEVENT_END_OF_STATE := 12  (*State changes at end of state*)
+	);
+
+	McCamAutStartIntoEnum:
+	(
+		mcCAMAUT_START_INTO_CAM := 0,  (*Start into cam*)
+		mcCAMAUT_START_INTO_COMP := 1  (*Start into compensation*)
 	);
 
 	McCamStartModeEnum:
@@ -444,27 +446,41 @@ TYPE
 		mcAT_INDUCTION_MOTOR := 9, (* Auto tuning for induction motor is active*)
 		mcAT_SYNCHRON_MOTOR := 10 (* Auto tuning for synchronous motor is active*)
 	);
+	
+	McSdoDataTypeEnum  :
+	(
+		mcSDO_PARTYPE_BOOL := 1,  (*Data type: Digital information, 1 bit (1 byte)*)
+		mcSDO_PARTYPE_SINT,  (*Data type: Whole number, 1 byte*)
+		mcSDO_PARTYPE_INT,  (*Data type: Whole number, 2 bytes*)
+		mcSDO_PARTYPE_DINT,  (*Data type: Whole number, 4 bytes*)
+		mcSDO_PARTYPE_USINT,  (*Data type: Whole number, 1 byte, positive numbers only*)
+		mcSDO_PARTYPE_UINT,  (*Data type: Whole number, 2 bytes, positive numbers only*)
+		mcSDO_PARTYPE_UDINT,  (*Data type: Whole number, 4 bytes, positive numbers only*)
+		mcSDO_PARTYPE_REAL,  (*Data type: Floating point, 4 bytes*)
+		mcSDO_PARTYPE_VOID := 65535   (*General data type*)
+	);
+
+	McProcessSdoModeEnum :
+	(
+		mcSDO_GET := 0,  (*Read SDO(s)*)
+		mcSDO_SET,     (*Write SDO(s)*)
+		mcSDO_GET_NO_NCT,  (*Read SDO(s) without entry in the NCT*)
+		mcSDO_GET_NO_LOG  (*Read SDO(s) without NCT and logger entry. If an error occurs while reading, an entry is still created*)
+	);
 
 	McCamDefineType : STRUCT
 		DataObjectName : STRING[12]; (*Name of the cam data object*)
-		DataAdress : UDINT; (*Address of the cam data on the PLC provided in a PV of data type "McCamDataType"*)
+		DataAddress : UDINT; (*Address of the cam data on the PLC provided in a PV of data type "McCamDataType"*)
 	END_STRUCT;
 
 	McAdvCamAutSetParType : STRUCT
 		ParLock : McCamAutParLockCmdEnum; (*Command for the transfer of the parameter*)
 	END_STRUCT;
 
-	McCamAutEventParType : STRUCT
-	    Type : McCamAutEventTypeEnum; (*Event type*)
-	    Transition :	McCamAutEventTransitionEnum; (*Event transition*)
-	    SynchronousUpdate: McSwitchEnum; (*Synchronous parameter update if event occurs*)
-	    NextState : USINT; (*Index of the next state if the event occurs*)
-	END_STRUCT;
 
 	McCamAutCompParType : STRUCT
 	    MasterCompDistance : LREAL; (*Compensation distance for the master axis [Measurement units of master]*)
 	    SlaveCompDistance : LREAL; (*Compensation distance for the slave axis [Measurement units of slave]*)
-	    MasterCamLeadIn : LREAL; (*Relative position at which the master axis enters the state [Measurement units of master]*)
 	    MinMasterCompDistance : LREAL; (*Minimum compensation distance for the master axis [Measurement units of master]*)
 	    MinSlaveCompDistance : LREAL; (*Minimum compensation distance for the slave axis [Measurement units of slave]*)
 	    MaxSlaveCompDistance : LREAL; (*Maximum compensation distance for the slave axis [Measurement units of slave]*)
@@ -473,46 +489,38 @@ TYPE
 	    MaxSlaveCompAccel1 : REAL; (*Maximum acceleration of the slave axis during compensation phase 1 [Measurement units of slave/s�]*)
 	    MaxSlaveCompAccel2 : REAL; (*Maximum acceleration of the slave axis during compensation phase 2 [Measurement units of slave/s�]*)
 	    SlaveCompJoltTime : REAL; (*Jerk time of the slave axis during compensation [s]*)
-	    SlaveCompJerk : REAL; (*Jerk of the slave axis during compensation [Measurement units of slave/s�]*)
+	    SlaveCompJerk : REAL; (*ProfGen: Jerk of the slave axis during compensation [Measurement units of slave/s�]*)
 	END_STRUCT;
 
 	McCamAutMasterAxisType : STRUCT
-		Axis : REFERENCE TO McAxisType; (*Axis reference of master axis*)
-		ValueSource : McValueSrcEnum ; (*Defines the source of the position to be read*)
-		MaxVelocity : REAL; (*Maximum velocity of the master axis [Measurement units of master/s]*)
+	    AxisReference : REFERENCE TO McAxisType; (*Axis reference of master axis*)
+	    ValueSource : McValueSrcEnum ; (*Defines the source of the position to be read*)
+	    MaxVelocity : REAL; (*Maximum velocity of the master axis [Measurement units of master/s]*)
+	END_STRUCT;
+
+	McCamAutMasterParIdType : STRUCT
+	    AxisReference : REFERENCE TO McAxisType; (*ACOPOS: Axis reference of the master or slave axis*)
+	    ParID : UINT; (*ACOPOS: Parameter ID of the axis*)
+	    MaxVelocity : REAL; (*ACOPOS: Maximum velocity of the ParID [Units of ParID/s]*)
 	END_STRUCT;
 
 	McCamAutMasterVarType : STRUCT
-		VariableAddress  :  REFERENCE TO LREAL; (*Address of the process variable*)
-		MaxVelocity : REAL; (*Maximum velocity of the master axis [Measurement units of master/s]*)
+	    VariableAddress  :  REFERENCE TO LREAL; (*ProfGen: Address of the process variable*)
+	    MaxVelocity : REAL; (*ProfGen: Maximum velocity of the process variable [Units of PV/s]*)
 	END_STRUCT;
 
 	McCamAutAxisType : STRUCT
-		Axis : REFERENCE TO McAxisType; (*Axis reference*)
-		ValueSource : McValueSrcEnum ; (*Defines the source of the position to be read*)
+	    AxisReference : REFERENCE TO McAxisType; (*Axis reference*)
+	    ValueSource : McValueSrcEnum ; (*Defines the source of the position to be read*)
+	END_STRUCT;
+
+	McCamAutParIdType : STRUCT
+	    AxisReference : REFERENCE TO McAxisType; (*ACOPOS: Axis reference*)
+	    ParID : UINT; (*ACOPOS: Parameter ID of the axis*)
 	END_STRUCT;
 
 	McCamAutVariableType : STRUCT
-		VariableAddress  :  REFERENCE TO LREAL; (*Address of the process variable*)
-	END_STRUCT;
-
-	McCamAutAdvStateParType : STRUCT
-	    RepeatCounterInit : UINT; (*Starting value of state repetitions for event mcACPAX_EVENT_COUNT*)
-	    RepeatCounterSetTransfer : McSwitchEnum; (*"RepeatCounterInit" is transferred*)
-	    RepeatCounterSet : UINT; (*State repetitions counter for event mcACPAX_EVENT_COUNT*)
-	    MasterSource : McCamAutCouplingSourceEnum; (*Source to be used as master of this state*)
-	    MasterAxis : McCamAutAxisType; (*Master axis for this state*)
-	    MasterVariable : McCamAutVariableType; (*Process variable that is used as master position for this state*)
-	END_STRUCT;
-
-	McCamAutStateParType : STRUCT
-	    CamID : UINT; (*Index of the cam data for a state*)
-	    MasterFactor : DINT; (*Master gauge factor for the cam profile for this state*)
-	    SlaveFactor: DINT; (*Slave gauge factor for the cam profile for this state*)
-	    CompensationMode : McCamAutCompModeEnum; (*Compensation gear mode*)
-	    CompensationParameters : McCamAutCompParType; (*Parameters for the compensation gear*)
-	    AdvancedParameters : McCamAutAdvStateParType; (*Advanced state parameter*)
-	    Event : ARRAY[0..4] OF McCamAutEventParType; (*Definition of the event for a state*)
+	    VariableAddress  :  REFERENCE TO LREAL; (*ProfGen: Address of the process variable*)
 	END_STRUCT;
 
 	McCamAutCtrlSettingsType : STRUCT
@@ -522,51 +530,13 @@ TYPE
 
 	McCamAutStartStateParType : STRUCT
 	    StartState : USINT; (*State in which the cam automat is started*)
-	    MasterStartRelPos : LREAL; (*Master position within the starting state at which the cam automat is started [measurements units of the master]*)
-	END_STRUCT;
-
-	McCamAutAddAxesType : STRUCT
-	    AdditiveMasterSource : McCamAutCouplingSourceEnum; (*Source to be used as additive master*)
-	    AdditiveMasterAxis : McCamAutAxisType; (*Additive master axis*)
-	    AdditiveMasterVariable : McCamAutVariableType; (*Process variable specifying the additive master position*)
-	    AdditiveSlaveSource : McCamAutCouplingSourceEnum; (*Source to be used as additive slave*)
-	    AdditiveSlaveAxis : McCamAutAxisType; (*Additive slave axis*)
-	    AdditiveSlaveVariable : McCamAutVariableType; (*Process variable specifying the additive slave position*)
-	END_STRUCT;
-
-	McCamAutAdvParType : STRUCT
-		StartStateParam : McCamAutStartStateParType; (*Parameter used for starting directly from a state*)
-		AdditiveAxes : McCamAutAddAxesType; (*Parameter for additive axes*)
-	    MasterStartPosMode : McCamAutMaStartPosModeEnum; (*Mode for event type mcEVENT_START_POSITION*)
-	    ControlSettings : McCamAutCtrlSettingsType; (*Control settings for cam automat*)
-	    StartIntervalPos1 : LREAL; (*Relative starting positions of the master axis in the interval for generating event mcEVENT_START_IV_POS1 [Measurement units of master]*)
-	    StartIntervalPos2 : LREAL; (*Relative starting positions of the master axis in the interval for generating event mcEVENT_START_IV_POS2 [Measurement units of master]*)
-	    StartIntervalPos3 : LREAL; (*Relative starting positions of the master axis in the interval for generating event mcEVENT_START_IV_POS3 [Measurement units of master]*)
-	    StartIntervalPos4 : LREAL; (*Relative starting positions of the master axis in the interval for generating event mcEVENT_START_IV_POS4 [Measurement units of master]*)
-	END_STRUCT;
-
-	McCamAutMasterParType : STRUCT
-	    MasterSource : McCamAutCouplingSourceEnum; (*Source to be used as master*)
-	    MasterAxis : McCamAutMasterAxisType; (*Master axis*)
-	    MasterVariable : McCamAutMasterVarType; (*Process variable specifying the master position*)
-	    MasterStartPosition : LREAL; (*Starting position of the master axis [Measurement units of master]*)
-	    MasterStartInterval : LREAL; (*Starting interval of the master axis [Measurement units of master]*)
-	END_STRUCT;
-
-	McCamAutCommonParType : STRUCT
-	    Master : McCamAutMasterParType; (*Parameter for the cam automat master*)
-	    AdvancedParameters : McCamAutAdvParType; (*Optional parameter for the cam automat*)
-	END_STRUCT;
-
-	McCamAutParType : STRUCT
-	    Common : McCamAutCommonParType; (*General parameter for all states of the cam automat*)
-	    State : ARRAY[0..14] OF McCamAutStateParType; (*Parameter for the states of the cam automat*)
+	    StartType : McCamAutStartIntoEnum; (*The cam or compensation of the selected state is started*)
+	    MasterStartPositionInCam : LREAL; (*Relative master position within the starting state cam at which the cam automat is started [Measurements units of the master]*)
 	END_STRUCT;
 
 	McCamAutDefineType : STRUCT
 	    DataObjectName : STRING[32]; (*Name of the cam automat configuration object*)
-	    DataAddress : UDINT; (*Address of a variable of data type McCamAutParType or McAcpAxCamAutParType*)
-		DataSize: UDINT; (*Address of the cam data, 0 considered as use of McCamAutParType"*)
+	    DataAddress : UDINT; (*Address of a variable of data type McCamAutParType*)
 	END_STRUCT;
 
 	McPolynomialDataType : STRUCT  (*Structure with polynomial coefficient*)
@@ -825,7 +795,6 @@ TYPE
 		LoadFactorNeg : DINT; (*Multiplication factor of the torque for the negative direction *)
 		StopMode : McLimitLoadStopModeEnum; (*Mode defines how and if limits are switched when movement is aborted*)
 		StopTorque : REAL; (*If Stop mode is mcLLSM_USER_DEFINED, switch over to limit value contained in StopTorque is performed*)
-
 	END_STRUCT;
 
 	McAcpAxAutoTuneOrientationEnum:
@@ -909,6 +878,103 @@ TYPE
 		FeatureName : STRING[250]; (*Name of the "Digital output" feature in which the output which should be written. The feature must be assigned to the axis as well inside the hardware configuration*)
 	END_STRUCT;
 
+	McCamAutCouplingSourceEnum :
+	(
+	    mcCAMAUT_COUPLING_SRC_NOT_USED, 	(*No source*)
+	    mcCAMAUT_COUPLING_SRC_AXIS,	(*Axis as source*)
+	    mcCAMAUT_COUPLING_SRC_PARID_VAR,	(*ACOPOS: ParID as source / ProfGen: Process variable as source*)
+	    mcCAMAUT_COUPLING_SRC_SYSTIME	(*System time as source*)
+	);
+
+	McCamAutEventParType : STRUCT
+	    Type : McCamAutEventTypeEnum; (*Event type*)
+	    Transition : McCamAutEventTransitionEnum; (*Event transition*)
+	    SynchronousUpdate: McSwitchEnum; (*Synchronous parameter update if event occurs*)
+	    NextState : USINT; (*Index of the next state if the event occurs*)
+	END_STRUCT;
+
+	McCamAutAdvStateParType : STRUCT
+	    MasterCamLeadIn : LREAL; (*Relative position at which the master axis enters the state [Measurement units of master]*)
+	    RepeatCounterInit : UINT; (*Starting value of state repetitions for event mcACPAX_EVENT_COUNT*)
+	    RepeatCounterSetTransfer : McSwitchEnum; (*"RepeatCounterInit" is transferred*)
+	    RepeatCounterSet : UINT; (*State repetitions counter for event mcACPAX_EVENT_COUNT*)
+	    StateMasterSource : McCamAutCouplingSrcType; (*Source to be used as master of this state*)
+	END_STRUCT;
+
+	McCamAutStateParType : STRUCT
+	    CamID : UINT; (*Index of the cam data for a state*)
+	    MasterFactor : DINT; (*Master gauge factor for the cam profile for this state*)
+	    SlaveFactor: DINT; (*Slave gauge factor for the cam profile for this state*)
+	    CompensationMode : McCamAutCompModeEnum; (*Compensation gear mode*)
+	    CompensationParameters : McCamAutCompParType; (*Parameters for the compensation gear*)
+	    AdvancedParameters : McCamAutAdvStateParType; (*Advanced state parameter*)
+	    Event : ARRAY[0..4] OF McCamAutEventParType; (*Definition of the event for a state*)
+	END_STRUCT;
+
+	McCamAutMsgSettingsType : STRUCT
+	    ErrorsInStandby : McCamAutErrorsInStandbyEnum; (*ACOPOS: Used for setting an error message in stand-by mode*)
+	    ExceedingLimits : McCamAutExceedingLimitsEnum; (*ACOPOS: Used for setting a message if the limit values are exceeded*)
+	END_STRUCT;
+
+	McCamAutTriggerAndLatchType : STRUCT
+	    Trigger1Delay : REAL; (*ACOPOS: Trigger1 delay time [s] to compensate for a signal delay*)
+	    Trigger2Delay : REAL; (*ACOPOS: Trigger2 delay time [s] to compensate for a signal delay*)
+	    SlaveLatchParID : UINT; (*ACOPOS: Parameter ID for the latch value of the slave axis*)
+	END_STRUCT;
+
+	McCamAutCouplingSrcType : STRUCT
+	    CouplingSource : McCamAutCouplingSourceEnum; (*Source to be used for the coupling*)
+	    Axis : McCamAutAxisType; (*Axis used for position*)
+	    ParID : McCamAutParIdType; (*ACOPOS: Parameter ID used as position*)
+	    Variable : McCamAutVariableType; (*ProfGen: Process variable used as position*)
+	END_STRUCT;
+
+	McCamAutCommonFactorsType : STRUCT
+	    SlaveFactorParID : UINT; (*ACOPOS: Parameter ID for multiplication factor of the slave axis*)
+	END_STRUCT;
+
+	McCamAutAdvParType : STRUCT
+	    AdditiveMasterSource : McCamAutCouplingSrcType; (*Definition of the additive master*)
+	    AdditiveSlaveSource : McCamAutCouplingSrcType; (*Definition of the additive slave*)
+	    MasterStartPosMode : McCamAutMaStartPosModeEnum; (*Mode for event type mcEVENT_START_POSITION*)
+	    ControlSettings : McCamAutCtrlSettingsType; (*Control settings for cam automat*)
+	    MessageSettings : McCamAutMsgSettingsType; (*ACOPOS: Settings for warnings and error messages*)
+	    TriggerAndLatch : McCamAutTriggerAndLatchType; (*ACOPOS: Settings for triggering delay times and for latch value*)
+	    EventParID1 : UINT; (*ACOPOS: Parameter ID for event input 1*)
+	    EventParID2 : UINT; (*ACOPOS: Parameter ID for event input 2*)
+	    EventParID3 : UINT; (*ACOPOS: Parameter ID for event input 3*)
+	    EventParID4 : UINT; (*ACOPOS: Parameter ID for event input 4*)
+	    StartIntervalPos1 : LREAL; (*Relative starting positions of the master axis in the interval for generating event mcEVENT_START_IV_POS1 [Measurement units of master]*)
+	    StartIntervalPos2 : LREAL; (*Relative starting positions of the master axis in the interval for generating event mcEVENT_START_IV_POS2 [Measurement units of master]*)
+	    StartIntervalPos3 : LREAL; (*Relative starting positions of the master axis in the interval for generating event mcEVENT_START_IV_POS3 [Measurement units of master]*)
+	    StartIntervalPos4 : LREAL; (*Relative starting positions of the master axis in the interval for generating event mcEVENT_START_IV_POS4 [Measurement units of master]*)
+	    Factors : McCamAutCommonFactorsType; (*ACOPOS: Multiplication factors for all states of the cam automat*)
+	END_STRUCT;
+
+	McCamAutMasterCouplingSrcType : STRUCT
+	    CouplingSource : McCamAutCouplingSourceEnum; (*Source to be used for the coupling*)
+	    Axis : McCamAutMasterAxisType; (*Axis*)
+	    ParID : McCamAutMasterParIdType; (*ACOPOS: Parameter ID used as position*)
+	    Variable : McCamAutMasterVarType; (*ProfGen: Process variable used as position*)
+	END_STRUCT;
+
+	McCamAutMasterParType : STRUCT
+	    MasterSource : McCamAutMasterCouplingSrcType; (*Definition of the master*)
+	    MasterStartPosition : LREAL; (*Starting position of the master axis [Measurement units of master]*)
+	    MasterStartInterval : LREAL; (*Starting interval of the master axis [Measurement units of master]*)
+	END_STRUCT;
+
+	McCamAutCommonParType : STRUCT
+	    Master : McCamAutMasterParType; (*Parameter for the cam automat master*)
+	    StartStateParam : McCamAutStartStateParType; (*Parameter used for starting directly from a state*)
+	    AdvancedParameters : McCamAutAdvParType; (*Optional parameter for the cam automat*)
+	END_STRUCT;
+
+	McCamAutParType : STRUCT
+	    Common : McCamAutCommonParType; (*General parameter for all states of the cam automat*)
+	    State : ARRAY[0..14] OF McCamAutStateParType; (*Parameter for the states of the cam automat*)
+	END_STRUCT;
+
 	McCheckAutCompModeEnum :
 	(
 		mcCAC_CHECK_ALL := 1, (*Check all parameters.*)
@@ -937,5 +1003,14 @@ TYPE
 		LimitsExceeded : BOOL := FALSE; (*Logical result of the Check or Calculate function.*)
 		CalculatedValue : LREAL := 0.0; (*Calculated Master or Slave compensation distance value [Measurement units of master] or [Measurement units of slave].*)
 	END_STRUCT;
+	
+	McProcessSdoType : STRUCT
+	        Index : UINT; (*Index of the SDO parameter to be read or written*)
+	        SubIndex : USINT; (*Subindex of the SDO parameter to be read or written*)
+	        VariableAddress : UDINT; (*Address of the variable that receives the read value or the corresponding value to be written*)
+	        DataType : McSdoDataTypeEnum; (*Data type of the variable*)
+	        Valid : BOOL; (*Output: Parameter was successfully written or read value can be used*)
+	        ErrorInfo : UDINT; (*Output: Error information if 'Valid' is false (see SDO Abort Code)*)
+    	END_STRUCT;
 
 END_TYPE

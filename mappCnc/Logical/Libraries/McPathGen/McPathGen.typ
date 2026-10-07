@@ -100,12 +100,6 @@ TYPE
 		SetPosition : ARRAY [0..14] OF LREAL; (**)
 	END_STRUCT;
 
-	McPathGenMonElemPathSpeedType : STRUCT (*Monitoring Element: Programmed path speed*)
-		UnitPerMinute : REAL; (**)
-		UnitPerRevolution : REAL; (**)
-		Inverse : REAL; (**)
-	END_STRUCT;
-
 	McPathGenMonElemFeedSettingsType : STRUCT (*Monitoring Element: Feed settings*)
 		FeedPath : STRING[80]; (*Defines the path on which the feedrate is applied*)
 		FeedCharacteristic : McPathGenMonElemFeedCharEnum; (**)
@@ -195,6 +189,59 @@ TYPE
 		Level: ARRAY [0..9] OF BOOL; (*Skip block levels*)
 	END_STRUCT;
 
+	McPathGenWorkspaceStatusEnum :
+		(
+		mcPATHGEN_WS_OK, (*In Workspace*)
+		mcPATHGEN_WS_AXES_VIOLATION, (*Axis limit reached*)
+		mcPATHGEN_WS_JOINTAXES_VIOLATION, (*Joint axis limit reached*)
+		mcPATHGEN_WS_SLAVEAXES_VIOLATION, (*Slave axis limit reached*)
+		mcPATHGEN_WS_WORKSPACE_VIOLATION, (*Workspace boundary reached*)
+		mcPATHGEN_WS_SAFESPACE_VIOLATION, (*Safe space workspace boundary reached*)
+		mcPATHGEN_WS_SELF_COLLISION, (*Self collision imminent*)
+		mcPATHGEN_WS_WORKRANGE_VIOLATION (*Working range boundary reached*)
+		);
+
+	McPathGenMonElemWorkspaceType : STRUCT (*Monitoring Element: Workspace*)
+		InWorkspace : BOOL; (*In workspace*)
+		WorkspaceStatus : McPathGenWorkspaceStatusEnum; (*Workspace status*)
+	END_STRUCT;
+
+	McPathGenMonElemActLimTypeEnum : 
+		(	(*Monitoring Element: Active limit - Type*)
+		mcPATHGEN_AL_UNDEFINED_TYPE := 0, (*Default value*)
+		mcPATHGEN_AL_VELOCITY := 10, (*Velocity limit*)
+		mcPATHGEN_AL_ACCELERATION := 20, (*Acceleration limit*)
+		mcPATHGEN_AL_JERK := 30, (*Jerk limit*)
+		mcPATHGEN_AL_TORQUE := 40, (*Torque limit*)
+		mcPATHGEN_AL_PROCESS := 50, (*Process limit*)
+		mcPATHGEN_AL_INTERNAL := 60 (*Internal limitation*)
+		);
+
+	McPathGenMonElemActLimSourceEnum : 
+		(	(*Monitoring Element: Active limit - Source*)
+		mcPATHGEN_AL_UNDEFINED_SOURCE := 0, (*Default value*)
+		mcPATHGEN_AL_JOINT_AXIS := 10, (*Joint axis limit*)
+		mcPATHGEN_AL_SLAVE_AXIS := 20, (*Slave axis limit*)
+		mcPATHGEN_AL_TCP := 30, (*TCP axis limit*)
+		mcPATHGEN_AL_PATH := 40, (*Path definition limit*)
+		mcPATHGEN_AL_SPINDLE := 50, (*Spindle limit*)
+		mcPATHGEN_AL_JOINT_GEARBOX := 60, (*Joint axis gearbox limit*)
+		mcPATHGEN_AL_CS := 70, (*Cross section load limit*)
+		mcPATHGEN_AL_CCS := 71, (*Composed cross section load limit*)
+		mcPATHGEN_AL_PROC_OUT_OF_WS := 80, (*Process limit - Tracking out of workspace*)
+		mcPATHGEN_AL_PROC_ONLINE_MOD := 81, (*Process limit - online modification*)
+		mcPATHGEN_AL_VIRTUAL_JOINT_AXIS := 90, (*Virtual joint axis limit*)
+		mcPATHGEN_AL_MON_POINTS := 100, (*Monitoring point velocity limit*)
+		mcPATHGEN_AL_JOGGING_VELOCITY := 110, (*Jogging velocity limit*)
+		mcPATHGEN_AL_INT := 120 (*Internal limit*)
+		);
+
+	McPathGenMonElemActLimType : STRUCT (*Monitoring Element: Active limit*)
+		Type : McPathGenMonElemActLimTypeEnum; (*Type of the current active limit*)
+		Source : McPathGenMonElemActLimSourceEnum; (*Source of the current active limit*)
+		Index : UDINT; (*Index of the source*)
+	END_STRUCT;
+
 	McPathGenMonElemBasicMonType : STRUCT (*Monitoring Element: Basic monitor*)
 		CurrentProgram : McPathGenMonElemCurrentPrgType; (**)
 		LineNumber : UDINT; (**)
@@ -228,6 +275,7 @@ TYPE
 		Tool : McToolGeometryType; (**)
 		JointCount : UDINT; (**)
 		TcpCount : UDINT; (**)
+		CustomDataAddr : UDINT; (**)
 	END_STRUCT;
 
 	McPathGenCusMechDirType : STRUCT (*Custom mechanical system: Data for direct function*)
@@ -242,6 +290,10 @@ TYPE
 		JointRefPos : ARRAY [0..14] OF LREAL; (**)
 	END_STRUCT;
 
+	McPathGenCusMechInvAddInType : STRUCT (*Custom mechanical system: Additional input for inverse function*)
+		TcpDer : ARRAY [0..14] OF LREAL; (**)
+	END_STRUCT;
+
 	McPathGenCusMechInvOutType : STRUCT (*Custom mechanical system: Output for inverse function*)
 		JointPos :	ARRAY [0..14] OF LREAL; (**)
 	END_STRUCT;
@@ -251,10 +303,12 @@ TYPE
 		Tool : McToolGeometryType; (**)
 		JointCount : UDINT; (**)
 		TcpCount : UDINT; (**)
+		CustomDataAddr : UDINT; (**)
 	END_STRUCT;
 
 	McPathGenCusMechInvType : STRUCT (*Custom mechanical system: Data for inverse function*)
 		Input : McPathGenCusMechInvInType; (**)
+		AddInput : McPathGenCusMechInvAddInType; (**)
 		Output : McPathGenCusMechInvOutType; (**)
 		Parameter : McPathGenCusMechInvParType; (**)
 		Info : McPathGenCusMechInfoType; (**)
@@ -275,6 +329,7 @@ TYPE
 		Tool : McToolGeometryType; (**)
 		JointCount : UDINT; (**)
 		TcpCount : UDINT; (**)
+		CustomDataAddr : UDINT; (**)
 	END_STRUCT;
 
 	McPathGenCusMechDirDerType : STRUCT (*Custom mechanical system: Data for direct derivative function*)
@@ -290,6 +345,10 @@ TYPE
 		JointRefPos : ARRAY [0..14] OF LREAL; (**)
 	END_STRUCT;
 
+	McPathGenCusMechInvDerAddInType : STRUCT (*Custom mechanical system: Additional input for inverse derivative function*)
+		JointPos : ARRAY [0..14] OF LREAL; (**)
+	END_STRUCT;
+
 	McPathGenCusMechInvDerOutType : STRUCT (*Custom mechanical system: Output for inverse derivative function*)
 		JointDer : ARRAY [0..14] OF LREAL; (**)
 	END_STRUCT;
@@ -299,10 +358,12 @@ TYPE
 		Tool : McToolGeometryType; (**)
 		JointCount : UDINT; (**)
 		TcpCount : UDINT; (**)
+		CustomDataAddr : UDINT; (**)
 	END_STRUCT;
 
 	McPathGenCusMechInvDerType : STRUCT (*Custom mechanical system: Data for inverse derivative function*)
 		Input : McPathGenCusMechInvDerInType; (**)
+		AddInput : McPathGenCusMechInvDerAddInType; (**)
 		Output : McPathGenCusMechInvDerOutType; (**)
 		Parameter : McPathGenCusMechInvDerParType; (**)
 		Info : McPathGenCusMechInfoType; (**)
@@ -336,6 +397,7 @@ TYPE
 		Tool : McToolGeometryType;
 		JointCount : UDINT;
 		CheckSelfCollision : BOOL;
+		CustomDataAddr : UDINT; (**)
 	END_STRUCT;
 
 	McPathGenCusMechWMInfoType :	STRUCT	(*Custom mechanical system: Wireframe model info*)
@@ -380,6 +442,7 @@ TYPE
 		TrackedObject : McPathGenTrackedObjectType; (*info tracked object*)
 		TrackedFrame : McPathGenTrackedFrameType; (*info tracked frame*)
 		ErrorStruct : McPathGenErrorStructType; (*geometric error*)
+		MotionBehaviour : McPathGenMotionBehaviourType; (*motion behaviour limit states*)
 	END_STRUCT;
 
 	McPathGenTrackedObjectType : 	STRUCT
@@ -393,6 +456,11 @@ TYPE
 
 	McPathGenErrorStructType : 	STRUCT
 		ActualError : LREAL; (*Actual geometric tracking error*)
+	END_STRUCT;
+
+	McPathGenMotionBehaviourType : 	STRUCT
+		AdjustedVelocity : BOOL; (*Actual velocity limit has been adjusted, to avoid moving out of workspace*)
+		AdjustedVelocityToZero : BOOL; (*Actual velocity limit has been adjusted to zero, to avoid moving out of workspace*)
 	END_STRUCT;
 
 END_TYPE

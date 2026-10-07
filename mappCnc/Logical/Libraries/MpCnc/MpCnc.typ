@@ -2,7 +2,6 @@
 TYPE
 	MpCncDiagExtType : 	STRUCT 
 		StatusID : MpCncStatusIDType; (*StatusID information*)
-		Internal : MpCncInternalIDType; (*Internal data*)
 	END_STRUCT;
 	MpCnc5AxisInfoType : 	STRUCT 
 		CommunicationReady : BOOL; (*TRUE if MpCnc2Axis is ready to communicate*)
@@ -68,12 +67,6 @@ TYPE
 		Jog : MpCnc3AxisJogType := (PathLimits:=(Velocity:=1000,Acceleration:=10000,Deceleration:=10000,Jerk:=0)); (*Jog parameter*)
 		Block : STRING[260]; (*Single instruction*)
 	END_STRUCT;
-	MpCncInternalIDType : 	STRUCT 
-		ID : DINT; (**)
-		Severity : MpComSeveritiesEnum; (**)
-		Facility : MpComFacilitiesEnum; (**)
-		Code : UINT; (**)
-	END_STRUCT;
 	MpCnc2AxisJogType : 	STRUCT 
 		Velocity : ARRAY[0..1]OF REAL; (*Jog velocities [application units / s]*)
 		PathLimits : McJogPathLimitsType; (*Path limits*)
@@ -97,7 +90,6 @@ TYPE
 	MpCncStatusIDType : 	STRUCT 
 		ID : MpCncErrorEnum; (*Error numbers of library MpCnc*)
 		Severity : MpComSeveritiesEnum; (*Error severity*)
-		Code : UINT; (*Error code*)
 	END_STRUCT;
 	MpCncFlexParType : 	STRUCT
 		ProgramName : STRING[260]; (*Name of the primary program that should be executed*)

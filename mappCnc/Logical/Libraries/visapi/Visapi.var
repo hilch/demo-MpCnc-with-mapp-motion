@@ -1,12 +1,4 @@
-(********************************************************************
- * COPYRIGHT -- Bernecker + Rainer
- ********************************************************************
- * Library: Visapi
- * File: Visapi.var
- * Created: 11.11.2003
- ********************************************************************
- * 
- ********************************************************************)
+
 VAR CONSTANT
 	vaERR_VISAPI_NOT_INITIALIZED : UINT := 100; (*visapi not initialized*)
 	vaERR_RESOURCE_WRONG_FORMAT : UINT := 7197; (*resource has wrong format*)
@@ -38,12 +30,12 @@ VAR CONSTANT
 	vaERR_EMPTY_ALARMLIST : UINT := 240; (*empty alarm list*)
 	vaERR_BUSY : UINT := 7000; (*busy*)
 	vaERR_EMPTY_HISTORYLIST : UINT := 248; (*empty alarm history*)
-
-	vaALS_INACTIVE :UDINT := 1; (*Filter for inactive alarms*)
- 	vaALS_ACTIVE :UDINT := 2; (*Filter for active alarms*)
-	vaALS_ACKNOWLEDGED :UDINT := 16; (*Filter for acknowledged alarms*)
-	vaALS_NOTACKNOWLEDGED :UDINT := 32; (*Filter for not acknowledged alarms*)	
-	vaALS_BYPASSSED :UDINT := 256; (*Filter for bypassed alarms*)
-	vaALS_NOTBYPASSSED :UDINT := 512; (*Filter for not bypassed alarms*)	
- 	vaALS_CURRENT :UDINT := 16#10000; (*Filter for current alarms*)
+	vaALS_INACTIVE : UDINT := 1; (*Filter for inactive alarms*)
+ 	vaALS_ACTIVE : UDINT := 2; (*Filter for active alarms*)
+	vaALS_ACKNOWLEDGED : UDINT := 16; (*Filter for acknowledged alarms*)
+	vaALS_NOTACKNOWLEDGED : UDINT := 32; (*Filter for not acknowledged alarms*)	
+	vaALS_BYPASSSED : UDINT := 256; (*Filter for bypassed alarms*)
+	vaALS_NOTBYPASSSED : UDINT := 512; (*Filter for not bypassed alarms*)	
+ 	vaALS_CURRENT : UDINT := 16#10000; (*Filter for current alarms*)
+	vaATTRIBUTE_ALPHA : USINT := 16#80; (*Consider alpha channel byte of bitmap data*)
 END_VAR
