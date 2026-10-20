@@ -1,6 +1,6 @@
 /* Automation Studio generated header file */
 /* Do not edit ! */
-/* McAxis 6.7.2 */
+/* McAxis 6.8.1 */
 
 #ifndef _MCAXIS_
 #define _MCAXIS_
@@ -9,7 +9,7 @@ extern "C"
 {
 #endif
 #ifndef _McAxis_VERSION
-#define _McAxis_VERSION 6.7.2
+#define _McAxis_VERSION 6.8.1
 #endif
 
 #include <bur/plctypes.h>
@@ -333,7 +333,8 @@ typedef enum McAxisTypeEnum
 	mcAX_TYPE_DS402_INV,
 	mcAX_TYPE_PURE_VIRT_EXT_ENC,
 	mcAX_TYPE_PURE_VIRT_DS402_CSP,
-	mcAX_TYPE_PURE_VIRT_DS402_VL
+	mcAX_TYPE_PURE_VIRT_DS402_VL,
+	mcAX_TYPE_ACP_INV_V2
 } McAxisTypeEnum;
 
 typedef enum McAcpAxAutoTuneFeedFwdModeEnum

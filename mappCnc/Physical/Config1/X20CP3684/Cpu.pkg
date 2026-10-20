@@ -24,6 +24,6 @@
     <Build GccVersion="11.3.0" />
     <DefaultTargetMemory Tasks="UserROM" />
     <Transfer />
-    <Vc FirmwareVersion="6.7.0" />
+    <Vc FirmwareVersion="6.8.0" />
   </Configuration>
 </Cpu>

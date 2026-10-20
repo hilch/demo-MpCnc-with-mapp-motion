@@ -2984,6 +2984,11 @@ TYPE
 	McCfgAcpZeroVibFltrType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_ACP_ZERO_VIB_FLTR*)
 		ZeroVibrationFilter : McAZVFType; (*Zero vibration filter*)
 	END_STRUCT;
+	McAPSMActAcpSimOnPLCEnum :
+		( (*Activates or deactivates the ACOPOS simulation on the PLC*)
+		mcAPSMAASOP_OFF := 0, (*Off - The drive is not simulated on the PLC*)
+		mcAPSMAASOP_ON := 1 (*On - The drive is simulated on the PLC*)
+		);
 	McAPSMOutParEnum :
 		( (*Output parameters selector setting*)
 		mcAPSMOP_ACPMOT_CMPCT := 0, (*ACOPOSmotor compact - Output parameters for ACOPOSmotor compact modules*)
@@ -3042,6 +3047,7 @@ TYPE
 	END_STRUCT;
 	McCfgAcpAuxPwrSupModType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_ACP_AUX_PWR_SUP_MOD*)
 		AxisReference : STRING[250]; (*Name of the power supply module component*)
+		ActivateACOPOSSimulationOnPLC : McAPSMActAcpSimOnPLCEnum; (*Activates or deactivates the ACOPOS simulation on the PLC*)
 		OutputParameters : McAPSMOutParType; (*Output parameters selection*)
 		OutputVoltageOn : McAPSMOutVOnType; (*Output voltage is on after start-up and error reset*)
 	END_STRUCT;
@@ -4438,6 +4444,9 @@ TYPE
 	END_STRUCT;
 	McCfgAcpExtEncAxEncLinkType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_ACP_EXT_ENC_AX_ENC_LINK*)
 		EncoderLink : McAEEAUseEncLinkType;
+	END_STRUCT;
+	McCfgAcpExtEncAxEncLinkPosFType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_ACP_EXT_ENC_AX_ENC_LINK_P*)
+		PositionFilter : McAEEAUELOneEncPosFltrType; (*Filter for the encoder position*)
 	END_STRUCT;
 	McCfgAcpExtEncAxMechElmType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_ACP_EXT_ENC_AX_MECH_ELM*)
 		MechanicalElements : McAMEType; (*Parameter of hardware elements situated between motor encoder and load which influence the scaling*)

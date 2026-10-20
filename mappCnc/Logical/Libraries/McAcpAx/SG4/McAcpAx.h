@@ -1,6 +1,6 @@
 /* Automation Studio generated header file */
 /* Do not edit ! */
-/* McAcpAx 6.7.2 */
+/* McAcpAx 6.8.1 */
 
 #ifndef _MCACPAX_
 #define _MCACPAX_
@@ -9,7 +9,7 @@ extern "C"
 {
 #endif
 #ifndef _McAcpAx_VERSION
-#define _McAcpAx_VERSION 6.7.2
+#define _McAcpAx_VERSION 6.8.1
 #endif
 
 #include <bur/plctypes.h>
@@ -1206,6 +1206,11 @@ typedef enum McASAMEnum
 	mcASAM_SET_VAL_GEN = 1,
 	mcASAM_COMPL = 2
 } McASAMEnum;
+
+typedef enum McAPSMActAcpSimOnPLCEnum
+{	mcAPSMAASOP_OFF = 0,
+	mcAPSMAASOP_ON = 1
+} McAPSMActAcpSimOnPLCEnum;
 
 typedef enum McAPSMOutParEnum
 {	mcAPSMOP_ACPMOT_CMPCT = 0,
@@ -4958,6 +4963,7 @@ typedef struct McAPSMOutVOnType
 
 typedef struct McCfgAcpAuxPwrSupModType
 {	plcstring AxisReference[251];
+	enum McAPSMActAcpSimOnPLCEnum ActivateACOPOSSimulationOnPLC;
 	struct McAPSMOutParType OutputParameters;
 	struct McAPSMOutVOnType OutputVoltageOn;
 } McCfgAcpAuxPwrSupModType;
@@ -5916,6 +5922,10 @@ typedef struct McCfgAcpExtEncAxRefType
 typedef struct McCfgAcpExtEncAxEncLinkType
 {	struct McAEEAUseEncLinkType EncoderLink;
 } McCfgAcpExtEncAxEncLinkType;
+
+typedef struct McCfgAcpExtEncAxEncLinkPosFType
+{	struct McAEEAUELOneEncPosFltrType PositionFilter;
+} McCfgAcpExtEncAxEncLinkPosFType;
 
 typedef struct McCfgAcpExtEncAxMechElmType
 {	struct McAMEType MechanicalElements;

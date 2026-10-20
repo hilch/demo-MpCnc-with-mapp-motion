@@ -1,6 +1,6 @@
 /* Automation Studio generated header file */
 /* Do not edit ! */
-/* McBase 6.7.2 */
+/* McBase 6.8.1 */
 
 #ifndef _MCBASE_
 #define _MCBASE_
@@ -9,7 +9,7 @@ extern "C"
 {
 #endif
 #ifndef _McBase_VERSION
-#define _McBase_VERSION 6.7.2
+#define _McBase_VERSION 6.8.1
 #endif
 
 #include <bur/plctypes.h>
@@ -83,7 +83,8 @@ typedef enum McHomingModeEnum
 typedef enum McStopModeEnum
 {	mcSTOPMODE_JERK_LIMIT,
 	mcSTOPMODE_NO_JERK_LIMIT,
-	mcSTOPMODE_QUICKSTOP
+	mcSTOPMODE_QUICKSTOP,
+	mcSTOPMODE_ESTOP
 } McStopModeEnum;
 
 typedef enum McIplModeEnum
@@ -306,6 +307,7 @@ typedef enum McCfgTypeEnum
 	mcCFG_ACP_EXT_ENC_AX = 11070,
 	mcCFG_ACP_EXT_ENC_AX_REF = 11071,
 	mcCFG_ACP_EXT_ENC_AX_ENC_LINK = 11072,
+	mcCFG_ACP_EXT_ENC_AX_ENC_LINK_P = 11075,
 	mcCFG_ACP_EXT_ENC_AX_MECH_ELM = 11073,
 	mcCFG_ACP_EXT_ENC_AX_HOME = 11074,
 	mcCFG_AX_FEAT_A_IN = 11103,
@@ -479,6 +481,7 @@ typedef enum McCfgTypeEnum
 	mcCFG_MS_4AX_DELTA_B = 52142,
 	mcCFG_MS_4AX_DELTA_C = 52143,
 	mcCFG_MS_5AX_DELTA_A = 52151,
+	mcCFG_MS_5AX_DELTA_B = 52152,
 	mcCFG_MS_3AX_ROB_A = 52301,
 	mcCFG_MS_4AX_ROB_A = 52401,
 	mcCFG_MS_4AX_ROB_B = 52402,

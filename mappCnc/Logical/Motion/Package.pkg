@@ -5,5 +5,6 @@
     <Object Type="File">Motion.var</Object>
     <Object Type="Program" Language="IEC">Cnc</Object>
     <Object Type="DataObject" Language="Cnc">World</Object>
+    <Object Type="DataObject" Language="Cnc">Rect</Object>
   </Objects>
 </Package>

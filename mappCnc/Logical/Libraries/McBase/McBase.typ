@@ -72,7 +72,8 @@ TYPE
 	(
 		mcSTOPMODE_JERK_LIMIT,			 (*Takes into account the jerk limit value while stopping*)
 		mcSTOPMODE_NO_JERK_LIMIT,		 (*Ignores the jerk limit value while stopping*)
-		mcSTOPMODE_QUICKSTOP			 (*Considers only velocity and acceleration axis limits, motor and gearbox torques limits and cross section loads limits*)
+		mcSTOPMODE_QUICKSTOP,			 (*Considers only velocity and acceleration axis limits, motor and gearbox torques limits and cross section loads limits*)
+		mcSTOPMODE_ESTOP				 (*Considers only velocity and acceleration axis limits, motor and gearbox torques limits and cross section loads limits. Not delayed by centralized jerk filter*)
 	);
 
 	McIplModeEnum :

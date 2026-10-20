@@ -416,7 +416,8 @@ TYPE
 	 	mcAX_TYPE_DS402_INV,	(*DS402 conform inverter axis*)
 	 	mcAX_TYPE_PURE_VIRT_EXT_ENC,	(*Purely virtual axis with activated external encoder axis interface*)
 	 	mcAX_TYPE_PURE_VIRT_DS402_CSP,	(*Purely virtual axis with activated DS402 CSP*)
-	 	mcAX_TYPE_PURE_VIRT_DS402_VL	(*Purely virtual axis with activated DS402 VL*)
+	 	mcAX_TYPE_PURE_VIRT_DS402_VL,	(*Purely virtual axis with activated DS402 VL*)
+	 	mcAX_TYPE_ACP_INV_V2	(*ACOPOSinverter version 2 axis*)
 	);
 
 	McAcpAxAutoTuneFeedFwdModeEnum:

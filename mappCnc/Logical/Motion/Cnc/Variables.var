@@ -1,4 +1,5 @@
 VAR
-	fbMpCnc : MpCnc2Axis;
+	fbMpCnc : MpCnc4Axis;
 	CncParameters : MpCnc4AxisParType;
+	direction : REAL;
 END_VAR
