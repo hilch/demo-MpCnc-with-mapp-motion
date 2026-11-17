@@ -1,3 +1,4 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Made For B&R](https://github.com/hilch/BandR-badges/blob/main/Made-For-BrAutomation.svg)](https://www.br-automation.com)
 
 # demo-MpCnc-with-mapp-motion
@@ -5,6 +6,10 @@
 demo cnc application with [B&amp;R](https://www.br-automation.com) mapp components (MpCNC based on mapp motion).
 
 ![Screenshot](https://github.com/hilch/demo-MpCnc-with-mapp-motion-/blob/master/doc/screenshot.PNG)
+
+## License
+
+This software published under [MIT license](LICENSE). Also have a look into the [disclaimer](Disclaimer.md).
 
 ## Usage
 This project can be started in a simulation environment ('ArSim') with a vnc viewer connected to 127.0.0.1 (8-Bit colour mode).
